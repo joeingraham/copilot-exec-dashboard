@@ -220,13 +220,9 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zm.75 4.75a.75.75 0 0 0-1.5 0v2.5h-2.5a.75.75 0 0 0 0 1.5h2.5v2.5a.75.75 0 0 0 1.5 0v-2.5h2.5a.75.75 0 0 0 0-1.5h-2.5v-2.5z"/></svg></span>
     <span class="nav-label">User Growth & Acquisition</span>
   </a>
-  <a class="nav-item" href="#revenue" data-section="revenue">
+  <a class="nav-item" href="#finance" data-section="finance">
     <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm.25-11.25a.75.75 0 0 0-1.5 0v1h-.5a2.25 2.25 0 0 0 0 4.5h.5v1.5h-.75a.75.75 0 0 0 0 1.5h.75v.5a.75.75 0 0 0 1.5 0v-.5H9a2.25 2.25 0 0 0 0-4.5H7.75v-1.5h.5a.75.75 0 0 0 0-1.5h-.5v-.5z"/></svg></span>
-    <span class="nav-label">Revenue & Monetization</span>
-  </a>
-  <a class="nav-item" href="#cost" data-section="cost">
-    <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M2 2h12v12H2V2zm1.5 1.5v9h9v-9h-9zM5 5h2v6H5V5zm4 2h2v4H9V7z"/></svg></span>
-    <span class="nav-label">Cost & Unit Economics</span>
+    <span class="nav-label">Finance</span>
   </a>
   <a class="nav-item" href="#utilization" data-section="utilization">
     <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0zm7.25-3.25v2.992l2.028 1.064a.75.75 0 0 1-.557 1.392l-2.5-1.312A.75.75 0 0 1 7.25 8.5v-3.75a.75.75 0 0 1 1.5 0z"/></svg></span>
@@ -277,14 +273,14 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
   </div>
 </section>
 
-<!-- ── REVENUE ── -->
-<section class="section" id="revenue">
-  <div class="section-header"><h2>Revenue &amp; Monetization</h2><p>ARR trajectory, plan mix, and ARPU</p></div>
+<!-- ── FINANCE ── -->
+<section class="section" id="finance">
+  <div class="section-header"><h2>Finance</h2><p>Revenue, cost, margins, and unit economics</p></div>
   <div class="grid grid-2">
-    <div class="card"><div class="card-title">ARR Run-Rate by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Annual Recurring Revenue by plan tier. Current month revenue × 12, stacked to show mix.</div><div class="info-takeaway">📌 ARR has more than doubled YoY. Business + Enterprise drive 75% of ARR growth.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-arr"></canvas></div></div>
-    <div class="card"><div class="card-title">Monthly Revenue by Plan <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly revenue breakdown by plan tier. Shows where dollars come from and how the mix is shifting.</div><div class="info-takeaway">📌 Enterprise revenue is growing fastest (4× in 12 months). Business remains the largest contributor at ~$118M/mo.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-rev-plan"></canvas></div></div>
-    <div class="card"><div class="card-title">ARPU by Plan (Subscription + Overage) <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Average Revenue Per User by plan tier over time, split into subscription base and overage. Tracks pricing power.</div><div class="info-takeaway">📌 Enterprise ARPU growing fastest driven by overage. Pro+ overage contribution increasing — power users consuming premium requests.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-arpu"></canvas></div></div>
-    <div class="card"><div class="card-title">Subscription vs Overage <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Shows the split between base subscription revenue and usage-based overage charges.</div><div class="info-takeaway">📌 Overage is growing to 15% of total — usage-based pricing is working, but monitor for customer friction.</div></div></span><span class="illustrative">(Illustrative Data)</span></div>
+    <div class="card"><div class="card-title">Revenue, COGS &amp; Gross Margin <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Revenue above x-axis, COGS below. GM% line on right axis shows margin trajectory.</div><div class="info-takeaway">📌 Revenue growing faster than COGS — margins improving toward 70% target.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-rev-cogs-gm"></canvas></div></div>
+    <div class="card"><div class="card-title">Gross Profit by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Per-SKU profitability. Negative = SKU costs more to serve than it earns. Stacked bar shows which SKUs subsidize others.</div><div class="info-takeaway">📌 Free and Edu are negative GP. Business and Enterprise carry the business. Pro+ improving.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-gp-sku"></canvas></div></div>
+    <div class="card"><div class="card-title">ARPU by Plan (Subscription + Overage) <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Average Revenue Per User by plan tier over time, split into subscription base and overage.</div><div class="info-takeaway">📌 Enterprise ARPU growing fastest driven by overage. Pro+ overage contribution increasing.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-arpu"></canvas></div></div>
+    <div class="card"><div class="card-title">Subscription vs Overage <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Split between base subscription revenue and usage-based overage charges.</div><div class="info-takeaway">📌 Overage growing as share of total — usage-based pricing working.</div></div></span><span class="illustrative">(Illustrative Data)</span></div>
       <div class="funnel-toggles" id="overage-toggles">
         <button class="funnel-toggle active" data-overage-sku="Total" onclick="switchOverageSku('Total')">Total</button>
         <button class="funnel-toggle" data-overage-sku="Free" onclick="switchOverageSku('Free')"><span class="ft-dot" style="background:#8B949E"></span>Free</button>
@@ -295,22 +291,16 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
         <button class="funnel-toggle" data-overage-sku="Enterprise" onclick="switchOverageSku('Enterprise')"><span class="ft-dot" style="background:#FFB08E"></span>Ent</button>
       </div>
       <div class="chart-wrap"><canvas id="ch-overage"></canvas></div></div>
+    <div class="card"><div class="card-title">Total Seats by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Assigned seats by plan tier over time.</div><div class="info-takeaway">📌 Approaching 2.7M total seats. Business and Enterprise driving growth.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-seats-sku"></canvas></div></div>
+    <div class="card"><div class="card-title">Net Seat Adds by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly net new seats by plan tier.</div><div class="info-takeaway">📌 Enterprise net adds accelerating. Free tier adds steady.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-netadds-sku"></canvas></div></div>
+  </div>
+  <div class="grid grid-3" style="margin-top:20px">
+    <div class="card"><div class="card-title">ARPU by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Revenue per user by plan. Positive values.</div><div class="info-takeaway">📌 Enterprise highest at ~$47/mo. All paid SKUs trending up.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-arpu-cost"></canvas></div></div>
+    <div class="card"><div class="card-title">COGS per User by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Cost to serve each user. Shown as negative values for visual comparison with ARPU.</div><div class="info-takeaway">📌 Pro+ costs $14/user/mo — highest. Free at $0.26 is efficient.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cogspu"></canvas></div></div>
+    <div class="card"><div class="card-title">Gross Profit per User by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> ARPU minus COGS per user. Positive = profitable, negative = subsidized. The unit economics truth.</div><div class="info-takeaway">📌 Enterprise most profitable at ~$37/user/mo. Free is -$0.26 (cost only). Pro+ margins improving.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-gppu"></canvas></div></div>
   </div>
 </section>
 
-<!-- ── COST ── -->
-<section class="section" id="cost">
-  <div class="section-header"><h2>Cost, Unit Economics &amp; Financial Metrics</h2><p>Revenue, COGS, margins, ARR, retention, and seat growth</p></div>
-  <div class="grid grid-2">
-    <div class="card"><div class="card-title">Revenue, COGS & Gross Margin <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Combined view of revenue, cost structure, and resulting margins. The "is this a real business" chart.</div><div class="info-takeaway">📌 Gross margin entering 65-75% goal band. Revenue growing faster than COGS — unit economics improving.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-rev-cogs-gm"></canvas></div></div>
-    <div class="card"><div class="card-title">MAU vs COGS Distribution by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Compares each SKU's share of users vs share of cost. Highlights cross-subsidization.</div><div class="info-takeaway">📌 Free users are 28% of MAU but only 10% of COGS. Pro+ is 7% of MAU but 17% of COGS — power users cost disproportionately.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-mau-vs-cogs"></canvas></div></div>
-    <div class="card"><div class="card-title">COGS per Seat / Month <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Unit economics north star — cost per seat must trend down for margin expansion.</div><div class="info-takeaway">📌 COGS/seat dropped from $9.50 to $7.20 — approaching the $7.00 target. Model routing and caching driving improvement.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cogs-seat"></canvas></div></div>
-    <div class="card"><div class="card-title">ARR Trend <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> ARR trajectory with growth rate. The #1 top-line metric.</div><div class="info-takeaway">📌 ARR growing at 8-12% MoM. On track to exit the year above $500M.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-arr-deep"></canvas></div></div>
-    <div class="card"><div class="card-title">ARPU by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Revenue per user by plan tier. Same as Revenue section view for cross-reference.</div><div class="info-takeaway">📌 Enterprise ARPU highest at ~$47/mo. Pro+ growing fastest driven by overage.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-arpu-cost"></canvas></div></div>
-    <div class="card"><div class="card-title">COGS per User by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Cost to serve each user by plan tier. Compare with ARPU to see per-user profitability.</div><div class="info-takeaway">📌 Pro+ costs $14/user/mo — highest per-user cost. Free at $0.26 is efficient but generates no subscription revenue.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cogspu"></canvas></div></div>
-    <div class="card"><div class="card-title">Total Seats by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Assigned seats by plan tier. Volume growth engine.</div><div class="info-takeaway">📌 Approaching 2.7M total seats. Business and Enterprise driving growth.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-seats-sku"></canvas></div></div>
-    <div class="card"><div class="card-title">Net Seat Adds by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly net new seats by plan tier. Shows which SKUs are expanding.</div><div class="info-takeaway">📌 Enterprise net adds accelerating. Free tier adds steady — healthy top of funnel.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-netadds-sku"></canvas></div></div>
-  </div>
 </section>
 
 <!-- ── UTILIZATION ── -->
@@ -864,46 +854,13 @@ function rebuildAll() {
     allCharts.mauGrowth.update('none');
   }
 
-  // 5. ARR
-  if (allCharts.arr) {
-    allCharts.arr.data.labels = labels;
-    allCharts.arr.data.datasets.forEach(function(ds) {
-      var sku = SKU_LIST.find(function(s){ return ds.label === s; });
-      if (sku) {
-        ds.data = sliceTime(skuData.revenue[sku].map(function(v){return v*12}));
-        var idx = allCharts.arr.data.datasets.indexOf(ds);
-        allCharts.arr.getDatasetMeta(idx).hidden = !skuState[sku];
-      }
-    });
-    allCharts.arr.update('none');
-  }
 
-  // 6. Revenue by Plan
-  if (allCharts.revPlan) {
-    allCharts.revPlan.data.labels = labels;
-    allCharts.revPlan.data.datasets.forEach(function(ds) {
-      var sku = SKU_LIST.find(function(s){ return ds.label === s; });
-      if (sku) {
-        ds.data = adjustFlow(sliceTime(skuData.revenue[sku]));
-        var idx = allCharts.revPlan.data.datasets.indexOf(ds);
-        allCharts.revPlan.getDatasetMeta(idx).hidden = !skuState[sku];
-      }
-    });
-    allCharts.revPlan.update('none');
-  }
+
+
 
   // 7. (removed — ch-cogs replaced by ch-rev-cogs-gm)
 
-  // 8. COGS per Seat
-  if (allCharts.cogsSeat) {
-    allCharts.cogsSeat.data.labels = labels;
-    var slicedMau8 = sliceTime(totalMau);
-    var slicedCogs8 = adjustFlow(sliceTime(totalCogs));
-    allCharts.cogsSeat.data.datasets[0].data = slicedCogs8.map(function(v,i){
-      return slicedMau8[i]>0 ? Math.round(v / slicedMau8[i] * 100000) / 100 : 0;
-    });
-    allCharts.cogsSeat.update('none');
-  }
+
 
   // 9. (removed — ch-gm replaced by ch-rev-cogs-gm)
 
@@ -1090,23 +1047,18 @@ function rebuildAll() {
     allCharts.freqDist.update('none');
   }
 
-  // -- Revenue, COGS & Gross Margin
+  // -- Revenue, COGS & Gross Margin (Revenue above, COGS below)
   if (allCharts.revCogsGm) {
     allCharts.revCogsGm.data.labels = labels;
     var slicedRevRC = adjustFlow(sliceTime(totalRev));
     var slicedCogsRC = adjustFlow(sliceTime(totalCogs));
-    allCharts.revCogsGm.data.datasets[0].data = slicedCogsRC;
-    allCharts.revCogsGm.data.datasets[1].data = slicedRevRC.map(function(v,i){ return Math.round((v - slicedCogsRC[i])*100)/100; });
+    allCharts.revCogsGm.data.datasets[0].data = slicedRevRC;
+    allCharts.revCogsGm.data.datasets[1].data = slicedCogsRC.map(function(v){ return -Math.round(v*100)/100; });
     allCharts.revCogsGm.data.datasets[2].data = slicedRevRC.map(function(v,i){ return v > 0 ? Math.round((v - slicedCogsRC[i])/v*1000)/10 : 0; });
     allCharts.revCogsGm.update('none');
   }
 
-  // -- ARR Trend
-  if (allCharts.arrDeep) {
-    allCharts.arrDeep.data.labels = labels;
-    allCharts.arrDeep.data.datasets[0].data = sliceTime(totalRev.map(function(v){ return Math.round(v*12); }));
-    allCharts.arrDeep.update('none');
-  }
+
 
   // -- ARPU by SKU (Cost section clone)
   if (allCharts.arpuCost) {
@@ -1120,13 +1072,13 @@ function rebuildAll() {
     allCharts.arpuCost.update('none');
   }
 
-  // -- COGS per User by SKU
+  // -- COGS per User by SKU (negative values)
   if (allCharts.cogspu) {
     allCharts.cogspu.data.labels = labels;
     allCharts.cogspu.data.datasets.forEach(function(ds) {
       var sku = ds.label;
       if (cogspuData[sku]) {
-        ds.data = sliceTime(cogspuData[sku]);
+        ds.data = sliceTime(cogspuData[sku]).map(function(v){return -v});
       }
     });
     allCharts.cogspu.update('none');
@@ -1155,6 +1107,33 @@ function rebuildAll() {
       }
     });
     allCharts.netaddsSku.update('none');
+  }
+
+
+  // -- Gross Profit by SKU
+  if (allCharts.gpSku) {
+    allCharts.gpSku.data.labels = labels;
+    allCharts.gpSku.data.datasets.forEach(function(ds) {
+      var sku = ds.label;
+      if (gpSkuData[sku]) {
+        ds.data = sliceTime(gpSkuData[sku]);
+      }
+    });
+    allCharts.gpSku.update('none');
+  }
+
+  // -- Gross Profit per User by SKU
+  if (allCharts.gppu) {
+    allCharts.gppu.data.labels = labels;
+    allCharts.gppu.data.datasets.forEach(function(ds) {
+      var sku = ds.label;
+      if (arpuData[sku] && cogspuData[sku]) {
+        ds.data = sliceTime(arpuData[sku].total).map(function(arpu, i) {
+          return Math.round((arpu - sliceTime(cogspuData[sku])[i]) * 100) / 100;
+        });
+      }
+    });
+    allCharts.gppu.update('none');
   }
 
   // 18. Overage
@@ -1613,48 +1592,11 @@ allCharts.upgradeRates = new Chart(document.getElementById('ch-upgrade-rates'), 
 })();
 
 // ══════════════════════════════
-//  3. REVENUE
+//  3. FINANCE
 // ══════════════════════════════
-// ARR by SKU — stacked bar (revenue × 12)
-allCharts.arr = new Chart(document.getElementById('ch-arr'), {
-  type:'bar',
-  data:{ labels:MONTHS, datasets:[
-    { label:'Free',       data:skuData.revenue.Free.map(function(v){return v*12}), backgroundColor:skuColors.Free, borderRadius:2 },
-    { label:'Edu',        data:skuData.revenue.Edu.map(function(v){return v*12}), backgroundColor:skuColors.Edu, borderRadius:2 },
-    { label:'Pro',        data:skuData.revenue.Pro.map(function(v){return v*12}), backgroundColor:skuColors.Pro, borderRadius:2 },
-    { label:'Pro+',       data:skuData.revenue['Pro+'].map(function(v){return v*12}), backgroundColor:skuColors['Pro+'], borderRadius:2 },
-    { label:'Business',   data:skuData.revenue.Business.map(function(v){return v*12}), backgroundColor:skuColors.Business, borderRadius:2 },
-    { label:'Enterprise', data:skuData.revenue.Enterprise.map(function(v){return v*12}), backgroundColor:skuColors.Enterprise, borderRadius:2 },
-  ]},
-  options:{ plugins:{legend:{position:'bottom'},
-    datalabels: stackedDatalabels(function(v){return '$'+(v>=1000?(v/1000).toFixed(0)+'B':v+'M')}, 0.05),
-    stackedTotal:{display:true, formatter:function(v){return '$'+(v>=1000?(v/1000).toFixed(1)+'B':v+'M')}},
-    tooltip:{mode:'index',callbacks:{footer:function(items){
-      var t=items.reduce(function(s,i){return s+i.parsed.y},0); return 'Total ARR: $'+(t>=1000?(t/1000).toFixed(1)+'B':t+'M');
-    }}}},
-    scales:{x:{stacked:true, grid:{display:false}},
-      y:{stacked:true, ticks:{callback:function(v){return '$'+v+'M'}}, title:{display:true,text:'ARR ($M)'}}},
-    aspectRatio:1.7 }
-});
 
-// Monthly Revenue by Plan — stacked bar
-allCharts.revPlan = new Chart(document.getElementById('ch-rev-plan'), {
-  type:'bar',
-  data:{ labels:MONTHS, datasets:[
-    { label:'Free',       data:skuData.revenue.Free, backgroundColor:skuColors.Free, borderRadius:2 },
-    { label:'Edu',        data:skuData.revenue.Edu, backgroundColor:skuColors.Edu, borderRadius:2 },
-    { label:'Pro',        data:skuData.revenue.Pro, backgroundColor:skuColors.Pro, borderRadius:2 },
-    { label:'Pro+',       data:skuData.revenue['Pro+'], backgroundColor:skuColors['Pro+'], borderRadius:2 },
-    { label:'Business',   data:skuData.revenue.Business, backgroundColor:skuColors.Business, borderRadius:2 },
-    { label:'Enterprise', data:skuData.revenue.Enterprise, backgroundColor:skuColors.Enterprise, borderRadius:2 },
-  ]},
-  options:{ plugins:{legend:{position:'bottom'},
-    datalabels: stackedDatalabels(function(v){return '$'+Math.round(v)+'M'}, 0.05),
-    stackedTotal:{display:true, formatter:function(v){return '$'+Math.round(v)+'M'}}},
-    scales:{x:{stacked:true, grid:{display:false}},
-      y:{stacked:true, ticks:{callback:function(v){return '$'+v+'M'}}}},
-    aspectRatio:1.7 }
-});
+
+
 
 // ARPU by Plan — line chart with subscription vs overage tooltip
 // Per-SKU ARPU data (illustrative): {sub, overage, total} per month
@@ -1966,64 +1908,43 @@ allCharts.ide = new Chart(document.getElementById('ch-ide'), {
 });
 
 // ══════════════════════════════
-//  6. COST, UNIT ECONOMICS & FINANCIAL METRICS
+//  6. FINANCE (COST & UNIT ECONOMICS)
 // ══════════════════════════════
 
-// Chart 1: Revenue, COGS & Gross Margin (combo)
+// Chart 1: Revenue, COGS & Gross Margin (combo) — Revenue above x-axis, COGS below
 (function() {
   var initRev = getFilteredSkuOnly('revenue');
   var initCogs = getFiltered('cogs');
-  var cogsArr = initCogs.slice();
-  var gpArr = initRev.map(function(v,i){ return Math.round((v - initCogs[i])*100)/100; });
+  var revArr = initRev.slice();
+  var negCogs = initCogs.map(function(v){ return -Math.round(v*100)/100; });
   var gmPct = initRev.map(function(v,i){ return v > 0 ? Math.round((v - initCogs[i])/v*1000)/10 : 0; });
 
   allCharts.revCogsGm = new Chart(document.getElementById('ch-rev-cogs-gm'), {
     type:'bar',
     data:{ labels:MONTHS, datasets:[
-      { label:'COGS', data:cogsArr, backgroundColor:a(RED,.55), borderRadius:2 },
-      { label:'Gross Profit', data:gpArr, backgroundColor:a(GREEN,.55), borderRadius:2 },
+      { label:'Revenue', data:revArr, backgroundColor:a(GREEN,.55), borderRadius:2, stack:'stack0' },
+      { label:'COGS', data:negCogs, backgroundColor:a(RED,.55), borderRadius:2, stack:'stack0' },
       { type:'line', label:'Gross Margin %', data:gmPct, borderColor:PURPLE, borderWidth:2.5,
         pointRadius:3, tension:.3, fill:false, yAxisID:'y1', datalabels:{display:false} }
     ]},
     options:{ plugins:{legend:{position:'bottom'},
-      datalabels: stackedDatalabels(function(v){ return '$'+Math.round(v)+'M'; }, 0.06),
-      stackedTotal:{display:true, formatter:function(v){ return '$'+Math.round(v)+'M'; }},
-      annotation:{annotations:{band:goalBand(65,75,'GM Goal 65–75%')}}},
+      datalabels:{display:function(ctx){ if(ctx.dataset.type==='line') return false; var v=Math.abs(ctx.dataset.data[ctx.dataIndex]||0); return v>=5; }, color:'#E6EDF3', font:{size:9,weight:'bold'}, formatter:function(v){return '$'+Math.abs(Math.round(v))+'M';}, anchor:'center', align:'center'},
+      stackedTotal:{display:false},
+      annotation:{annotations:{
+        band:goalBand(65,75,'GM Goal 65–75%'),
+        zero:{type:'line',yMin:0,yMax:0,borderColor:'rgba(255,255,255,.2)',borderWidth:1}
+      }}},
       scales:{x:{stacked:true, grid:{display:false}},
-        y:{stacked:true, ticks:{callback:function(v){return '$'+v+'M'}}, title:{display:true,text:'Revenue / COGS ($M)'}},
+        y:{stacked:true, ticks:{callback:function(v){return '$'+Math.abs(v)+'M'}}, title:{display:true,text:'Revenue / COGS ($M)'}},
         y1:{position:'right', grid:{display:false}, ticks:{callback:function(v){return v+'%'}}, min:0, max:100,
           title:{display:true,text:'Gross Margin %'}}},
       aspectRatio:1.7 }
   });
 })();
 
-// Chart 2: MAU vs COGS Distribution by SKU (latest month grouped bar)
-(function() {
-  var mauShares = [28, 2, 16, 7, 31, 16];
-  var cogsShares = [10, 2, 19, 17, 32, 20];
 
-  new Chart(document.getElementById('ch-mau-vs-cogs'), {
-    type:'bar',
-    data:{ labels:['Free','Edu','Pro','Pro+','Business','Enterprise'], datasets:[
-      { label:'MAU Share %', data:mauShares, backgroundColor:a(BLUE,.65), borderRadius:4, barPercentage:0.7, categoryPercentage:0.6 },
-      { label:'COGS Share %', data:cogsShares, backgroundColor:a(RED,.55), borderRadius:4, barPercentage:0.7, categoryPercentage:0.6 }
-    ]},
-    options:{ plugins:{legend:{position:'bottom'},
-      datalabels:{display:true, color:'#E6EDF3', font:{size:9,weight:'bold'}, formatter:function(v){return v+'%'}, anchor:'end', align:'end'}},
-      scales:{x:{grid:{display:false}},
-        y:{ticks:{callback:function(v){return v+'%'}}, title:{display:true,text:'Share of Total (%)'}, max:40}},
-      aspectRatio:1.7 }
-  });
-})();
 
-// Chart 3: COGS per Seat / Month (keep existing)
-allCharts.cogsSeat = new Chart(document.getElementById('ch-cogs-seat'), {
-  type:'line',
-  data:{ labels:MONTHS, datasets:[{ label:'$/Seat/Mo', data:[9.5,9.3,9.1,8.9,8.7,8.4,8.2,8.0,7.8,7.5,7.4,7.2],
-    borderColor:PINK, backgroundColor:a(PINK,.1), fill:true, tension:.3, borderWidth:2 }] },
-  options:{ plugins:{legend:{display:false}, datalabels:{display:false}, annotation:{annotations:{goal:goalLine(7.0,'Goal: $7.00')}}},
-    scales:{x:{grid:{display:false}}, y:{min:6,max:10.5, ticks:{callback:function(v){return '$'+v.toFixed(2)}}}}, aspectRatio:1.7 }
-});
+
 
 // Chart 3b: ARPU by SKU (clone for Cost section)
 allCharts.arpuCost = new Chart(document.getElementById('ch-arpu-cost'), {
@@ -2063,35 +1984,21 @@ var cogspuData = {
 allCharts.cogspu = new Chart(document.getElementById('ch-cogspu'), {
   type:'line',
   data:{ labels:MONTHS, datasets:[
-    { label:'Free', data:cogspuData.Free.slice(), borderColor:skuColors.Free, backgroundColor:a(skuColors.Free,.05), fill:false, tension:.3, borderWidth:2, borderDash:[4,3] },
-    { label:'Edu', data:cogspuData.Edu.slice(), borderColor:skuColors.Edu, backgroundColor:a(skuColors.Edu,.05), fill:false, tension:.3, borderWidth:2, borderDash:[4,3] },
-    { label:'Pro', data:cogspuData.Pro.slice(), borderColor:skuColors.Pro, backgroundColor:a(skuColors.Pro,.05), fill:false, tension:.3, borderWidth:2.5 },
-    { label:'Pro+', data:cogspuData['Pro+'].slice(), borderColor:skuColors['Pro+'], backgroundColor:a(skuColors['Pro+'],.05), fill:false, tension:.3, borderWidth:2.5 },
-    { label:'Business', data:cogspuData.Business.slice(), borderColor:skuColors.Business, backgroundColor:a(skuColors.Business,.05), fill:false, tension:.3, borderWidth:2.5 },
-    { label:'Enterprise', data:cogspuData.Enterprise.slice(), borderColor:skuColors.Enterprise, backgroundColor:a(skuColors.Enterprise,.05), fill:false, tension:.3, borderWidth:2.5 }
+    { label:'Free', data:cogspuData.Free.map(function(v){return -v}), borderColor:skuColors.Free, backgroundColor:a(skuColors.Free,.05), fill:false, tension:.3, borderWidth:2, borderDash:[4,3] },
+    { label:'Edu', data:cogspuData.Edu.map(function(v){return -v}), borderColor:skuColors.Edu, backgroundColor:a(skuColors.Edu,.05), fill:false, tension:.3, borderWidth:2, borderDash:[4,3] },
+    { label:'Pro', data:cogspuData.Pro.map(function(v){return -v}), borderColor:skuColors.Pro, backgroundColor:a(skuColors.Pro,.05), fill:false, tension:.3, borderWidth:2.5 },
+    { label:'Pro+', data:cogspuData['Pro+'].map(function(v){return -v}), borderColor:skuColors['Pro+'], backgroundColor:a(skuColors['Pro+'],.05), fill:false, tension:.3, borderWidth:2.5 },
+    { label:'Business', data:cogspuData.Business.map(function(v){return -v}), borderColor:skuColors.Business, backgroundColor:a(skuColors.Business,.05), fill:false, tension:.3, borderWidth:2.5 },
+    { label:'Enterprise', data:cogspuData.Enterprise.map(function(v){return -v}), borderColor:skuColors.Enterprise, backgroundColor:a(skuColors.Enterprise,.05), fill:false, tension:.3, borderWidth:2.5 }
   ]},
   options:{ interaction:{mode:'index', intersect:false},
-    plugins:{legend:{position:'bottom'}, datalabels:{display:false}},
-    scales:{x:{grid:{display:false}}, y:{ticks:{callback:function(v){return '$'+v.toFixed(2)}}, title:{display:true,text:'COGS/User ($/user/mo)'}}},
+    plugins:{legend:{position:'bottom'}, datalabels:{display:false},
+      annotation:{annotations:{zero:{type:'line',yMin:0,yMax:0,borderColor:'rgba(255,255,255,.15)',borderWidth:1}}}},
+    scales:{x:{grid:{display:false}}, y:{ticks:{callback:function(v){return '-$'+Math.abs(v).toFixed(2)}}, title:{display:true,text:'COGS/User ($/user/mo)'}}},
     aspectRatio:1.7 }
 });
 
-// Chart 4: ARR Trend
-(function() {
-  var initRev = getFilteredSkuOnly('revenue');
-  var arrData = initRev.map(function(v){ return Math.round(v * 12); });
 
-  allCharts.arrDeep = new Chart(document.getElementById('ch-arr-deep'), {
-    type:'line',
-    data:{ labels:MONTHS, datasets:[{ label:'ARR ($M)', data:arrData,
-      borderColor:TEAL, backgroundColor:a(TEAL,.12), fill:true, tension:.3, borderWidth:2.5, pointRadius:3,
-      pointBackgroundColor:TEAL }] },
-    options:{ plugins:{legend:{display:false}, datalabels:{display:false}},
-      scales:{x:{grid:{display:false}},
-        y:{ticks:{callback:function(v){return '$'+v+'M'}}, title:{display:true,text:'ARR ($M)'}}},
-      aspectRatio:1.7 }
-  });
-})();
 
 // Chart 5: Total Seats by SKU — stacked bar
 var seatsData = {
@@ -2142,6 +2049,56 @@ allCharts.seatsSku = new Chart(document.getElementById('ch-seats-sku'), {
   });
 })();
 
+
+
+// Chart: Gross Profit by SKU (ch-gp-sku) — stacked bar
+var gpSkuData = {
+  Free: [-0.8,-0.9,-0.9,-1.0,-1.0,-1.1,-1.1,-1.2,-1.2,-1.3,-1.3,-1.4],
+  Edu: [0.8,0.8,0.8,0.8,0.8,0.7,0.7,0.7,0.7,0.7,0.7,0.7],
+  Pro: [28.5,29.4,30.3,30.2,31.1,31.0,31.9,31.8,32.7,32.6,33.5,33.4],
+  'Pro+': [11.2,13.1,15.0,16.9,18.8,20.7,23.6,26.5,29.3,32.1,35.9,39.7],
+  Business: [56.5,60.3,64.1,67.9,73.6,79.3,83.0,86.8,92.2,97.8,103.4,111.0],
+  Enterprise: [20.8,24.6,28.4,33.2,38.0,43.8,49.6,55.4,62.1,69.8,78.5,88.2]
+};
+allCharts.gpSku = new Chart(document.getElementById('ch-gp-sku'), {
+  type:'bar',
+  data:{ labels:MONTHS, datasets: SKU_LIST.map(function(sku) {
+    return { label:sku, data:gpSkuData[sku].slice(), backgroundColor:skuColors[sku], borderRadius:2 };
+  })},
+  options:{ plugins:{legend:{position:'bottom'},
+    datalabels: stackedDatalabels(function(v){ return '$'+Math.round(v)+'M'; }, 0.05),
+    stackedTotal:{display:true, formatter:function(v){ return '$'+Math.round(v)+'M'; }},
+    annotation:{annotations:{zero:{type:'line',yMin:0,yMax:0,borderColor:'rgba(255,255,255,.2)',borderWidth:1}}}},
+    scales:{x:{stacked:true, grid:{display:false}},
+      y:{stacked:true, ticks:{callback:function(v){return '$'+v+'M'}}, title:{display:true,text:'Gross Profit ($M)'}}},
+    aspectRatio:1.7 }
+});
+
+// Chart: Gross Profit per User by SKU (ch-gppu) — line chart
+(function() {
+  var gppuData = {};
+  SKU_LIST.forEach(function(sku) {
+    gppuData[sku] = arpuData[sku].total.map(function(arpu, i) {
+      return Math.round((arpu - cogspuData[sku][i]) * 100) / 100;
+    });
+  });
+  allCharts.gppu = new Chart(document.getElementById('ch-gppu'), {
+    type:'line',
+    data:{ labels:MONTHS, datasets:[
+      { label:'Free', data:gppuData.Free, borderColor:skuColors.Free, backgroundColor:a(skuColors.Free,.05), fill:false, tension:.3, borderWidth:2, borderDash:[4,3] },
+      { label:'Edu', data:gppuData.Edu, borderColor:skuColors.Edu, backgroundColor:a(skuColors.Edu,.05), fill:false, tension:.3, borderWidth:2, borderDash:[4,3] },
+      { label:'Pro', data:gppuData.Pro, borderColor:skuColors.Pro, backgroundColor:a(skuColors.Pro,.05), fill:false, tension:.3, borderWidth:2.5 },
+      { label:'Pro+', data:gppuData['Pro+'], borderColor:skuColors['Pro+'], backgroundColor:a(skuColors['Pro+'],.05), fill:false, tension:.3, borderWidth:2.5 },
+      { label:'Business', data:gppuData.Business, borderColor:skuColors.Business, backgroundColor:a(skuColors.Business,.05), fill:false, tension:.3, borderWidth:2.5 },
+      { label:'Enterprise', data:gppuData.Enterprise, borderColor:skuColors.Enterprise, backgroundColor:a(skuColors.Enterprise,.05), fill:false, tension:.3, borderWidth:2.5 }
+    ]},
+    options:{ interaction:{mode:'index', intersect:false},
+      plugins:{legend:{position:'bottom'}, datalabels:{display:false},
+        annotation:{annotations:{zero:{type:'line',yMin:0,yMax:0,borderColor:'rgba(255,255,255,.15)',borderWidth:1}}}},
+      scales:{x:{grid:{display:false}}, y:{ticks:{callback:function(v){return '$'+v.toFixed(2)}}, title:{display:true,text:'GP/User ($/user/mo)'}}},
+      aspectRatio:1.7 }
+  });
+})();
 // ══════════════════════════════
 //  7. RETENTION
 // ══════════════════════════════
