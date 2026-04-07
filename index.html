@@ -259,9 +259,9 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 <section class="section" id="revenue">
   <div class="section-header"><h2>Revenue &amp; Monetization</h2><p>ARR trajectory, plan mix, and ARPU</p></div>
   <div class="grid grid-2">
-    <div class="card"><div class="card-title">ARR Run-Rate <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Annual Recurring Revenue = current month revenue × 12. The #1 business metric for SaaS health.</div><div class="info-takeaway">📌 ARR has more than doubled YoY ($200M → $450M), driven primarily by Business and Enterprise expansion.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-arr"></canvas></div></div>
-    <div class="card"><div class="card-title">Revenue by Plan <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly revenue breakdown by plan tier. Shows where dollars come from and how the mix is shifting.</div><div class="info-takeaway">📌 Enterprise revenue is growing fastest (4× in 12 months). Business remains the largest contributor at ~$118M/mo.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-rev-plan"></canvas></div></div>
-    <div class="card"><div class="card-title">ARPU by Plan <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Average Revenue Per User by plan tier. Tracks pricing power — are we growing via volume or price?</div><div class="info-takeaway">📌 Enterprise ARPU ($39/mo) is ~4× Pro ($10/mo), validating the tiered pricing strategy.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-arpu"></canvas></div></div>
+    <div class="card"><div class="card-title">ARR Run-Rate by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Annual Recurring Revenue by plan tier. Current month revenue × 12, stacked to show mix.</div><div class="info-takeaway">📌 ARR has more than doubled YoY. Business + Enterprise drive 75% of ARR growth.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-arr"></canvas></div></div>
+    <div class="card"><div class="card-title">Monthly Revenue by Plan <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly revenue breakdown by plan tier. Shows where dollars come from and how the mix is shifting.</div><div class="info-takeaway">📌 Enterprise revenue is growing fastest (4× in 12 months). Business remains the largest contributor at ~$118M/mo.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-rev-plan"></canvas></div></div>
+    <div class="card"><div class="card-title">ARPU by Plan (Subscription + Overage) <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Average Revenue Per User by plan tier over time, split into subscription base and overage. Tracks pricing power.</div><div class="info-takeaway">📌 Enterprise ARPU growing fastest driven by overage. Pro+ overage contribution increasing — power users consuming premium requests.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-arpu"></canvas></div></div>
     <div class="card"><div class="card-title">Subscription vs Overage <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Shows the split between base subscription revenue and usage-based overage charges.</div><div class="info-takeaway">📌 Overage is growing to 15% of total — usage-based pricing is working, but monitor for customer friction.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-overage"></canvas></div></div>
   </div>
 </section>
@@ -601,20 +601,25 @@ function rebuildAll() {
     allCharts.mauGrowth.update('none');
   }
 
-  // ARR
+  // ARR — now SKU-based stacked bar, toggle visibility
   if (allCharts.arr) {
-    allCharts.arr.data.datasets[0].data = totalRev.map(function(v){ return v*12; });
+    allCharts.arr.data.datasets.forEach(function(ds) {
+      var matched = SKU_LIST.find(function(s){ return ds.label === s; });
+      if (matched) {
+        var idx = allCharts.arr.data.datasets.indexOf(ds);
+        allCharts.arr.getDatasetMeta(idx).hidden = !skuState[matched];
+      }
+    });
     allCharts.arr.update('none');
   }
 
   // Revenue by plan — toggle visibility like SKU charts
   if (allCharts.revPlan) {
-    var revMap = { Enterprise:'Enterprise', Business:'Business', Pro:'Pro' };
     allCharts.revPlan.data.datasets.forEach(function(ds) {
-      var sku = revMap[ds.label];
-      if (sku) {
+      var matched = SKU_LIST.find(function(s){ return ds.label === s; });
+      if (matched) {
         var idx = allCharts.revPlan.data.datasets.indexOf(ds);
-        allCharts.revPlan.getDatasetMeta(idx).hidden = !skuState[sku];
+        allCharts.revPlan.getDatasetMeta(idx).hidden = !skuState[matched];
       }
     });
     allCharts.revPlan.update('none');
@@ -986,34 +991,81 @@ new Chart(document.getElementById('ch-upgrade-rates'), {
 // ══════════════════════════════
 //  3. REVENUE
 // ══════════════════════════════
+// ARR by SKU — stacked bar (revenue × 12)
 allCharts.arr = new Chart(document.getElementById('ch-arr'), {
-  type:'line',
-  data:{ labels:MONTHS, datasets:[{ label:'ARR ($M)', data:[200,220,240,260,285,310,330,350,375,400,425,450],
-    borderColor:PURPLE, borderWidth:2.5, backgroundColor:a(PURPLE,.1), fill:true, tension:.3 }] },
-  options:{ plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>'$'+c.parsed.y+'M'}}},
-    scales:{x:{grid:{display:false}}, y:{ticks:{callback:v=>'$'+v+'M'}, title:{display:true,text:'ARR'}}}, aspectRatio:1.7 }
+  type:'bar',
+  data:{ labels:MONTHS, datasets:[
+    { label:'Free',       data:skuData.revenue.Free.map(function(v){return v*12}), backgroundColor:skuColors.Free, borderRadius:2 },
+    { label:'Edu',        data:skuData.revenue.Edu.map(function(v){return v*12}), backgroundColor:skuColors.Edu, borderRadius:2 },
+    { label:'Pro',        data:skuData.revenue.Pro.map(function(v){return v*12}), backgroundColor:skuColors.Pro, borderRadius:2 },
+    { label:'Pro+',       data:skuData.revenue['Pro+'].map(function(v){return v*12}), backgroundColor:skuColors['Pro+'], borderRadius:2 },
+    { label:'Business',   data:skuData.revenue.Business.map(function(v){return v*12}), backgroundColor:skuColors.Business, borderRadius:2 },
+    { label:'Enterprise', data:skuData.revenue.Enterprise.map(function(v){return v*12}), backgroundColor:skuColors.Enterprise, borderRadius:2 },
+  ]},
+  options:{ plugins:{legend:{position:'bottom'},
+    datalabels: stackedDatalabels(function(v){return '$'+(v>=1000?(v/1000).toFixed(0)+'B':v+'M')}, 0.05),
+    stackedTotal:{display:true, formatter:function(v){return '$'+(v>=1000?(v/1000).toFixed(1)+'B':v+'M')}},
+    tooltip:{mode:'index',callbacks:{footer:function(items){
+      var t=items.reduce(function(s,i){return s+i.parsed.y},0); return 'Total ARR: $'+(t>=1000?(t/1000).toFixed(1)+'B':t+'M');
+    }}}},
+    scales:{x:{stacked:true, grid:{display:false}},
+      y:{stacked:true, ticks:{callback:function(v){return '$'+v+'M'}}, title:{display:true,text:'ARR ($M)'}}},
+    aspectRatio:1.7 }
 });
 
+// Monthly Revenue by Plan — stacked bar
 allCharts.revPlan = new Chart(document.getElementById('ch-rev-plan'), {
   type:'bar',
   data:{ labels:MONTHS, datasets:[
-    { label:'Enterprise', data:[22,26,30,35,40,46,52,58,65,73,82,92], backgroundColor:PURPLE, borderRadius:2 },
-    { label:'Business', data:[60,64,68,72,78,84,88,92,98,104,110,118], backgroundColor:BLUE, borderRadius:2 },
-    { label:'Pro', data:[30,31,32,32,33,33,34,34,35,35,36,36], backgroundColor:TEAL, borderRadius:2 }
+    { label:'Free',       data:skuData.revenue.Free, backgroundColor:skuColors.Free, borderRadius:2 },
+    { label:'Edu',        data:skuData.revenue.Edu, backgroundColor:skuColors.Edu, borderRadius:2 },
+    { label:'Pro',        data:skuData.revenue.Pro, backgroundColor:skuColors.Pro, borderRadius:2 },
+    { label:'Pro+',       data:skuData.revenue['Pro+'], backgroundColor:skuColors['Pro+'], borderRadius:2 },
+    { label:'Business',   data:skuData.revenue.Business, backgroundColor:skuColors.Business, borderRadius:2 },
+    { label:'Enterprise', data:skuData.revenue.Enterprise, backgroundColor:skuColors.Enterprise, borderRadius:2 },
   ]},
   options:{ plugins:{legend:{position:'bottom'},
-    datalabels: stackedDatalabels(v => '$'+v+'M', 0.05),
-    stackedTotal:{display:true, formatter:v => '$'+v+'M'}},
+    datalabels: stackedDatalabels(function(v){return '$'+v+'M'}, 0.05),
+    stackedTotal:{display:true, formatter:function(v){return '$'+v+'M'}}},
     scales:{x:{stacked:true, grid:{display:false}},
-    y:{stacked:true, ticks:{callback:v=>'$'+v+'M'}}}, aspectRatio:1.7 }
+      y:{stacked:true, ticks:{callback:function(v){return '$'+v+'M'}}}},
+    aspectRatio:1.7 }
+});
+
+// ARPU by Plan — line chart with subscription vs overage tooltip
+// Per-SKU ARPU data (illustrative): {sub, overage, total} per month
+var arpuData = {
+  Pro:       {sub:[9.8,9.8,9.9,9.9,9.9,10.0,10.0,10.0,10.1,10.1,10.1,10.2], ov:[0.2,0.2,0.3,0.3,0.4,0.4,0.5,0.5,0.6,0.6,0.7,0.8]},
+  'Pro+':    {sub:[18.0,18.0,18.2,18.2,18.5,18.5,18.8,18.8,19.0,19.0,19.2,19.5], ov:[2.0,2.5,3.0,3.5,4.0,4.5,5.0,5.5,6.0,6.5,7.0,7.5]},
+  Business:  {sub:[17.5,17.5,17.8,17.8,18.0,18.0,18.2,18.2,18.5,18.5,18.8,19.0], ov:[1.5,1.8,2.0,2.2,2.5,2.8,3.0,3.2,3.5,3.8,4.0,4.2]},
+  Enterprise:{sub:[33.0,33.5,34.0,34.5,35.0,35.5,36.0,36.5,37.0,37.5,38.0,38.5], ov:[3.0,3.5,4.0,4.5,5.0,5.5,6.0,6.5,7.0,7.5,8.0,8.5]},
+};
+// Compute totals
+Object.keys(arpuData).forEach(function(sku) {
+  arpuData[sku].total = arpuData[sku].sub.map(function(v,i){ return Math.round((v + arpuData[sku].ov[i])*100)/100; });
 });
 
 new Chart(document.getElementById('ch-arpu'), {
-  type:'bar',
-  data:{ labels:['Pro','Business','Enterprise'], datasets:[
-    { label:'ARPU ($/mo)', data:[10,19,39], backgroundColor:[TEAL,BLUE,PURPLE], borderRadius:6, barPercentage:.5 }
+  type:'line',
+  data:{ labels:MONTHS, datasets:[
+    { label:'Pro', data:arpuData.Pro.total, borderColor:skuColors.Pro, backgroundColor:a(skuColors.Pro,.05), fill:false, tension:.3, borderWidth:2.5 },
+    { label:'Pro+', data:arpuData['Pro+'].total, borderColor:skuColors['Pro+'], backgroundColor:a(skuColors['Pro+'],.05), fill:false, tension:.3, borderWidth:2.5 },
+    { label:'Business', data:arpuData.Business.total, borderColor:skuColors.Business, backgroundColor:a(skuColors.Business,.05), fill:false, tension:.3, borderWidth:2.5 },
+    { label:'Enterprise', data:arpuData.Enterprise.total, borderColor:skuColors.Enterprise, backgroundColor:a(skuColors.Enterprise,.05), fill:false, tension:.3, borderWidth:2.5 },
   ]},
-  options:{ indexAxis:'y', plugins:{legend:{display:false}}, scales:{x:{ticks:{callback:v=>'$'+v}},y:{grid:{display:false}}}, aspectRatio:1.7 }
+  options:{ interaction:{mode:'index', intersect:false},
+    plugins:{legend:{position:'bottom'}, datalabels:{display:false},
+      tooltip:{displayColors:true, callbacks:{
+        label: function(ctx) {
+          var sku = ctx.dataset.label;
+          var i = ctx.dataIndex;
+          var d = arpuData[sku];
+          if (!d) return ctx.dataset.label + ': $' + ctx.parsed.y.toFixed(2);
+          return sku + ': $' + d.total[i].toFixed(2) + '  (Sub: $' + d.sub[i].toFixed(2) + ' + Overage: $' + d.ov[i].toFixed(2) + ')';
+        }
+      }}},
+    scales:{x:{grid:{display:false}}, y:{ticks:{callback:function(v){return '$'+v}}, title:{display:true,text:'ARPU ($/user/mo)'}}},
+    aspectRatio:1.7 }
 });
 
 new Chart(document.getElementById('ch-overage'), {
