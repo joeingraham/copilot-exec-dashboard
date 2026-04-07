@@ -197,6 +197,15 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <button class="toggle-btn active" data-surface="PR Summaries" onclick="toggleSurface(this)"><span class="dot" style="background:#FD71AF"></span>PR Sum</button>
     <button class="toggle-btn active" data-surface="Agent" onclick="toggleSurface(this)"><span class="dot" style="background:#FFB08E"></span>Agent</button>
   </div>
+  <div class="toggle-wrap" id="granularity-toggle">
+    <button class="toggle-btn active" data-gran="monthly" onclick="setGranularity(this)">Monthly</button>
+    <button class="toggle-btn" data-gran="weekly" onclick="setGranularity(this)">Weekly</button>
+  </div>
+  <div class="toggle-wrap" id="range-toggle">
+    <button class="toggle-btn" data-range="3" onclick="setTimeRange(this)">3M</button>
+    <button class="toggle-btn" data-range="6" onclick="setTimeRange(this)">6M</button>
+    <button class="toggle-btn active" data-range="12" onclick="setTimeRange(this)">12M</button>
+  </div>
   <span class="updated">Last Updated: April 6, 2026</span>
 </header>
 
@@ -464,14 +473,18 @@ function goalBand(min, max, label) {
       color: GREEN, font:{size:10}, padding:2 }};
 }
 
-// ── SKU Filter Toggle — GLOBAL DATA MODEL ──
+// ── GLOBAL DATA MODEL ──
 var skuState = { Free:true, Edu:true, Pro:true, 'Pro+':true, Business:true, Enterprise:true };
 var SKU_LIST = ['Free','Edu','Pro','Pro+','Business','Enterprise'];
 var surfaceState = { Completions:true, Chat:true, CLI:true, 'PR Summaries':true, Agent:true };
 var SURFACE_LIST = ['Completions','Chat','CLI','PR Summaries','Agent'];
+var timeGranularity = 'monthly';
+var timeRange = 12;
 
-// Per-SKU monthly data for all metrics (illustrative)
-// Each array = 12 monthly values. Charts sum active SKUs.
+// Surface weights for splitting SKU-level metrics across surfaces
+var SURFACE_WEIGHTS = { Completions:0.45, Chat:0.35, CLI:0.10, 'PR Summaries':0.07, Agent:0.03 };
+
+// Base per-SKU monthly data (12 months, illustrative)
 var skuData = {
   mau: {
     Free:[480,510,540,560,580,600,620,640,660,680,700,720],
@@ -523,15 +536,71 @@ var skuData = {
   }
 };
 
-// Sum active SKUs for a metric
-function sumActive(metric) {
-  return MONTHS.map(function(_,i) {
-    var total = 0;
-    SKU_LIST.forEach(function(sku) {
-      if (skuState[sku] && skuData[metric][sku]) total += skuData[metric][sku][i];
+// Build DATA: DATA.metric[sku][surface] = [12 values]
+// Surface-dimensioned metrics split by SURFACE_WEIGHTS; revenue is SKU-only (surface "All")
+var DATA = {};
+['mau','activations','cogs','churn','resurrections'].forEach(function(metric) {
+  DATA[metric] = {};
+  SKU_LIST.forEach(function(sku) {
+    DATA[metric][sku] = {};
+    SURFACE_LIST.forEach(function(surf) {
+      DATA[metric][sku][surf] = skuData[metric][sku].map(function(v) {
+        return Math.round(v * SURFACE_WEIGHTS[surf] * 100) / 100;
+      });
     });
-    return total;
   });
+});
+DATA.revenue = {};
+SKU_LIST.forEach(function(sku) {
+  DATA.revenue[sku] = { 'All': skuData.revenue[sku].slice() };
+});
+
+// WAU/MAU and DAU/WAU stickiness ratios (illustrative)
+var WAU_MAU_RATIOS = [0.32,0.33,0.34,0.35,0.36,0.37,0.38,0.38,0.39,0.40,0.41,0.42];
+var DAU_WAU_RATIOS = [0.28,0.29,0.30,0.31,0.32,0.33,0.34,0.34,0.35,0.36,0.37,0.38];
+
+// Sum across active SKUs × active surfaces
+function getFiltered(metric) {
+  var result = new Array(12).fill(0);
+  SKU_LIST.forEach(function(sku) {
+    if (!skuState[sku]) return;
+    SURFACE_LIST.forEach(function(surf) {
+      if (!surfaceState[surf]) return;
+      if (DATA[metric] && DATA[metric][sku] && DATA[metric][sku][surf]) {
+        DATA[metric][sku][surf].forEach(function(v, i) { result[i] += v; });
+      }
+    });
+  });
+  return result.map(function(v) { return Math.round(v * 100) / 100; });
+}
+
+// Sum for SKU-only metrics (no surface dimension, e.g. revenue)
+function getFilteredSkuOnly(metric) {
+  var result = new Array(12).fill(0);
+  SKU_LIST.forEach(function(sku) {
+    if (!skuState[sku]) return;
+    if (DATA[metric] && DATA[metric][sku]) {
+      var d = DATA[metric][sku]['All'] || DATA[metric][sku];
+      if (Array.isArray(d)) d.forEach(function(v, i) { result[i] += v; });
+    }
+  });
+  return result;
+}
+
+// Per-SKU totals (summing across active surfaces only)
+function getPerSku(metric) {
+  var result = {};
+  SKU_LIST.forEach(function(sku) {
+    result[sku] = new Array(12).fill(0);
+    SURFACE_LIST.forEach(function(surf) {
+      if (!surfaceState[surf]) return;
+      if (DATA[metric] && DATA[metric][sku] && DATA[metric][sku][surf]) {
+        DATA[metric][sku][surf].forEach(function(v, i) { result[sku][i] += v; });
+      }
+    });
+    result[sku] = result[sku].map(function(v) { return Math.round(v * 10) / 10; });
+  });
+  return result;
 }
 
 // All chart instances that need rebuilding
@@ -581,46 +650,74 @@ function toggleSurface(btn) {
   rebuildAll();
 }
 
+function setGranularity(btn) {
+  timeGranularity = btn.dataset.gran;
+  document.querySelectorAll('#granularity-toggle .toggle-btn').forEach(function(b) {
+    b.classList.toggle('active', b.dataset.gran === timeGranularity);
+  });
+}
+
+function setTimeRange(btn) {
+  timeRange = parseInt(btn.dataset.range);
+  document.querySelectorAll('#range-toggle .toggle-btn').forEach(function(b) {
+    b.classList.toggle('active', parseInt(b.dataset.range) === timeRange);
+  });
+}
+
 function rebuildAll() {
-  // 1. SKU-based charts: toggle dataset visibility
-  ['mauSku','actSku'].forEach(function(key) {
-    if (!allCharts[key]) return;
-    allCharts[key].data.datasets.forEach(function(ds) {
-      var matched = SKU_LIST.find(function(s){ return ds.label === s; });
-      if (matched) {
-        var idx = allCharts[key].data.datasets.indexOf(ds);
-        allCharts[key].getDatasetMeta(idx).hidden = !skuState[matched];
+  // Compute filtered totals
+  var totalMau = getFiltered('mau');
+  var totalRev = getFilteredSkuOnly('revenue');
+  var totalCogs = getFiltered('cogs');
+  var totalAct = getFiltered('activations');
+  var totalChurn = getFiltered('churn');
+  var totalRes = getFiltered('resurrections');
+  var netGrowth = totalAct.map(function(v,i){ return Math.round((v + totalRes[i] - totalChurn[i]) * 100) / 100; });
+  var perSkuMau = getPerSku('mau');
+  var perSkuAct = getPerSku('activations');
+
+  // 1. MAU by SKU — update data (surface filter) and visibility (SKU filter)
+  if (allCharts.mauSku) {
+    allCharts.mauSku.data.datasets.forEach(function(ds) {
+      var sku = SKU_LIST.find(function(s){ return ds.label === s; });
+      if (sku) {
+        ds.data = perSkuMau[sku];
+        var idx = allCharts.mauSku.data.datasets.indexOf(ds);
+        allCharts.mauSku.getDatasetMeta(idx).hidden = !skuState[sku];
       }
     });
-    allCharts[key].update('none');
-  });
+    allCharts.mauSku.update('none');
+  }
 
-  // 2. Aggregate charts: recompute data from active SKUs
-  var totalMau = sumActive('mau');
-  var totalRev = sumActive('revenue');
-  var totalCogs = sumActive('cogs');
-  var totalAct = sumActive('activations');
-  var totalChurn = sumActive('churn');
-  var totalRes = sumActive('resurrections');
-  var netGrowth = totalAct.map(function(v,i){ return v + totalRes[i] - totalChurn[i]; });
+  // 2. Activations by SKU
+  if (allCharts.actSku) {
+    allCharts.actSku.data.datasets.forEach(function(ds) {
+      var sku = SKU_LIST.find(function(s){ return ds.label === s; });
+      if (sku) {
+        ds.data = perSkuAct[sku];
+        var idx = allCharts.actSku.data.datasets.indexOf(ds);
+        allCharts.actSku.getDatasetMeta(idx).hidden = !skuState[sku];
+      }
+    });
+    allCharts.actSku.update('none');
+  }
 
-  // KPI sparklines
+  // 3. KPI sparklines and tile values
   if (allCharts.kpi) {
     var kpiMap = [
-      totalMau.map(function(v){ return v/1000; }),           // MAU in M
-      totalRev.map(function(v,i){ return totalMau[i]>0 ? (v/totalMau[i]*1000).toFixed(2)*1 : 0; }),  // ARPU
-      totalRev.map(function(v){ return v*12; }),              // ARR
-      totalRev.map(function(v,i){ return totalRev[i]>0 ? ((totalRev[i]-totalCogs[i])/totalRev[i]*100) : 0; }) // GM%
+      totalMau.map(function(v){ return Math.round(v/100)/10; }),
+      totalRev.map(function(v,i){ return totalMau[i]>0 ? Math.round(v/totalMau[i]*100000)/100 : 0; }),
+      totalRev.map(function(v){ return v*12; }),
+      totalRev.map(function(v,i){ return totalRev[i]>0 ? Math.round((totalRev[i]-totalCogs[i])/totalRev[i]*1000)/10 : 0; })
     ];
     allCharts.kpi.forEach(function(ch, idx) {
       ch.data.datasets[0].data = kpiMap[idx];
       ch.update('none');
     });
-    // Update KPI tile values
     var kpiTiles = document.querySelectorAll('.kpi .value');
     var lastMau = totalMau[11]; var lastRev = totalRev[11]; var lastCogs = totalCogs[11];
     var fmts = [
-      (lastMau >= 1000 ? (lastMau/1000).toFixed(1)+'M' : lastMau+'K'),
+      (lastMau >= 1000 ? (lastMau/1000).toFixed(1)+'M' : Math.round(lastMau)+'K'),
       '$'+(lastMau>0?(lastRev/lastMau*1000).toFixed(2):'0'),
       '$'+(lastRev*12 >= 1000 ? (lastRev*12/1000).toFixed(0)+'M' : (lastRev*12).toFixed(0)+'M'),
       (lastRev>0?((lastRev-lastCogs)/lastRev*100).toFixed(1):'0')+'%'
@@ -634,7 +731,7 @@ function rebuildAll() {
     });
   }
 
-  // MAU Growth
+  // 4. MAU Growth
   if (allCharts.mauGrowth) {
     allCharts.mauGrowth.data.datasets[0].data = totalAct;
     allCharts.mauGrowth.data.datasets[1].data = totalRes;
@@ -643,48 +740,47 @@ function rebuildAll() {
     allCharts.mauGrowth.update('none');
   }
 
-  // ARR — now SKU-based stacked bar, toggle visibility
+  // 5. ARR — SKU-based stacked bar, toggle visibility
   if (allCharts.arr) {
     allCharts.arr.data.datasets.forEach(function(ds) {
-      var matched = SKU_LIST.find(function(s){ return ds.label === s; });
-      if (matched) {
+      var sku = SKU_LIST.find(function(s){ return ds.label === s; });
+      if (sku) {
         var idx = allCharts.arr.data.datasets.indexOf(ds);
-        allCharts.arr.getDatasetMeta(idx).hidden = !skuState[matched];
+        allCharts.arr.getDatasetMeta(idx).hidden = !skuState[sku];
       }
     });
     allCharts.arr.update('none');
   }
 
-  // Revenue by plan — toggle visibility like SKU charts
+  // 6. Revenue by Plan — toggle visibility
   if (allCharts.revPlan) {
     allCharts.revPlan.data.datasets.forEach(function(ds) {
-      var matched = SKU_LIST.find(function(s){ return ds.label === s; });
-      if (matched) {
+      var sku = SKU_LIST.find(function(s){ return ds.label === s; });
+      if (sku) {
         var idx = allCharts.revPlan.data.datasets.indexOf(ds);
-        allCharts.revPlan.getDatasetMeta(idx).hidden = !skuState[matched];
+        allCharts.revPlan.getDatasetMeta(idx).hidden = !skuState[sku];
       }
     });
     allCharts.revPlan.update('none');
   }
 
-  // Total COGS
+  // 7. Total COGS — recompute from filtered cogs
   if (allCharts.cogs) {
-    var tc = sumActive('cogs');
-    allCharts.cogs.data.datasets[0].data = tc.map(function(v){ return v*0.85; });
-    allCharts.cogs.data.datasets[1].data = tc.map(function(v){ return v*0.10; });
-    allCharts.cogs.data.datasets[2].data = tc.map(function(v){ return v*0.05; });
+    allCharts.cogs.data.datasets[0].data = totalCogs.map(function(v){ return Math.round(v*0.85*100)/100; });
+    allCharts.cogs.data.datasets[1].data = totalCogs.map(function(v){ return Math.round(v*0.10*100)/100; });
+    allCharts.cogs.data.datasets[2].data = totalCogs.map(function(v){ return Math.round(v*0.05*100)/100; });
     allCharts.cogs.update('none');
   }
 
-  // COGS per seat
+  // 8. COGS per Seat
   if (allCharts.cogsSeat) {
     allCharts.cogsSeat.data.datasets[0].data = totalCogs.map(function(v,i){
-      return totalMau[i]>0 ? (v / totalMau[i] * 1000).toFixed(2)*1 : 0;
+      return totalMau[i]>0 ? Math.round(v / totalMau[i] * 100000) / 100 : 0;
     });
     allCharts.cogsSeat.update('none');
   }
 
-  // Gross margin
+  // 9. Gross Margin
   if (allCharts.gm) {
     allCharts.gm.data.datasets[0].data = totalRev.map(function(v,i){
       return v>0 ? Math.round((v-totalCogs[i])/v*1000)/10 : 0;
@@ -692,7 +788,7 @@ function rebuildAll() {
     allCharts.gm.update('none');
   }
 
-  // Churn rate
+  // 10. Churn Rate
   if (allCharts.churn) {
     allCharts.churn.data.datasets[0].data = totalChurn.map(function(v,i){
       return totalMau[i]>0 ? Math.round(v/totalMau[i]*10000)/100 : 0;
@@ -700,7 +796,46 @@ function rebuildAll() {
     allCharts.churn.update('none');
   }
 
-  // Overage chart — rebuild if showing Total (responds to SKU filter)
+  // 11. WAU/MAU Stickiness
+  if (allCharts.wauMau) {
+    var wau = totalMau.map(function(m,i){ return Math.round(m * WAU_MAU_RATIOS[i]); });
+    var mauOnly = totalMau.map(function(m,i){ return Math.round(m - wau[i]); });
+    var wauPct = totalMau.map(function(m,i){ return m>0 ? Math.round(WAU_MAU_RATIOS[i]*1000)/10 : 0; });
+    allCharts.wauMau.data.datasets[0].data = wau;
+    allCharts.wauMau.data.datasets[1].data = mauOnly;
+    allCharts.wauMau.data.datasets[2].data = wauPct;
+    allCharts.wauMau.update('none');
+  }
+
+  // 12. DAU/WAU Stickiness
+  if (allCharts.dauWau) {
+    var wauForDau = totalMau.map(function(m,i){ return Math.round(m * WAU_MAU_RATIOS[i]); });
+    var dauArr = wauForDau.map(function(w,i){ return Math.round(w * DAU_WAU_RATIOS[i]); });
+    var wauMinusDauArr = wauForDau.map(function(w,i){ return w - dauArr[i]; });
+    var dauPct = wauForDau.map(function(w,i){ return w>0 ? Math.round(DAU_WAU_RATIOS[i]*1000)/10 : 0; });
+    allCharts.dauWau.data.datasets[0].data = dauArr;
+    allCharts.dauWau.data.datasets[1].data = wauMinusDauArr;
+    allCharts.dauWau.data.datasets[2].data = dauPct;
+    allCharts.dauWau.update('none');
+  }
+
+  // 13. MAU by Surface — latest month per surface
+  if (allCharts.mauSurface) {
+    var surfTotals = SURFACE_LIST.map(function(surf) {
+      var total = 0;
+      SKU_LIST.forEach(function(sku) {
+        if (!skuState[sku]) return;
+        if (DATA.mau[sku] && DATA.mau[sku][surf]) {
+          total += DATA.mau[sku][surf][11];
+        }
+      });
+      return Math.round(total);
+    });
+    allCharts.mauSurface.data.datasets[0].data = surfTotals;
+    allCharts.mauSurface.update('none');
+  }
+
+  // 14. Overage — rebuild if showing Total
   if (typeof buildOverageChart === 'function' && activeOverageSku === 'Total') {
     buildOverageChart();
   }
@@ -1170,57 +1305,64 @@ buildOverageChart();
 // ══════════════════════════════
 //  4. UTILIZATION
 // ══════════════════════════════
-// WAU/MAU Stickiness — stacked bar (WAU + MAU-only) with line (WAU/MAU %)
-var wauData = [1200,1260,1320,1380,1440,1500,1560,1620,1700,1770,1840,1900];
-var mauOnlyData = [220,255,290,320,350,380,422,474,506,560,615,682];
-var wauMauPct = wauData.map(function(w,i){ return Math.round(w/(w+mauOnlyData[i])*1000)/10; });
+// WAU/MAU Stickiness — computed from filtered MAU and ratios
+(function() {
+  var initMau = getFiltered('mau');
+  var wau = initMau.map(function(m,i){ return Math.round(m * WAU_MAU_RATIOS[i]); });
+  var mauOnly = initMau.map(function(m,i){ return Math.round(m - wau[i]); });
+  var wauPct = WAU_MAU_RATIOS.map(function(r){ return Math.round(r*1000)/10; });
 
-allCharts.wauMau = new Chart(document.getElementById('ch-wau-mau'), {
-  type:'bar',
-  data:{ labels:MONTHS, datasets:[
-    { label:'WAU (Weekly Active)', data:wauData, backgroundColor:a(TEAL,.6), borderRadius:2, yAxisID:'y' },
-    { label:'MAU-only (Monthly only)', data:mauOnlyData, backgroundColor:a(BLUE,.3), borderRadius:2, yAxisID:'y' },
-    { type:'line', label:'WAU/MAU %', data:wauMauPct, borderColor:PURPLE, borderWidth:2.5, pointRadius:3,
-      tension:.3, fill:false, yAxisID:'y1', datalabels:{display:false} }
-  ]},
-  options:{ plugins:{legend:{position:'bottom'},
-    datalabels: stackedDatalabels(function(v){ return v>=1000?(v/1000).toFixed(1)+'M':v+'K'; }, 0.08),
-    stackedTotal:{display:true, formatter:function(v){ return (v/1000).toFixed(1)+'M'; }},
-    annotation:{annotations:{goal:{type:'line',yScaleID:'y1',yMin:50,yMax:50,borderColor:GREEN,borderWidth:1.5,borderDash:[6,4],
-      label:{display:true,content:'Goal: 50%',position:'end',backgroundColor:'transparent',
-        color:GREEN,font:{size:10,weight:'500'},padding:2}}}}},
-    scales:{x:{stacked:true, grid:{display:false}},
-      y:{stacked:true, position:'left', ticks:{callback:function(v){ return v>=1000?(v/1000).toFixed(1)+'M':v+'K'; }},
-        title:{display:true,text:'Users (thousands)'}},
-      y1:{position:'right', grid:{display:false}, ticks:{callback:function(v){return v+'%'}}, min:0, max:100}},
-    aspectRatio:1.7 }
-});
+  allCharts.wauMau = new Chart(document.getElementById('ch-wau-mau'), {
+    type:'bar',
+    data:{ labels:MONTHS, datasets:[
+      { label:'WAU (Weekly Active)', data:wau, backgroundColor:a(TEAL,.6), borderRadius:2, yAxisID:'y' },
+      { label:'MAU-only (Monthly only)', data:mauOnly, backgroundColor:a(BLUE,.3), borderRadius:2, yAxisID:'y' },
+      { type:'line', label:'WAU/MAU %', data:wauPct, borderColor:PURPLE, borderWidth:2.5, pointRadius:3,
+        tension:.3, fill:false, yAxisID:'y1', datalabels:{display:false} }
+    ]},
+    options:{ plugins:{legend:{position:'bottom'},
+      datalabels: stackedDatalabels(function(v){ return v>=1000?(v/1000).toFixed(1)+'M':v+'K'; }, 0.08),
+      stackedTotal:{display:true, formatter:function(v){ return (v/1000).toFixed(1)+'M'; }},
+      annotation:{annotations:{goal:{type:'line',yScaleID:'y1',yMin:40,yMax:40,borderColor:GREEN,borderWidth:1.5,borderDash:[6,4],
+        label:{display:true,content:'Goal: 40%',position:'end',backgroundColor:'transparent',
+          color:GREEN,font:{size:10,weight:'500'},padding:2}}}}},
+      scales:{x:{stacked:true, grid:{display:false}},
+        y:{stacked:true, position:'left', ticks:{callback:function(v){ return v>=1000?(v/1000).toFixed(1)+'M':v+'K'; }},
+          title:{display:true,text:'Users (thousands)'}},
+        y1:{position:'right', grid:{display:false}, ticks:{callback:function(v){return v+'%'}}, min:0, max:100}},
+      aspectRatio:1.7 }
+  });
+})();
 
-// DAU/WAU Stickiness — stacked bar (DAU + WAU-only) with line (DAU/WAU %)
-var dauData = [700,740,780,820,860,900,940,980,1020,1060,1120,1200];
-var wauMinusDau = wauData.map(function(w,i){ return w - dauData[i]; });
-var dauWauPct = dauData.map(function(d,i){ return Math.round(d/wauData[i]*1000)/10; });
+// DAU/WAU Stickiness — computed from filtered MAU, WAU ratios, and DAU ratios
+(function() {
+  var initMau = getFiltered('mau');
+  var wau = initMau.map(function(m,i){ return Math.round(m * WAU_MAU_RATIOS[i]); });
+  var dau = wau.map(function(w,i){ return Math.round(w * DAU_WAU_RATIOS[i]); });
+  var wauMinusDau = wau.map(function(w,i){ return w - dau[i]; });
+  var dauPct = DAU_WAU_RATIOS.map(function(r){ return Math.round(r*1000)/10; });
 
-allCharts.dauWau = new Chart(document.getElementById('ch-dau-wau'), {
-  type:'bar',
-  data:{ labels:MONTHS, datasets:[
-    { label:'DAU (Daily Active)', data:dauData, backgroundColor:a(PURPLE,.6), borderRadius:2, yAxisID:'y' },
-    { label:'WAU-only (Weekly only)', data:wauMinusDau, backgroundColor:a(TEAL,.3), borderRadius:2, yAxisID:'y' },
-    { type:'line', label:'DAU/WAU %', data:dauWauPct, borderColor:PINK, borderWidth:2.5, pointRadius:3,
-      tension:.3, fill:false, yAxisID:'y1', datalabels:{display:false} }
-  ]},
-  options:{ plugins:{legend:{position:'bottom'},
-    datalabels: stackedDatalabels(function(v){ return v>=1000?(v/1000).toFixed(1)+'M':v+'K'; }, 0.08),
-    stackedTotal:{display:true, formatter:function(v){ return (v/1000).toFixed(1)+'M'; }},
-    annotation:{annotations:{goal:{type:'line',yScaleID:'y1',yMin:60,yMax:60,borderColor:GREEN,borderWidth:1.5,borderDash:[6,4],
-      label:{display:true,content:'Goal: 60%',position:'end',backgroundColor:'transparent',
-        color:GREEN,font:{size:10,weight:'500'},padding:2}}}}},
-    scales:{x:{stacked:true, grid:{display:false}},
-      y:{stacked:true, position:'left', ticks:{callback:function(v){ return v>=1000?(v/1000).toFixed(1)+'M':v+'K'; }},
-        title:{display:true,text:'Users (thousands)'}},
-      y1:{position:'right', grid:{display:false}, ticks:{callback:function(v){return v+'%'}}, min:0, max:100}},
-    aspectRatio:1.7 }
-});
+  allCharts.dauWau = new Chart(document.getElementById('ch-dau-wau'), {
+    type:'bar',
+    data:{ labels:MONTHS, datasets:[
+      { label:'DAU (Daily Active)', data:dau, backgroundColor:a(PURPLE,.6), borderRadius:2, yAxisID:'y' },
+      { label:'WAU-only (Weekly only)', data:wauMinusDau, backgroundColor:a(TEAL,.3), borderRadius:2, yAxisID:'y' },
+      { type:'line', label:'DAU/WAU %', data:dauPct, borderColor:PINK, borderWidth:2.5, pointRadius:3,
+        tension:.3, fill:false, yAxisID:'y1', datalabels:{display:false} }
+    ]},
+    options:{ plugins:{legend:{position:'bottom'},
+      datalabels: stackedDatalabels(function(v){ return v>=1000?(v/1000).toFixed(1)+'M':v+'K'; }, 0.08),
+      stackedTotal:{display:true, formatter:function(v){ return (v/1000).toFixed(1)+'M'; }},
+      annotation:{annotations:{goal:{type:'line',yScaleID:'y1',yMin:35,yMax:35,borderColor:GREEN,borderWidth:1.5,borderDash:[6,4],
+        label:{display:true,content:'Goal: 35%',position:'end',backgroundColor:'transparent',
+          color:GREEN,font:{size:10,weight:'500'},padding:2}}}}},
+      scales:{x:{stacked:true, grid:{display:false}},
+        y:{stacked:true, position:'left', ticks:{callback:function(v){ return v>=1000?(v/1000).toFixed(1)+'M':v+'K'; }},
+          title:{display:true,text:'Users (thousands)'}},
+        y1:{position:'right', grid:{display:false}, ticks:{callback:function(v){return v+'%'}}, min:0, max:100}},
+      aspectRatio:1.7 }
+  });
+})();
 
 // Usage Frequency Distribution — stacked area (% of MAU by days active per week)
 var freqData = {
@@ -1261,10 +1403,17 @@ new Chart(document.getElementById('ch-interactions'), {
 // ══════════════════════════════
 //  5. SURFACE ADOPTION
 // ══════════════════════════════
-new Chart(document.getElementById('ch-mau-surface'), {
+allCharts.mauSurface = new Chart(document.getElementById('ch-mau-surface'), {
   type:'bar',
   data:{ labels:['Completions','Chat','CLI','PR Summaries','Agent'], datasets:[{
-    data:[2100,1400,200,150,80], backgroundColor:[PURPLE,BLUE,TEAL,PINK,ORANGE], borderRadius:6, barPercentage:.55
+    data: SURFACE_LIST.map(function(surf) {
+      var total = 0;
+      SKU_LIST.forEach(function(sku) {
+        if (DATA.mau[sku] && DATA.mau[sku][surf]) total += DATA.mau[sku][surf][11];
+      });
+      return Math.round(total);
+    }),
+    backgroundColor:[PURPLE,BLUE,TEAL,PINK,ORANGE], borderRadius:6, barPercentage:.55
   }]},
   options:{ plugins:{legend:{display:false}}, scales:{x:{grid:{display:false}}, y:{ticks:{callback:v=>v>=1000?(v/1000)+'M':v+'K'},
     title:{display:true,text:'MAU (K)'}}}, aspectRatio:1.7 }
