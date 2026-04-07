@@ -1035,6 +1035,8 @@ allCharts.revPlan = new Chart(document.getElementById('ch-rev-plan'), {
 // ARPU by Plan — line chart with subscription vs overage tooltip
 // Per-SKU ARPU data (illustrative): {sub, overage, total} per month
 var arpuData = {
+  Free:      {sub:[0,0,0,0,0,0,0,0,0,0,0,0], ov:[0.05,0.06,0.07,0.08,0.10,0.12,0.14,0.16,0.18,0.20,0.22,0.25]},
+  Edu:       {sub:[0,0,0,0,0,0,0,0,0,0,0,0], ov:[0.10,0.12,0.14,0.16,0.18,0.20,0.22,0.25,0.28,0.30,0.32,0.35]},
   Pro:       {sub:[9.8,9.8,9.9,9.9,9.9,10.0,10.0,10.0,10.1,10.1,10.1,10.2], ov:[0.2,0.2,0.3,0.3,0.4,0.4,0.5,0.5,0.6,0.6,0.7,0.8]},
   'Pro+':    {sub:[18.0,18.0,18.2,18.2,18.5,18.5,18.8,18.8,19.0,19.0,19.2,19.5], ov:[2.0,2.5,3.0,3.5,4.0,4.5,5.0,5.5,6.0,6.5,7.0,7.5]},
   Business:  {sub:[17.5,17.5,17.8,17.8,18.0,18.0,18.2,18.2,18.5,18.5,18.8,19.0], ov:[1.5,1.8,2.0,2.2,2.5,2.8,3.0,3.2,3.5,3.8,4.0,4.2]},
@@ -1048,6 +1050,8 @@ Object.keys(arpuData).forEach(function(sku) {
 new Chart(document.getElementById('ch-arpu'), {
   type:'line',
   data:{ labels:MONTHS, datasets:[
+    { label:'Free', data:arpuData.Free.total, borderColor:skuColors.Free, backgroundColor:a(skuColors.Free,.05), fill:false, tension:.3, borderWidth:2, borderDash:[4,3] },
+    { label:'Edu', data:arpuData.Edu.total, borderColor:skuColors.Edu, backgroundColor:a(skuColors.Edu,.05), fill:false, tension:.3, borderWidth:2, borderDash:[4,3] },
     { label:'Pro', data:arpuData.Pro.total, borderColor:skuColors.Pro, backgroundColor:a(skuColors.Pro,.05), fill:false, tension:.3, borderWidth:2.5 },
     { label:'Pro+', data:arpuData['Pro+'].total, borderColor:skuColors['Pro+'], backgroundColor:a(skuColors['Pro+'],.05), fill:false, tension:.3, borderWidth:2.5 },
     { label:'Business', data:arpuData.Business.total, borderColor:skuColors.Business, backgroundColor:a(skuColors.Business,.05), fill:false, tension:.3, borderWidth:2.5 },
