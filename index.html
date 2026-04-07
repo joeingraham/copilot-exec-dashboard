@@ -216,6 +216,10 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M0 1.75A.75.75 0 0 1 .75 1h14.5a.75.75 0 0 1 0 1.5H.75A.75.75 0 0 1 0 1.75zm0 5A.75.75 0 0 1 .75 6h14.5a.75.75 0 0 1 0 1.5H.75A.75.75 0 0 1 0 6.75zm0 5A.75.75 0 0 1 .75 11h14.5a.75.75 0 0 1 0 1.5H.75a.75.75 0 0 1-.75-.75z"/></svg></span>
     <span class="nav-label">Executive Summary</span>
   </a>
+  <a class="nav-item" href="#goals" data-section="goals">
+    <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zm3.28 5.22a.75.75 0 0 0-1.06 0L7 8.44 5.78 7.22a.75.75 0 0 0-1.06 1.06l1.75 1.75a.75.75 0 0 0 1.06 0l3.75-3.75a.75.75 0 0 0 0-1.06z"/></svg></span>
+    <span class="nav-label">Goals & Targets</span>
+  </a>
   <a class="nav-item" href="#growth" data-section="growth">
     <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zm.75 4.75a.75.75 0 0 0-1.5 0v2.5h-2.5a.75.75 0 0 0 0 1.5h2.5v2.5a.75.75 0 0 0 1.5 0v-2.5h2.5a.75.75 0 0 0 0-1.5h-2.5v-2.5z"/></svg></span>
     <span class="nav-label">User Growth & Acquisition</span>
@@ -257,6 +261,51 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 <section class="section" id="exec">
   <div class="section-header"><h2>Executive Summary</h2><p>Key performance indicators at a glance</p></div>
   <div class="grid grid-4" id="kpi-tiles"></div>
+</section>
+
+<!-- ── GOALS ── -->
+<section class="section" id="goals">
+  <div class="section-header"><h2>Goals &amp; Targets</h2><p>Weekly actuals vs. targets by product area</p></div>
+  
+  <h3 style="color:#E6EDF3;font-size:15px;font-weight:600;margin:16px 0 10px;padding-left:4px;border-left:3px solid #7B68EE;padding-left:12px">GitHub Copilot (Total)</h3>
+  <div class="grid grid-2">
+    <div class="card"><div class="card-title">Rolling 7-Day DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ghcp-dau"></canvas></div></div>
+    <div class="card"><div class="card-title">New Users per Week <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ghcp-newusers"></canvas></div></div>
+    <div class="card"><div class="card-title">Week 1 Retention <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ghcp-retention"></canvas></div></div>
+    <div class="card"><div class="card-title">Gross Margin <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ghcp-margin"></canvas></div></div>
+  </div>
+
+  <h3 style="color:#E6EDF3;font-size:15px;font-weight:600;margin:24px 0 10px;padding-left:12px;border-left:3px solid #2EA043">VS Code</h3>
+  <div class="grid grid-2">
+    <div class="card"><div class="card-title">Rolling 7-Day DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-vsc-dau"></canvas></div></div>
+    <div class="card"><div class="card-title">New Users per Week <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-vsc-newusers"></canvas></div></div>
+    <div class="card"><div class="card-title">Week 1 Retention <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-vsc-retention"></canvas></div></div>
+    <div class="card"><div class="card-title">Cost per User <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-vsc-cost"></canvas></div></div>
+  </div>
+
+  <h3 style="color:#E6EDF3;font-size:15px;font-weight:600;margin:24px 0 10px;padding-left:12px;border-left:3px solid #79D9B9">CLI</h3>
+  <div class="grid grid-2">
+    <div class="card"><div class="card-title">Rolling 7-Day DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cli-dau"></canvas></div></div>
+    <div class="card"><div class="card-title">Week 1 Retention <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cli-retention"></canvas></div></div>
+    <div class="card"><div class="card-title">Cost per User <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cli-cost"></canvas></div></div>
+  </div>
+
+  <h3 style="color:#E6EDF3;font-size:15px;font-weight:600;margin:24px 0 10px;padding-left:12px;border-left:3px solid #49CCF9">CCA (Copilot Chat / Agent)</h3>
+  <div class="grid grid-2">
+    <div class="card"><div class="card-title">Rolling 7-Day DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cca-dau"></canvas></div></div>
+    <div class="card"><div class="card-title">Week 1 Retention <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cca-retention"></canvas></div></div>
+    <div class="card"><div class="card-title">Merging Users as % of DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cca-merging"></canvas></div></div>
+    <div class="card"><div class="card-title">Cost per User <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cca-cost"></canvas></div></div>
+  </div>
+
+  <h3 style="color:#E6EDF3;font-size:15px;font-weight:600;margin:24px 0 10px;padding-left:12px;border-left:3px solid #FD71AF">CCR (Copilot Code Review)</h3>
+  <div class="grid grid-2">
+    <div class="card"><div class="card-title">Positive Feedback Rate <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ccr-feedback"></canvas></div></div>
+    <div class="card"><div class="card-title">PRs with CCR Review <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ccr-prs"></canvas></div></div>
+    <div class="card"><div class="card-title">WAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ccr-wau"></canvas></div></div>
+    <div class="card"><div class="card-title">Reviews by CB/CE <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ccr-reviews"></canvas></div></div>
+    <div class="card"><div class="card-title">Cost per User <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ccr-cost"></canvas></div></div>
+  </div>
 </section>
 
 <!-- ── USER GROWTH ── -->
@@ -1040,6 +1089,89 @@ kpis.forEach((k, i) => {
   });
   allCharts.kpi.push(sparkChart);
 });
+
+// ══════════════════════════════
+//  1b. GOALS & TARGETS
+// ══════════════════════════════
+var GOAL_WEEKS = ['May W1','May W3','Jun W1','Jun W3','Jul W1','Jul W3','Aug W1','Aug W3',
+                  'Sep W1','Sep W3','Oct W1','Oct W3','Nov W1','Nov W3','Dec W1','Dec W3',
+                  'Jan W1','Jan W3','Feb W1','Feb W3','Mar W1','Mar W3','Apr W1','Apr W3'];
+
+var NOISE = [0.3,-0.5,0.8,-0.2,0.6,-0.7,0.1,0.9,-0.4,0.5,-0.8,0.2,-0.6,0.7,-0.1,0.4,-0.9,0.3,0.5,-0.3,0.8,-0.5,0.2,-0.7];
+
+function genActuals(start, end, noiseAmt) {
+  var d = []; var step = (end - start) / 23;
+  for (var i = 0; i < 24; i++) d.push(Math.round((start + step * i + NOISE[i] * noiseAmt) * 100) / 100);
+  return d;
+}
+function genGoal(start, end) {
+  var d = []; var step = (end - start) / 23;
+  for (var i = 0; i < 24; i++) d.push(Math.round((start + step * i) * 100) / 100);
+  return d;
+}
+
+function buildGoalChart(canvasId, actualData, goalData, opts) {
+  var color = opts.color || PURPLE;
+  var goalColor = opts.goalColor || GREEN;
+  var fmt = opts.fmt || function(v){return v};
+  return new Chart(document.getElementById(canvasId), {
+    type: 'line',
+    data: { labels: GOAL_WEEKS, datasets: [
+      { label: 'Actual', data: actualData, borderColor: color, backgroundColor: a(color, .08),
+        fill: true, tension: .3, borderWidth: 2.5, pointRadius: 2, pointHoverRadius: 5 },
+      { label: 'Goal', data: goalData, borderColor: goalColor, backgroundColor: 'transparent',
+        borderDash: [6, 4], borderWidth: 2, pointRadius: 0, fill: false, tension: .3 }
+    ]},
+    options: {
+      interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { position: 'bottom' }, datalabels: { display: false },
+        tooltip: { callbacks: {
+          label: function(ctx) { return ctx.dataset.label + ': ' + fmt(ctx.parsed.y); }
+        }}
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 8 }, maxRotation: 45 } },
+        y: { ticks: { callback: function(v) { return fmt(v); } }, title: { display: true, text: opts.yLabel || '' } }
+      },
+      aspectRatio: 1.7
+    }
+  });
+}
+
+var fmtK = function(v){return v>=1000?(v/1000).toFixed(0)+'K':v};
+var fmtPct = function(v){return v+'%'};
+var fmtCost = function(v){return '$'+v.toFixed(2)};
+var fmtK1 = function(v){return v>=1000?(v/1000).toFixed(1)+'K':v};
+
+// GHCP (Total)
+buildGoalChart('goal-ghcp-dau', genActuals(700,1200,40), genGoal(750,1250), {color:PURPLE, yLabel:'DAU (thousands)', fmt:fmtK});
+buildGoalChart('goal-ghcp-newusers', genActuals(25,32,2), genGoal(26,34), {color:PURPLE, yLabel:'New Users/Wk (thousands)', fmt:fmtK1});
+buildGoalChart('goal-ghcp-retention', genActuals(68,76,2), genGoal(70,78), {color:PURPLE, yLabel:'Retention %', fmt:fmtPct});
+buildGoalChart('goal-ghcp-margin', genActuals(55,68,2.5), genGoal(58,70), {color:PURPLE, yLabel:'Gross Margin %', fmt:fmtPct});
+
+// VS Code
+buildGoalChart('goal-vsc-dau', genActuals(500,850,30), genGoal(520,900), {color:'#2EA043', yLabel:'DAU (thousands)', fmt:fmtK});
+buildGoalChart('goal-vsc-newusers', genActuals(18,24,1.5), genGoal(19,25), {color:'#2EA043', yLabel:'New Users/Wk (thousands)', fmt:fmtK1});
+buildGoalChart('goal-vsc-retention', genActuals(70,78,1.8), genGoal(72,80), {color:'#2EA043', yLabel:'Retention %', fmt:fmtPct});
+buildGoalChart('goal-vsc-cost', genActuals(0.35,0.22,0.02), genGoal(0.32,0.20), {color:'#2EA043', yLabel:'Cost per User', fmt:fmtCost});
+
+// CLI
+buildGoalChart('goal-cli-dau', genActuals(40,95,5), genGoal(45,100), {color:TEAL, yLabel:'DAU (thousands)', fmt:fmtK1});
+buildGoalChart('goal-cli-retention', genActuals(55,68,2.5), genGoal(58,70), {color:TEAL, yLabel:'Retention %', fmt:fmtPct});
+buildGoalChart('goal-cli-cost', genActuals(0.28,0.18,0.02), genGoal(0.25,0.16), {color:TEAL, yLabel:'Cost per User', fmt:fmtCost});
+
+// CCA (Copilot Chat / Agent)
+buildGoalChart('goal-cca-dau', genActuals(300,650,25), genGoal(320,700), {color:BLUE, yLabel:'DAU (thousands)', fmt:fmtK});
+buildGoalChart('goal-cca-retention', genActuals(62,72,2), genGoal(65,75), {color:BLUE, yLabel:'Retention %', fmt:fmtPct});
+buildGoalChart('goal-cca-merging', genActuals(8,16,1.2), genGoal(10,18), {color:BLUE, yLabel:'% of DAU', fmt:fmtPct});
+buildGoalChart('goal-cca-cost', genActuals(0.52,0.35,0.03), genGoal(0.48,0.30), {color:BLUE, yLabel:'Cost per User', fmt:fmtCost});
+
+// CCR (Copilot Code Review)
+buildGoalChart('goal-ccr-feedback', genActuals(72,84,2), genGoal(75,86), {color:PINK, yLabel:'Positive %', fmt:fmtPct});
+buildGoalChart('goal-ccr-prs', genActuals(15,45,3), genGoal(18,50), {color:PINK, yLabel:'PRs (thousands)', fmt:fmtK1});
+buildGoalChart('goal-ccr-wau', genActuals(80,200,12), genGoal(90,220), {color:PINK, yLabel:'WAU (thousands)', fmt:fmtK});
+buildGoalChart('goal-ccr-reviews', genActuals(5,18,1.5), genGoal(6,20), {color:PINK, yLabel:'Reviews (thousands)', fmt:fmtK1});
+buildGoalChart('goal-ccr-cost', genActuals(0.65,0.42,0.04), genGoal(0.58,0.38), {color:PINK, yLabel:'Cost per User', fmt:fmtCost});
 
 // ══════════════════════════════
 //  2. USER GROWTH
