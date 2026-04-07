@@ -322,13 +322,14 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 
 <!-- ── COST ── -->
 <section class="section" id="cost">
-  <div class="section-header"><h2>Cost &amp; Unit Economics</h2><p>COGS breakdown, per-seat cost, and gross margin</p></div>
+  <div class="section-header"><h2>Cost, Unit Economics &amp; Financial Metrics</h2><p>Revenue, COGS, margins, ARR, retention, and seat growth</p></div>
   <div class="grid grid-2">
-    <div class="card"><div class="card-title">Total COGS <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Total cost of goods sold over time, stacked by category (inference, compute, egress). The denominator for margin.</div><div class="info-takeaway">📌 Inference is 85% of COGS. Total growing but rate of growth slowing — model efficiency gains are kicking in.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cogs"></canvas></div></div>
+    <div class="card"><div class="card-title">Revenue, COGS & Gross Margin <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Combined view of revenue, cost structure, and resulting margins. The "is this a real business" chart.</div><div class="info-takeaway">📌 Gross margin entering 65-75% goal band. Revenue growing faster than COGS — unit economics improving.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-rev-cogs-gm"></canvas></div></div>
+    <div class="card"><div class="card-title">MAU vs COGS Distribution by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Compares each SKU's share of users vs share of cost. Highlights cross-subsidization.</div><div class="info-takeaway">📌 Free users are 28% of MAU but only 10% of COGS. Pro+ is 7% of MAU but 17% of COGS — power users cost disproportionately.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-mau-vs-cogs"></canvas></div></div>
     <div class="card"><div class="card-title">COGS per Seat / Month <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Unit economics north star — cost per seat must trend down for margin expansion.</div><div class="info-takeaway">📌 COGS/seat dropped from $9.50 to $7.20 — approaching the $7.00 target. Model routing and caching driving improvement.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cogs-seat"></canvas></div></div>
-    <div class="card"><div class="card-title">Gross Margin % <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> (Revenue − COGS) ÷ Revenue. The "is this a real business" metric. Goal band: 65-75%.</div><div class="info-takeaway">📌 Gross margin reached 68%, entering the goal band. Driven by both revenue growth and COGS optimization.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-gm"></canvas></div></div>
-    <div class="card"><div class="card-title">COGS by Model <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Model mix and how routing decisions affect total cost. Shifting to cheaper models reduces COGS.</div><div class="info-takeaway">📌 GPT-4 share dropped from 70% to 38% while Claude grew to 23% — active model diversification is reducing cost concentration risk.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cogs-model"></canvas></div></div>
-    <div class="card span-full"><div class="card-title">Cost Percentile Distribution <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Power-law cost distribution. Shows that top percentile users consume disproportionate resources.</div><div class="info-takeaway">📌 P99 users cost $85/mo vs P50 at $3/mo — the top 1% drive ~20% of total COGS. Targeted rate limiting opportunity.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-percentile" style="max-height:260px"></canvas></div></div>
+    <div class="card"><div class="card-title">ARR Trend <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> ARR trajectory with growth rate. The #1 top-line metric.</div><div class="info-takeaway">📌 ARR growing at 8-12% MoM. On track to exit the year above $500M.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-arr-deep"></canvas></div></div>
+    <div class="card"><div class="card-title">Net Revenue Retention (NRR) <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> NRR > 100% means existing customers spend more over time. The SaaS gold standard.</div><div class="info-takeaway">📌 NRR at 118% — strong expansion. Driven by seat adds and overage within existing orgs.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-nrr"></canvas></div></div>
+    <div class="card"><div class="card-title">Total Seats & Net Adds <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Total assigned seats with net monthly additions. Volume growth engine.</div><div class="info-takeaway">📌 Approaching 2M total seats. Net adds accelerating — land-and-expand working in enterprise.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-seats-adds"></canvas></div></div>
   </div>
 </section>
 
@@ -706,14 +707,24 @@ function toggleSku(btn) {
       if (b.dataset.sku !== 'all') b.classList.toggle('active', newState);
     });
     btn.classList.add('active');
-    btn.style.background = 'rgba(255,255,255,.1)';
+    btn.style.background = newState ? 'rgba(255,255,255,.1)' : 'transparent';
   } else {
-    skuState[sku] = !skuState[sku];
-    btn.classList.toggle('active', skuState[sku]);
-    var allBtn = document.querySelector('.toggle-btn[data-sku="all"]');
-    var allActive = Object.values(skuState).every(function(v){ return v; });
-    allBtn.classList.toggle('active', allActive);
-    allBtn.style.background = allActive ? 'rgba(255,255,255,.1)' : 'transparent';
+    var allOn = Object.values(skuState).every(function(v){ return v; });
+    if (allOn) {
+      Object.keys(skuState).forEach(function(k){ skuState[k] = false; });
+      skuState[sku] = true;
+    } else {
+      skuState[sku] = !skuState[sku];
+    }
+    document.querySelectorAll('.toggle-btn[data-sku]').forEach(function(b){
+      if (b.dataset.sku === 'all') {
+        var allActive = Object.values(skuState).every(function(v){ return v; });
+        b.classList.toggle('active', allActive);
+        b.style.background = allActive ? 'rgba(255,255,255,.1)' : 'transparent';
+      } else {
+        b.classList.toggle('active', skuState[b.dataset.sku]);
+      }
+    });
   }
   rebuildAll();
 }
@@ -728,14 +739,24 @@ function toggleSurface(btn) {
       if (b.dataset.surface !== 'all') b.classList.toggle('active', newState);
     });
     btn.classList.add('active');
-    btn.style.background = 'rgba(255,255,255,.1)';
+    btn.style.background = newState ? 'rgba(255,255,255,.1)' : 'transparent';
   } else {
-    surfaceState[surface] = !surfaceState[surface];
-    btn.classList.toggle('active', surfaceState[surface]);
-    var allBtn = document.querySelector('.toggle-btn[data-surface="all"]');
-    var allActive = Object.values(surfaceState).every(function(v){ return v; });
-    allBtn.classList.toggle('active', allActive);
-    allBtn.style.background = allActive ? 'rgba(255,255,255,.1)' : 'transparent';
+    var allOn = Object.values(surfaceState).every(function(v){ return v; });
+    if (allOn) {
+      Object.keys(surfaceState).forEach(function(k){ surfaceState[k] = false; });
+      surfaceState[surface] = true;
+    } else {
+      surfaceState[surface] = !surfaceState[surface];
+    }
+    document.querySelectorAll('.toggle-btn[data-surface]').forEach(function(b){
+      if (b.dataset.surface === 'all') {
+        var allActive = Object.values(surfaceState).every(function(v){ return v; });
+        b.classList.toggle('active', allActive);
+        b.style.background = allActive ? 'rgba(255,255,255,.1)' : 'transparent';
+      } else {
+        b.classList.toggle('active', surfaceState[b.dataset.surface]);
+      }
+    });
   }
   rebuildAll();
 }
@@ -869,15 +890,7 @@ function rebuildAll() {
     allCharts.revPlan.update('none');
   }
 
-  // 7. Total COGS
-  if (allCharts.cogs) {
-    allCharts.cogs.data.labels = labels;
-    var slicedCogsAll = adjustFlow(sliceTime(totalCogs));
-    allCharts.cogs.data.datasets[0].data = slicedCogsAll.map(function(v){ return Math.round(v*0.85*100)/100; });
-    allCharts.cogs.data.datasets[1].data = slicedCogsAll.map(function(v){ return Math.round(v*0.10*100)/100; });
-    allCharts.cogs.data.datasets[2].data = slicedCogsAll.map(function(v){ return Math.round(v*0.05*100)/100; });
-    allCharts.cogs.update('none');
-  }
+  // 7. (removed — ch-cogs replaced by ch-rev-cogs-gm)
 
   // 8. COGS per Seat
   if (allCharts.cogsSeat) {
@@ -890,16 +903,7 @@ function rebuildAll() {
     allCharts.cogsSeat.update('none');
   }
 
-  // 9. Gross Margin
-  if (allCharts.gm) {
-    allCharts.gm.data.labels = labels;
-    var slicedRev9 = adjustFlow(sliceTime(totalRev));
-    var slicedCogs9 = adjustFlow(sliceTime(totalCogs));
-    allCharts.gm.data.datasets[0].data = slicedRev9.map(function(v,i){
-      return v>0 ? Math.round((v-slicedCogs9[i])/v*1000)/10 : 0;
-    });
-    allCharts.gm.update('none');
-  }
+  // 9. (removed — ch-gm replaced by ch-rev-cogs-gm)
 
   // 10. Churn Rate
   if (allCharts.churn) {
@@ -961,12 +965,14 @@ function rebuildAll() {
     allCharts.mauSurface.update('none');
   }
 
-  // 14. Multi-Surface Users (stacked bar)
+  // 14. Multi-Surface Users (stacked area)
   if (allCharts.multiSurface) {
     allCharts.multiSurface.data.labels = labels;
-    allCharts.multiSurface.data.datasets[0].data = sliceTime([8,9,10,12,14,15,17,19,21,23,25,28]);
-    allCharts.multiSurface.data.datasets[1].data = sliceTime([22,23,24,25,26,27,27,28,28,29,29,30]);
-    allCharts.multiSurface.data.datasets[2].data = sliceTime([70,68,66,63,60,58,56,53,51,48,46,42]);
+    allCharts.multiSurface.data.datasets.forEach(function(ds) {
+      if (baseMultiSurfaceData[ds.label]) {
+        ds.data = sliceTime(baseMultiSurfaceData[ds.label]);
+      }
+    });
     allCharts.multiSurface.update('none');
   }
 
@@ -1023,6 +1029,96 @@ function rebuildAll() {
       }
     });
     allCharts.interactions.update('none');
+  }
+
+
+  // -- Activations by Channel
+  if (allCharts.actChannel) {
+    allCharts.actChannel.data.labels = labels;
+    allCharts.actChannel.data.datasets.forEach(function(ds) {
+      if (baseActChannelData[ds.label]) {
+        ds.data = sliceTime(baseActChannelData[ds.label]);
+      }
+    });
+    allCharts.actChannel.update('none');
+  }
+
+  // -- Plan Migration
+  if (allCharts.planMigration) {
+    allCharts.planMigration.data.labels = labels;
+    allCharts.planMigration.data.datasets.forEach(function(ds) {
+      if (basePlanMigrationData[ds.label]) {
+        ds.data = sliceTime(basePlanMigrationData[ds.label]);
+      }
+    });
+    allCharts.planMigration.update('none');
+  }
+
+  // -- Upgrade/Downgrade Rates
+  if (allCharts.upgradeRates) {
+    allCharts.upgradeRates.data.labels = labels;
+    allCharts.upgradeRates.data.datasets.forEach(function(ds) {
+      if (baseUpgradeRatesData[ds.label]) {
+        ds.data = sliceTime(baseUpgradeRatesData[ds.label]);
+      }
+    });
+    allCharts.upgradeRates.update('none');
+  }
+
+  // -- ARPU by Plan
+  if (allCharts.arpu) {
+    allCharts.arpu.data.labels = labels;
+    allCharts.arpu.data.datasets.forEach(function(ds) {
+      var sku = ds.label;
+      if (arpuData[sku]) {
+        ds.data = sliceTime(arpuData[sku].total);
+      }
+    });
+    allCharts.arpu.update('none');
+  }
+
+  // -- Usage Frequency Distribution
+  if (allCharts.freqDist) {
+    allCharts.freqDist.data.labels = labels;
+    allCharts.freqDist.data.datasets.forEach(function(ds) {
+      if (freqData[ds.label]) {
+        ds.data = sliceTime(freqData[ds.label]);
+      }
+    });
+    allCharts.freqDist.update('none');
+  }
+
+  // -- Revenue, COGS & Gross Margin
+  if (allCharts.revCogsGm) {
+    allCharts.revCogsGm.data.labels = labels;
+    var slicedRevRC = adjustFlow(sliceTime(totalRev));
+    var slicedCogsRC = adjustFlow(sliceTime(totalCogs));
+    allCharts.revCogsGm.data.datasets[0].data = slicedCogsRC;
+    allCharts.revCogsGm.data.datasets[1].data = slicedRevRC.map(function(v,i){ return Math.round((v - slicedCogsRC[i])*100)/100; });
+    allCharts.revCogsGm.data.datasets[2].data = slicedRevRC.map(function(v,i){ return v > 0 ? Math.round((v - slicedCogsRC[i])/v*1000)/10 : 0; });
+    allCharts.revCogsGm.update('none');
+  }
+
+  // -- ARR Trend
+  if (allCharts.arrDeep) {
+    allCharts.arrDeep.data.labels = labels;
+    allCharts.arrDeep.data.datasets[0].data = sliceTime(totalRev.map(function(v){ return Math.round(v*12); }));
+    allCharts.arrDeep.update('none');
+  }
+
+  // -- NRR
+  if (allCharts.nrr) {
+    allCharts.nrr.data.labels = labels;
+    allCharts.nrr.data.datasets[0].data = sliceTime(baseNrrData);
+    allCharts.nrr.update('none');
+  }
+
+  // -- Seats & Net Adds
+  if (allCharts.seatsAdds) {
+    allCharts.seatsAdds.data.labels = labels;
+    allCharts.seatsAdds.data.datasets[0].data = sliceTime(baseSeatsTotalData);
+    allCharts.seatsAdds.data.datasets[1].data = adjustFlow(sliceTime(baseSeatsNetAddsData));
+    allCharts.seatsAdds.update('none');
   }
 
   // 18. Overage
@@ -1243,7 +1339,15 @@ allCharts.mauGrowth = new Chart(document.getElementById('ch-mau-growth'), {
 });
 
 // Activations by Channel — stacked bar
-new Chart(document.getElementById('ch-act-channel'), {
+var baseActChannelData = {
+  'Organic Search': [22,24,26,25,28,30,32,34,33,36,38,40],
+  'In-Product': [28,30,32,30,34,35,36,38,37,40,42,44],
+  'GitHub Web': [15,16,17,16,18,18,19,20,19,21,22,22],
+  'Marketing / Paid': [10,10,10,11,8,7,8,8,9,8,6,6],
+  'Microsoft & Partners': [6,6,6,6,6,6,6,6,6,6,6,6],
+  'Direct / Unknown': [4,4,4,4,4,4,4,4,4,4,4,4]
+};
+allCharts.actChannel = new Chart(document.getElementById('ch-act-channel'), {
   type:'bar',
   data:{ labels:MONTHS, datasets:[
     { label:'Organic Search', data:[22,24,26,25,28,30,32,34,33,36,38,40], backgroundColor:TEAL, borderRadius:2 },
@@ -1281,7 +1385,13 @@ allCharts.actSku = new Chart(document.getElementById('ch-act-sku'), {
 });
 
 // Plan Upgrade / Downgrade Volume — single stack, positives and negatives together
-new Chart(document.getElementById('ch-plan-migration'), {
+var basePlanMigrationData = {
+  'Individual Upgrades': [11,12.5,14,13.5,16,17.5,19,20.5,20,23,25,27],
+  'Biz & Ent Upgrades': [2.5,2.8,3.2,3.6,3.9,4.2,4.6,5.0,5.3,5.6,6.0,6.4],
+  'Individual Downgrades': [-4.2,-4.3,-3.8,-4.8,-4.1,-3.5,-3.8,-3.2,-3.4,-2.9,-2.6,-2.3],
+  'Biz & Ent Downgrades': [-0.8,-0.9,-0.7,-1.0,-0.8,-0.7,-0.6,-0.6,-0.5,-0.5,-0.4,-0.4]
+};
+allCharts.planMigration = new Chart(document.getElementById('ch-plan-migration'), {
   type:'bar',
   data:{ labels:MONTHS, datasets:[
     { label:'Individual Upgrades', data:[11,12.5,14,13.5,16,17.5,19,20.5,20,23,25,27],
@@ -1301,7 +1411,16 @@ new Chart(document.getElementById('ch-plan-migration'), {
 });
 
 // Upgrade & Downgrade Rates Over Time — downgrades on negative axis
-new Chart(document.getElementById('ch-upgrade-rates'), {
+var baseUpgradeRatesData = {
+  'Free → Pro ↑': [2.1,2.2,2.3,2.2,2.4,2.5,2.6,2.7,2.6,2.8,2.9,3.0],
+  'Pro → Pro+ ↑': [4.5,4.8,5.0,5.2,5.5,5.7,6.0,6.2,6.5,6.8,7.2,7.5],
+  'Pro → Biz ↑': [1.0,1.1,1.2,1.3,1.3,1.4,1.5,1.5,1.6,1.6,1.7,1.8],
+  'Biz → Ent ↑': [0.8,0.9,0.9,1.0,1.0,1.1,1.1,1.2,1.2,1.3,1.3,1.4],
+  'Pro+ → Pro ↓': [-1.8,-1.7,-1.6,-1.7,-1.5,-1.4,-1.3,-1.2,-1.2,-1.1,-1.0,-0.9],
+  'Pro → Free ↓': [-3.2,-3.0,-2.8,-3.1,-2.7,-2.5,-2.4,-2.2,-2.1,-1.9,-1.8,-1.6],
+  'Ent → Biz ↓': [-0.4,-0.4,-0.3,-0.4,-0.3,-0.3,-0.3,-0.2,-0.2,-0.2,-0.2,-0.2]
+};
+allCharts.upgradeRates = new Chart(document.getElementById('ch-upgrade-rates'), {
   type:'line',
   data:{ labels:MONTHS, datasets:[
     { label:'Free → Pro ↑', data:[2.1,2.2,2.3,2.2,2.4,2.5,2.6,2.7,2.6,2.8,2.9,3.0],
@@ -1504,7 +1623,7 @@ Object.keys(arpuData).forEach(function(sku) {
   arpuData[sku].total = arpuData[sku].sub.map(function(v,i){ return Math.round((v + arpuData[sku].ov[i])*100)/100; });
 });
 
-new Chart(document.getElementById('ch-arpu'), {
+allCharts.arpu = new Chart(document.getElementById('ch-arpu'), {
   type:'line',
   data:{ labels:MONTHS, datasets:[
     { label:'Free', data:arpuData.Free.total, borderColor:skuColors.Free, backgroundColor:a(skuColors.Free,.05), fill:false, tension:.3, borderWidth:2, borderDash:[4,3] },
@@ -1655,7 +1774,7 @@ var freqData = {
 var freqLabels = Object.keys(freqData);
 var freqColors = ['#555D6E','#6B7394','#7B68EE','#6366F1','#49CCF9','#79D9B9','#2EA043','#FFB08E'];
 
-new Chart(document.getElementById('ch-freq-dist'), {
+allCharts.freqDist = new Chart(document.getElementById('ch-freq-dist'), {
   type:'line',
   data:{ labels:MONTHS, datasets: freqLabels.map(function(label, idx) {
     return { label:label, data:freqData[label], backgroundColor:a(freqColors[idx],.5),
@@ -1719,18 +1838,21 @@ allCharts.mauSurface = new Chart(document.getElementById('ch-mau-surface'), {
     aspectRatio:1.7 }
 });
 
-// Multi-Surface Users — stacked bar (% of MAU)
+// Multi-Surface Users — 100% stacked area (% of MAU)
+var baseMultiSurfaceData = {
+  '3+ Surfaces': [8,9,10,12,14,15,17,19,21,23,25,28],
+  '2 Surfaces': [22,23,24,25,26,27,27,28,28,29,29,30],
+  '1 Surface': [70,68,66,63,60,58,56,53,51,48,46,42]
+};
 allCharts.multiSurface = new Chart(document.getElementById('ch-multi-surface'), {
-  type:'bar',
+  type:'line',
   data:{ labels:MONTHS, datasets:[
-    { label:'3+ Surfaces', data:[8,9,10,12,14,15,17,19,21,23,25,28], backgroundColor:a(PURPLE,.7), borderRadius:2 },
-    { label:'2 Surfaces', data:[22,23,24,25,26,27,27,28,28,29,29,30], backgroundColor:a(BLUE,.6), borderRadius:2 },
-    { label:'1 Surface', data:[70,68,66,63,60,58,56,53,51,48,46,42], backgroundColor:a(TEAL,.5), borderRadius:2 }
+    { label:'3+ Surfaces', data:[8,9,10,12,14,15,17,19,21,23,25,28], backgroundColor:a(PURPLE,.5), borderColor:PURPLE, fill:true, tension:.3, borderWidth:1.5, pointRadius:1 },
+    { label:'2 Surfaces', data:[22,23,24,25,26,27,27,28,28,29,29,30], backgroundColor:a(BLUE,.5), borderColor:BLUE, fill:true, tension:.3, borderWidth:1.5, pointRadius:1 },
+    { label:'1 Surface', data:[70,68,66,63,60,58,56,53,51,48,46,42], backgroundColor:a(TEAL,.5), borderColor:TEAL, fill:true, tension:.3, borderWidth:1.5, pointRadius:1 }
   ]},
-  options:{ plugins:{legend:{position:'bottom'},
-    datalabels: stackedDatalabels(function(v){ return v+'%'; }, 0.06),
-    stackedTotal:{display:true, formatter:function(v){ return '100%'; }}},
-    scales:{x:{stacked:true, grid:{display:false}},
+  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}, datalabels:{display:false}},
+    scales:{x:{grid:{display:false}},
       y:{stacked:true, max:100, ticks:{callback:function(v){return v+'%'}}}},
     aspectRatio:1.7 }
 });
@@ -1776,75 +1898,131 @@ var ideTimeData = {
 };
 var ideNameList = ['VS Code','JetBrains','Visual Studio','Neovim','Other'];
 allCharts.ide = new Chart(document.getElementById('ch-ide'), {
-  type:'bar',
+  type:'line',
   data:{ labels:MONTHS, datasets: ideNameList.map(function(ide) {
     return {
       label: ide,
       data: ideTimeData[ide],
-      backgroundColor: ideColors[ide],
-      borderRadius: 2
+      backgroundColor: a(ideColors[ide], .5),
+      borderColor: ideColors[ide],
+      fill: true,
+      tension: .3,
+      borderWidth: 1.5,
+      pointRadius: 1
     };
   })},
-  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}},
-    datalabels: stackedDatalabels(function(v){ return v+'%'; }, 0.06),
-    stackedTotal:{display:true, formatter:function(v){ return '100%'; }}},
-    scales:{x:{stacked:true, grid:{display:false}},
+  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}, datalabels:{display:false}},
+    scales:{x:{grid:{display:false}},
       y:{stacked:true, max:100, ticks:{callback:function(v){return v+'%'}}}},
     aspectRatio:1.7 }
 });
 
 // ══════════════════════════════
-//  6. COST & UNIT ECONOMICS
+//  6. COST, UNIT ECONOMICS & FINANCIAL METRICS
 // ══════════════════════════════
-allCharts.cogs = new Chart(document.getElementById('ch-cogs'), {
-  type:'line',
-  data:{ labels:MONTHS, datasets:[
-    { label:'Inference', data:[6.8,7.2,7.6,8.1,8.6,9.1,9.6,10.2,10.8,11.4,12.0,12.7], backgroundColor:a(PURPLE,.5), borderColor:PURPLE, fill:true, tension:.3 },
-    { label:'Compute', data:[0.8,0.85,0.9,0.95,1.0,1.05,1.1,1.2,1.25,1.3,1.4,1.5], backgroundColor:a(BLUE,.4), borderColor:BLUE, fill:true, tension:.3 },
-    { label:'Egress', data:[0.4,0.42,0.44,0.46,0.48,0.5,0.52,0.55,0.58,0.6,0.62,0.65], backgroundColor:a(TEAL,.3), borderColor:TEAL, fill:true, tension:.3 }
-  ]},
-  options:{ plugins:{legend:{position:'bottom'}}, scales:{x:{grid:{display:false}},
-    y:{stacked:true, ticks:{callback:v=>'$'+v+'M'}, title:{display:true,text:'COGS ($M)'}}}, aspectRatio:1.7 }
-});
 
+// Chart 1: Revenue, COGS & Gross Margin (combo)
+(function() {
+  var initRev = getFilteredSkuOnly('revenue');
+  var initCogs = getFiltered('cogs');
+  var cogsArr = initCogs.slice();
+  var gpArr = initRev.map(function(v,i){ return Math.round((v - initCogs[i])*100)/100; });
+  var gmPct = initRev.map(function(v,i){ return v > 0 ? Math.round((v - initCogs[i])/v*1000)/10 : 0; });
+
+  allCharts.revCogsGm = new Chart(document.getElementById('ch-rev-cogs-gm'), {
+    type:'bar',
+    data:{ labels:MONTHS, datasets:[
+      { label:'COGS', data:cogsArr, backgroundColor:a(RED,.55), borderRadius:2 },
+      { label:'Gross Profit', data:gpArr, backgroundColor:a(GREEN,.55), borderRadius:2 },
+      { type:'line', label:'Gross Margin %', data:gmPct, borderColor:PURPLE, borderWidth:2.5,
+        pointRadius:3, tension:.3, fill:false, yAxisID:'y1', datalabels:{display:false} }
+    ]},
+    options:{ plugins:{legend:{position:'bottom'},
+      datalabels: stackedDatalabels(function(v){ return '$'+Math.round(v)+'M'; }, 0.06),
+      stackedTotal:{display:true, formatter:function(v){ return '$'+Math.round(v)+'M'; }},
+      annotation:{annotations:{band:goalBand(65,75,'GM Goal 65–75%')}}},
+      scales:{x:{stacked:true, grid:{display:false}},
+        y:{stacked:true, ticks:{callback:function(v){return '$'+v+'M'}}, title:{display:true,text:'Revenue / COGS ($M)'}},
+        y1:{position:'right', grid:{display:false}, ticks:{callback:function(v){return v+'%'}}, min:0, max:100,
+          title:{display:true,text:'Gross Margin %'}}},
+      aspectRatio:1.7 }
+  });
+})();
+
+// Chart 2: MAU vs COGS Distribution by SKU (latest month grouped bar)
+(function() {
+  var mauShares = [28, 2, 16, 7, 31, 16];
+  var cogsShares = [10, 2, 19, 17, 32, 20];
+
+  new Chart(document.getElementById('ch-mau-vs-cogs'), {
+    type:'bar',
+    data:{ labels:['Free','Edu','Pro','Pro+','Business','Enterprise'], datasets:[
+      { label:'MAU Share %', data:mauShares, backgroundColor:a(BLUE,.65), borderRadius:4, barPercentage:0.7, categoryPercentage:0.6 },
+      { label:'COGS Share %', data:cogsShares, backgroundColor:a(RED,.55), borderRadius:4, barPercentage:0.7, categoryPercentage:0.6 }
+    ]},
+    options:{ plugins:{legend:{position:'bottom'},
+      datalabels:{display:true, color:'#E6EDF3', font:{size:9,weight:'bold'}, formatter:function(v){return v+'%'}, anchor:'end', align:'end'}},
+      scales:{x:{grid:{display:false}},
+        y:{ticks:{callback:function(v){return v+'%'}}, title:{display:true,text:'Share of Total (%)'}, max:40}},
+      aspectRatio:1.7 }
+  });
+})();
+
+// Chart 3: COGS per Seat / Month (keep existing)
 allCharts.cogsSeat = new Chart(document.getElementById('ch-cogs-seat'), {
   type:'line',
   data:{ labels:MONTHS, datasets:[{ label:'$/Seat/Mo', data:[9.5,9.3,9.1,8.9,8.7,8.4,8.2,8.0,7.8,7.5,7.4,7.2],
     borderColor:PINK, backgroundColor:a(PINK,.1), fill:true, tension:.3, borderWidth:2 }] },
-  options:{ plugins:{legend:{display:false}, annotation:{annotations:{goal:goalLine(7.0,'Goal: $7.00')}}},
-    scales:{x:{grid:{display:false}}, y:{min:6,max:10.5, ticks:{callback:v=>'$'+v.toFixed(2)}}}, aspectRatio:1.7 }
+  options:{ plugins:{legend:{display:false}, datalabels:{display:false}, annotation:{annotations:{goal:goalLine(7.0,'Goal: $7.00')}}},
+    scales:{x:{grid:{display:false}}, y:{min:6,max:10.5, ticks:{callback:function(v){return '$'+v.toFixed(2)}}}}, aspectRatio:1.7 }
 });
 
-allCharts.gm = new Chart(document.getElementById('ch-gm'), {
+// Chart 4: ARR Trend
+(function() {
+  var initRev = getFilteredSkuOnly('revenue');
+  var arrData = initRev.map(function(v){ return Math.round(v * 12); });
+
+  allCharts.arrDeep = new Chart(document.getElementById('ch-arr-deep'), {
+    type:'line',
+    data:{ labels:MONTHS, datasets:[{ label:'ARR ($M)', data:arrData,
+      borderColor:TEAL, backgroundColor:a(TEAL,.12), fill:true, tension:.3, borderWidth:2.5, pointRadius:3,
+      pointBackgroundColor:TEAL }] },
+    options:{ plugins:{legend:{display:false}, datalabels:{display:false}},
+      scales:{x:{grid:{display:false}},
+        y:{ticks:{callback:function(v){return '$'+v+'M'}}, title:{display:true,text:'ARR ($M)'}}},
+      aspectRatio:1.7 }
+  });
+})();
+
+// Chart 5: Net Revenue Retention (NRR)
+var baseNrrData = [108,109,110,111,112,112,113,114,115,116,117,118];
+allCharts.nrr = new Chart(document.getElementById('ch-nrr'), {
   type:'line',
-  data:{ labels:MONTHS, datasets:[{ label:'Gross Margin %', data:[55,56,57,58,60,61,62,63,64,65,67,68],
-    borderColor:TEAL, backgroundColor:a(TEAL,.1), fill:true, tension:.3, borderWidth:2 }] },
-  options:{ plugins:{legend:{display:false}, annotation:{annotations:{band:goalBand(65,75,'Goal Band 65–75%')}}},
-    scales:{x:{grid:{display:false}}, y:{min:50,max:80, ticks:{callback:v=>v+'%'}}}, aspectRatio:1.7 }
+  data:{ labels:MONTHS, datasets:[{ label:'NRR %', data:baseNrrData.slice(),
+    borderColor:PURPLE, backgroundColor:a(PURPLE,.12), fill:true, tension:.3, borderWidth:2.5, pointRadius:3,
+    pointBackgroundColor:PURPLE }] },
+  options:{ plugins:{legend:{display:false}, datalabels:{display:false},
+    annotation:{annotations:{goal:goalLine(110,'Goal: 110%',GREEN)}}},
+    scales:{x:{grid:{display:false}},
+      y:{min:105,max:125, ticks:{callback:function(v){return v+'%'}}, title:{display:true,text:'NRR %'}}},
+    aspectRatio:1.7 }
 });
 
-new Chart(document.getElementById('ch-cogs-model'), {
+// Chart 6: Total Seats & Net Seat Adds
+var baseSeatsTotalData = [920,980,1040,1100,1160,1230,1310,1400,1490,1590,1700,1820];
+var baseSeatsNetAddsData = [55,60,60,60,60,70,80,90,90,100,110,120];
+allCharts.seatsAdds = new Chart(document.getElementById('ch-seats-adds'), {
   type:'bar',
   data:{ labels:MONTHS, datasets:[
-    { label:'GPT-4 / 4.1', data:[70,68,65,62,58,55,52,48,45,42,40,38], backgroundColor:PURPLE, borderRadius:2 },
-    { label:'GPT-3.5', data:[20,21,22,23,24,25,25,26,26,27,27,28], backgroundColor:BLUE, borderRadius:2 },
-    { label:'Claude', data:[5,6,7,9,11,13,15,17,19,21,22,23], backgroundColor:PINK, borderRadius:2 },
-    { label:'Other', data:[5,5,6,6,7,7,8,9,10,10,11,11], backgroundColor:a(ORANGE,.6), borderRadius:2 }
+    { label:'Total Seats (K)', data:baseSeatsTotalData.slice(), backgroundColor:a(BLUE,.5), borderRadius:3, yAxisID:'y' },
+    { type:'line', label:'Net Adds (K)', data:baseSeatsNetAddsData.slice(), borderColor:TEAL, borderWidth:2.5,
+      pointRadius:3, tension:.3, fill:false, yAxisID:'y1', datalabels:{display:false} }
   ]},
-  options:{ plugins:{legend:{position:'bottom'},
-    datalabels: stackedDatalabels(v => v+'%', 0.06),
-    stackedTotal:{display:true, formatter:v => '100%'}},
-    scales:{x:{stacked:true, grid:{display:false}},
-    y:{stacked:true, max:100, ticks:{callback:v=>v+'%'}}}, aspectRatio:1.7 }
-});
-
-new Chart(document.getElementById('ch-percentile'), {
-  type:'bar',
-  data:{ labels:['P50','P75','P90','P95','P99'], datasets:[{
-    data:[3,8,18,32,85], backgroundColor:[a(TEAL,.7),a(BLUE,.7),a(PURPLE,.7),a(PINK,.7),a(RED,.6)], borderRadius:6, barPercentage:.45
-  }]},
-  options:{ plugins:{legend:{display:false}}, scales:{x:{grid:{display:false}},
-    y:{ticks:{callback:v=>'$'+v}, title:{display:true,text:'Cost per Seat/Mo ($)'}}}, aspectRatio:3.5 }
+  options:{ plugins:{legend:{position:'bottom'}, datalabels:{display:false}},
+    scales:{x:{grid:{display:false}},
+      y:{ticks:{callback:function(v){return v >= 1000 ? (v/1000).toFixed(1)+'M' : v+'K'}}, title:{display:true,text:'Total Seats (K)'}},
+      y1:{position:'right', grid:{display:false}, ticks:{callback:function(v){return v+'K'}}, title:{display:true,text:'Net Adds (K)'}}},
+    aspectRatio:1.7 }
 });
 
 // ══════════════════════════════
