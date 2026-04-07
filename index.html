@@ -1602,26 +1602,27 @@ var funnelRatesTrend = {
     });
     html += '<span style="margin-left:auto;font-size:10px;color:#8B949E;align-self:center">'+trLabel+'</span>';
     html += '</div>';
-    // 3-column grid: each step is a row with [bar | chart-space | commentary]
-    // Build all rows, chart goes in a spanning div
-    html += '<div style="display:grid;grid-template-columns:160px 3fr 1fr;gap:0 12px;align-items:center">';
+    // 3-column grid equal thirds: [line chart | funnel bars | commentary]
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 16px;align-items:center">';
     steps.forEach(function(step, i) {
       var val = scaledData[i];
-      // Scale relative to signup initiated (step 1), cap page visits at 2x
-      var scaleBase = scaledData[1]; // signup initiated is the reference
+      var scaleBase = scaledData[1];
       var barPct;
       var notToScale = false;
       if (i === 0) {
-        // Page visits: cap at 2x signup initiated
-        barPct = Math.min(100, (val / scaleBase) * 50); // 50% = 1x signup, 100% = 2x
-        barPct = 100; // always full width for top
+        barPct = 100;
         notToScale = (scaledData[0] > scaleBase * 2);
       } else {
-        barPct = Math.max(5, (val / scaleBase) * 50); // scale so signup=50%
+        barPct = Math.max(5, (val / scaleBase) * 50);
       }
       var pctOfTop = (val / scaledData[0] * 100).toFixed(1);
       var prevConv = i > 0 ? (val / scaledData[i-1] * 100).toFixed(1) : null;
-      // Col 1: funnel bar
+      // Col 1: chart (only on first row, spans all rows)
+      if (i === 0) {
+        html += '<div style="grid-row:1/'+String(steps.length+1)+'">';
+        html += '<canvas id="ch-funnel-rates"></canvas></div>';
+      }
+      // Col 2: funnel bar
       html += '<div class="funnel-step-cell">';
       html += '<div class="funnel-row-label">'+step;
       html += '<span class="fl-total">'+fmt(val)+'</span>';
@@ -1631,12 +1632,7 @@ var funnelRatesTrend = {
       if (i > 0) html += '<div class="funnel-row-rate">\u2193 '+prevConv+'%</div>';
       html += '<div class="funnel-bar-single" style="width:'+barPct+'%;background:'+ch.color+'">'+fmt(val)+(notToScale?' <span style="font-size:7px;opacity:.6;font-weight:400">(not to scale)</span>':'')+'</div>';
       html += '</div></div>';
-      // Col 2: chart (only on first row, spans all rows)
-      if (i === 0) {
-        html += '<div style="grid-row:1/'+String(steps.length+1)+'">';
-        html += '<canvas id="ch-funnel-rates" style="max-height:320px"></canvas></div>';
-      }
-      // Col 3: commentary (aligned to this row)
+      // Col 3: commentary
       html += '<div class="funnel-comment-cell" style="font-size:11px;line-height:1.4;padding:6px 10px">'+getFunnelCommentary(ch, scaledData, i)+'</div>';
     });
     html += '</div>';
