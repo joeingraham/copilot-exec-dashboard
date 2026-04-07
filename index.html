@@ -1565,17 +1565,20 @@ var funnelRatesTrend = {
   var activeChannel = 'total';
 
   function getFunnelCommentary(ch, scaledData, i) {
-    var steps_names = ['Page Visits','Signup Initiated','Account Created','Activated (MAU)','D7 Retained','D30 Retained','Paid Conversion'];
+    var step_names = ['Page Visits','Signup Initiated','Account Created','Activated (MAU)','D7 Retained','D30 Retained','Paid Conversion'];
     var trLabel = timeRange === 3 ? '3-month' : timeRange === 6 ? '6-month' : '12-month';
     var fmt_v = function(v){ return v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(0)+'K':v; };
-
+    var name = step_names[i];
+    var val = fmt_v(scaledData[i]);
+    
     if (i === 0) {
-      return '<b>'+fmt_v(scaledData[0])+' visits</b> in '+trLabel+' period. '+ch.commentary[0].replace(/<b>[^<]*<\/b> — /, '');
+      var baseText = ch.commentary[0].replace(/<b>[^<]*<\/b>[^A-Z]*/i, '');
+      return '<b style="color:#7B68EE">'+name+':</b> <b>'+val+'</b> ('+trLabel+'). '+baseText;
     }
     var stepConv = (scaledData[i] / scaledData[i-1] * 100).toFixed(1);
     var totalConv = (scaledData[i] / scaledData[0] * 100).toFixed(2);
-    var baseInsight = ch.commentary[i].replace(/<b>[^<]*<\/b> — /, '').replace(/<b>[^<]*<\/b>/, '');
-    return '<b>'+fmt_v(scaledData[i])+'</b> ('+stepConv+'% from prev, '+totalConv+'% of visits). '+baseInsight;
+    var baseText = ch.commentary[i].replace(/<b>[^<]*<\/b>[^A-Z]*/i, '');
+    return '<b style="color:#7B68EE">'+name+':</b> <b>'+val+'</b> — '+stepConv+'% from previous, '+totalConv+'% of visits. '+baseText;
   }
 
   function fmt(v) { return v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(0)+'K':v; }
@@ -1596,34 +1599,32 @@ var funnelRatesTrend = {
     });
     html += '<span style="margin-left:auto;font-size:10px;color:#8B949E;align-self:center">'+trLabel+'</span>';
     html += '</div>';
-    // 3-column layout: funnel bars | rates chart | commentary
-    html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start">';
-    // Column 1: Funnel bars
-    html += '<div>';
+    // 3-column grid: each step is a row with [bar | chart-space | commentary]
+    // Build all rows, chart goes in a spanning div
+    html += '<div style="display:grid;grid-template-columns:280px 1fr 1fr;gap:0 16px;align-items:center">';
     steps.forEach(function(step, i) {
       var val = scaledData[i];
       var barPct = Math.max(5, (val / maxVal) * 100);
       var pctOfTop = (val / scaledData[0] * 100).toFixed(1);
       var prevConv = i > 0 ? (val / scaledData[i-1] * 100).toFixed(1) : null;
+      // Col 1: funnel bar
       html += '<div class="funnel-step-cell">';
       html += '<div class="funnel-row-label">'+step;
       html += '<span class="fl-total">'+fmt(val)+'</span>';
       if (i > 0) html += '<span class="fl-pcts">'+pctOfTop+'% of top | \u2193'+prevConv+'%</span>';
       html += '</div>';
       html += '<div class="funnel-row-bar">';
-      if (i > 0) html += '<div class="funnel-row-rate">\u2193 '+prevConv+'% conversion</div>';
+      if (i > 0) html += '<div class="funnel-row-rate">\u2193 '+prevConv+'%</div>';
       html += '<div class="funnel-bar-single" style="width:'+barPct+'%;background:'+ch.color+'">'+fmt(val)+'</div>';
       html += '</div></div>';
+      // Col 2: chart (only on first row, spans all rows)
+      if (i === 0) {
+        html += '<div style="grid-row:1/'+String(steps.length+1)+'">';
+        html += '<canvas id="ch-funnel-rates" style="max-height:320px"></canvas></div>';
+      }
+      // Col 3: commentary (aligned to this row)
+      html += '<div class="funnel-comment-cell" style="font-size:11px;line-height:1.4;padding:6px 10px">'+getFunnelCommentary(ch, scaledData, i)+'</div>';
     });
-    html += '</div>';
-    // Column 2: Conversion rates line chart
-    html += '<div><canvas id="ch-funnel-rates" style="max-height:300px"></canvas></div>';
-    // Column 3: Commentary (dynamic based on actual data)
-    html += '<div>';
-    steps.forEach(function(step, i) {
-      html += '<div class="funnel-comment-cell">'+getFunnelCommentary(ch, scaledData, i)+'</div>';
-    });
-    html += '</div>';
     html += '</div>';
     container.innerHTML = html;
 
