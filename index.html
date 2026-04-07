@@ -193,6 +193,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <button class="toggle-btn active" data-surface="all" onclick="toggleSurface(this)" style="background:rgba(255,255,255,.1)">All Surfaces</button>
     <button class="toggle-btn active" data-surface="Completions" onclick="toggleSurface(this)"><span class="dot" style="background:#7B68EE"></span>Completions</button>
     <button class="toggle-btn active" data-surface="Chat" onclick="toggleSurface(this)"><span class="dot" style="background:#49CCF9"></span>Chat</button>
+    <button class="toggle-btn active" data-surface="VS Code" onclick="toggleSurface(this)"><span class="dot" style="background:#2EA043"></span>VS Code</button>
     <button class="toggle-btn active" data-surface="CLI" onclick="toggleSurface(this)"><span class="dot" style="background:#79D9B9"></span>CLI</button>
     <button class="toggle-btn active" data-surface="PR Summaries" onclick="toggleSurface(this)"><span class="dot" style="background:#FD71AF"></span>PR Sum</button>
     <button class="toggle-btn active" data-surface="Agent" onclick="toggleSurface(this)"><span class="dot" style="background:#FFB08E"></span>Agent</button>
@@ -308,10 +309,10 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 <section class="section" id="surface">
   <div class="section-header"><h2>Product Surface Adoption</h2><p>Feature-level usage and multi-surface expansion</p></div>
   <div class="grid grid-2">
-    <div class="card"><div class="card-title">MAU by Surface <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Which product features have traction? Compares MAU across Completions, Chat, CLI, PR Summaries, Agent.</div><div class="info-takeaway">📌 Completions still dominates at 2.1M but Chat (1.4M) is closing fast — the shift to conversational AI is real.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-mau-surface"></canvas></div></div>
+    <div class="card"><div class="card-title">MAU by Product Surface <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Which product features have traction? Compares MAU across Completions, Chat, CLI, PR Summaries, Agent.</div><div class="info-takeaway">📌 Completions still dominates at 2.1M but Chat (1.4M) is closing fast — the shift to conversational AI is real.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-mau-surface"></canvas></div></div>
     <div class="card"><div class="card-title">Multi-Surface Users <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Multi-surface users are stickier and harder to churn. 3+ surface adoption = platform lock-in.</div><div class="info-takeaway">📌 3+ surface users grew from 8% to 28% — strong platform stickiness trend.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-multi-surface"></canvas></div></div>
-    <div class="card"><div class="card-title">Chat vs Completions Mix <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Tracks the shift from inline completions to conversational AI. Is Chat cannibalizing or complementing?</div><div class="info-takeaway">📌 Chat grew from 25% to 40% of usage mix. Evidence suggests complementary — total usage is growing alongside the mix shift.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-chat-comp"></canvas></div></div>
-    <div class="card"><div class="card-title">IDE Distribution <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Market penetration by IDE. Strategic for partnership and investment decisions.</div><div class="info-takeaway">📌 VS Code dominates at 72%. JetBrains at 15% represents a significant enterprise opportunity.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-ide"></canvas></div></div>
+    <div class="card"><div class="card-title">Usage Share by Product Surface <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Tracks the shift from inline completions to conversational AI. Is Chat cannibalizing or complementing?</div><div class="info-takeaway">📌 Chat grew from 25% to 40% of usage mix. Evidence suggests complementary — total usage is growing alongside the mix shift.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-chat-comp"></canvas></div></div>
+    <div class="card"><div class="card-title">IDE Distribution Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Market penetration by IDE. Strategic for partnership and investment decisions.</div><div class="info-takeaway">📌 VS Code dominates at 72%. JetBrains at 15% represents a significant enterprise opportunity.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-ide"></canvas></div></div>
   </div>
 </section>
 
@@ -476,13 +477,13 @@ function goalBand(min, max, label) {
 // ── GLOBAL DATA MODEL ──
 var skuState = { Free:true, Edu:true, Pro:true, 'Pro+':true, Business:true, Enterprise:true };
 var SKU_LIST = ['Free','Edu','Pro','Pro+','Business','Enterprise'];
-var surfaceState = { Completions:true, Chat:true, CLI:true, 'PR Summaries':true, Agent:true };
-var SURFACE_LIST = ['Completions','Chat','CLI','PR Summaries','Agent'];
+var surfaceState = { Completions:true, Chat:true, 'VS Code':true, CLI:true, 'PR Summaries':true, Agent:true };
+var SURFACE_LIST = ['Completions','Chat','VS Code','CLI','PR Summaries','Agent'];
 var timeGranularity = 'monthly';
 var timeRange = 12;
 
 // Surface weights for splitting SKU-level metrics across surfaces
-var SURFACE_WEIGHTS = { Completions:0.45, Chat:0.35, CLI:0.10, 'PR Summaries':0.07, Agent:0.03 };
+var SURFACE_WEIGHTS = { Completions:0.35, Chat:0.28, 'VS Code':0.20, CLI:0.08, 'PR Summaries':0.06, Agent:0.03 };
 
 // Base per-SKU monthly data (12 months, illustrative)
 var skuData = {
@@ -603,6 +604,24 @@ function getPerSku(metric) {
   return result;
 }
 
+// ── Time Range / Granularity Helpers ──
+function getCurrentLabels() {
+  var base = MONTHS.slice(12 - timeRange);
+  if (timeGranularity === 'weekly') {
+    return base.map(function(m) { return m + ' (wk avg)'; });
+  }
+  return base;
+}
+function sliceTime(arr) {
+  return arr.slice(12 - timeRange);
+}
+function adjustFlow(arr) {
+  if (timeGranularity === 'weekly') {
+    return arr.map(function(v) { return Math.round(v / 4.3 * 100) / 100; });
+  }
+  return arr;
+}
+
 // All chart instances that need rebuilding
 var allCharts = {};
 
@@ -655,6 +674,7 @@ function setGranularity(btn) {
   document.querySelectorAll('#granularity-toggle .toggle-btn').forEach(function(b) {
     b.classList.toggle('active', b.dataset.gran === timeGranularity);
   });
+  rebuildAll();
 }
 
 function setTimeRange(btn) {
@@ -662,10 +682,12 @@ function setTimeRange(btn) {
   document.querySelectorAll('#range-toggle .toggle-btn').forEach(function(b) {
     b.classList.toggle('active', parseInt(b.dataset.range) === timeRange);
   });
+  rebuildAll();
 }
 
 function rebuildAll() {
-  // Compute filtered totals
+  var labels = getCurrentLabels();
+  // Compute filtered totals (full 12 months)
   var totalMau = getFiltered('mau');
   var totalRev = getFilteredSkuOnly('revenue');
   var totalCogs = getFiltered('cogs');
@@ -676,12 +698,13 @@ function rebuildAll() {
   var perSkuMau = getPerSku('mau');
   var perSkuAct = getPerSku('activations');
 
-  // 1. MAU by SKU — update data (surface filter) and visibility (SKU filter)
+  // 1. MAU by SKU
   if (allCharts.mauSku) {
+    allCharts.mauSku.data.labels = labels;
     allCharts.mauSku.data.datasets.forEach(function(ds) {
       var sku = SKU_LIST.find(function(s){ return ds.label === s; });
       if (sku) {
-        ds.data = perSkuMau[sku];
+        ds.data = sliceTime(perSkuMau[sku]);
         var idx = allCharts.mauSku.data.datasets.indexOf(ds);
         allCharts.mauSku.getDatasetMeta(idx).hidden = !skuState[sku];
       }
@@ -691,10 +714,11 @@ function rebuildAll() {
 
   // 2. Activations by SKU
   if (allCharts.actSku) {
+    allCharts.actSku.data.labels = labels;
     allCharts.actSku.data.datasets.forEach(function(ds) {
       var sku = SKU_LIST.find(function(s){ return ds.label === s; });
       if (sku) {
-        ds.data = perSkuAct[sku];
+        ds.data = adjustFlow(sliceTime(perSkuAct[sku]));
         var idx = allCharts.actSku.data.datasets.indexOf(ds);
         allCharts.actSku.getDatasetMeta(idx).hidden = !skuState[sku];
       }
@@ -704,18 +728,23 @@ function rebuildAll() {
 
   // 3. KPI sparklines and tile values
   if (allCharts.kpi) {
+    var slicedMau = sliceTime(totalMau);
+    var slicedRev = adjustFlow(sliceTime(totalRev));
+    var slicedCogs = adjustFlow(sliceTime(totalCogs));
     var kpiMap = [
-      totalMau.map(function(v){ return Math.round(v/100)/10; }),
-      totalRev.map(function(v,i){ return totalMau[i]>0 ? Math.round(v/totalMau[i]*100000)/100 : 0; }),
-      totalRev.map(function(v){ return v*12; }),
-      totalRev.map(function(v,i){ return totalRev[i]>0 ? Math.round((totalRev[i]-totalCogs[i])/totalRev[i]*1000)/10 : 0; })
+      slicedMau.map(function(v){ return Math.round(v/100)/10; }),
+      slicedMau.map(function(v,i){ return v>0 ? Math.round(slicedRev[i]/v*100000)/100 : 0; }),
+      slicedRev.map(function(v){ return v*12; }),
+      slicedRev.map(function(v,i){ return v>0 ? Math.round((v-slicedCogs[i])/v*1000)/10 : 0; })
     ];
     allCharts.kpi.forEach(function(ch, idx) {
+      ch.data.labels = labels;
       ch.data.datasets[0].data = kpiMap[idx];
       ch.update('none');
     });
     var kpiTiles = document.querySelectorAll('.kpi .value');
-    var lastMau = totalMau[11]; var lastRev = totalRev[11]; var lastCogs = totalCogs[11];
+    var lastIdx = slicedMau.length - 1;
+    var lastMau = slicedMau[lastIdx]; var lastRev = slicedRev[lastIdx]; var lastCogs = slicedCogs[lastIdx];
     var fmts = [
       (lastMau >= 1000 ? (lastMau/1000).toFixed(1)+'M' : Math.round(lastMau)+'K'),
       '$'+(lastMau>0?(lastRev/lastMau*1000).toFixed(2):'0'),
@@ -733,18 +762,21 @@ function rebuildAll() {
 
   // 4. MAU Growth
   if (allCharts.mauGrowth) {
-    allCharts.mauGrowth.data.datasets[0].data = totalAct;
-    allCharts.mauGrowth.data.datasets[1].data = totalRes;
-    allCharts.mauGrowth.data.datasets[2].data = totalChurn.map(function(v){ return -v; });
-    allCharts.mauGrowth.data.datasets[3].data = netGrowth;
+    allCharts.mauGrowth.data.labels = labels;
+    allCharts.mauGrowth.data.datasets[0].data = adjustFlow(sliceTime(totalAct));
+    allCharts.mauGrowth.data.datasets[1].data = adjustFlow(sliceTime(totalRes));
+    allCharts.mauGrowth.data.datasets[2].data = adjustFlow(sliceTime(totalChurn)).map(function(v){ return -v; });
+    allCharts.mauGrowth.data.datasets[3].data = adjustFlow(sliceTime(netGrowth));
     allCharts.mauGrowth.update('none');
   }
 
-  // 5. ARR — SKU-based stacked bar, toggle visibility
+  // 5. ARR
   if (allCharts.arr) {
+    allCharts.arr.data.labels = labels;
     allCharts.arr.data.datasets.forEach(function(ds) {
       var sku = SKU_LIST.find(function(s){ return ds.label === s; });
       if (sku) {
+        ds.data = sliceTime(skuData.revenue[sku].map(function(v){return v*12}));
         var idx = allCharts.arr.data.datasets.indexOf(ds);
         allCharts.arr.getDatasetMeta(idx).hidden = !skuState[sku];
       }
@@ -752,11 +784,13 @@ function rebuildAll() {
     allCharts.arr.update('none');
   }
 
-  // 6. Revenue by Plan — toggle visibility
+  // 6. Revenue by Plan
   if (allCharts.revPlan) {
+    allCharts.revPlan.data.labels = labels;
     allCharts.revPlan.data.datasets.forEach(function(ds) {
       var sku = SKU_LIST.find(function(s){ return ds.label === s; });
       if (sku) {
+        ds.data = adjustFlow(sliceTime(skuData.revenue[sku]));
         var idx = allCharts.revPlan.data.datasets.indexOf(ds);
         allCharts.revPlan.getDatasetMeta(idx).hidden = !skuState[sku];
       }
@@ -764,43 +798,57 @@ function rebuildAll() {
     allCharts.revPlan.update('none');
   }
 
-  // 7. Total COGS — recompute from filtered cogs
+  // 7. Total COGS
   if (allCharts.cogs) {
-    allCharts.cogs.data.datasets[0].data = totalCogs.map(function(v){ return Math.round(v*0.85*100)/100; });
-    allCharts.cogs.data.datasets[1].data = totalCogs.map(function(v){ return Math.round(v*0.10*100)/100; });
-    allCharts.cogs.data.datasets[2].data = totalCogs.map(function(v){ return Math.round(v*0.05*100)/100; });
+    allCharts.cogs.data.labels = labels;
+    var slicedCogsAll = adjustFlow(sliceTime(totalCogs));
+    allCharts.cogs.data.datasets[0].data = slicedCogsAll.map(function(v){ return Math.round(v*0.85*100)/100; });
+    allCharts.cogs.data.datasets[1].data = slicedCogsAll.map(function(v){ return Math.round(v*0.10*100)/100; });
+    allCharts.cogs.data.datasets[2].data = slicedCogsAll.map(function(v){ return Math.round(v*0.05*100)/100; });
     allCharts.cogs.update('none');
   }
 
   // 8. COGS per Seat
   if (allCharts.cogsSeat) {
-    allCharts.cogsSeat.data.datasets[0].data = totalCogs.map(function(v,i){
-      return totalMau[i]>0 ? Math.round(v / totalMau[i] * 100000) / 100 : 0;
+    allCharts.cogsSeat.data.labels = labels;
+    var slicedMau8 = sliceTime(totalMau);
+    var slicedCogs8 = adjustFlow(sliceTime(totalCogs));
+    allCharts.cogsSeat.data.datasets[0].data = slicedCogs8.map(function(v,i){
+      return slicedMau8[i]>0 ? Math.round(v / slicedMau8[i] * 100000) / 100 : 0;
     });
     allCharts.cogsSeat.update('none');
   }
 
   // 9. Gross Margin
   if (allCharts.gm) {
-    allCharts.gm.data.datasets[0].data = totalRev.map(function(v,i){
-      return v>0 ? Math.round((v-totalCogs[i])/v*1000)/10 : 0;
+    allCharts.gm.data.labels = labels;
+    var slicedRev9 = adjustFlow(sliceTime(totalRev));
+    var slicedCogs9 = adjustFlow(sliceTime(totalCogs));
+    allCharts.gm.data.datasets[0].data = slicedRev9.map(function(v,i){
+      return v>0 ? Math.round((v-slicedCogs9[i])/v*1000)/10 : 0;
     });
     allCharts.gm.update('none');
   }
 
   // 10. Churn Rate
   if (allCharts.churn) {
-    allCharts.churn.data.datasets[0].data = totalChurn.map(function(v,i){
-      return totalMau[i]>0 ? Math.round(v/totalMau[i]*10000)/100 : 0;
+    allCharts.churn.data.labels = labels;
+    var slicedChurnR = adjustFlow(sliceTime(totalChurn));
+    var slicedMauR = sliceTime(totalMau);
+    allCharts.churn.data.datasets[0].data = slicedChurnR.map(function(v,i){
+      return slicedMauR[i]>0 ? Math.round(v/slicedMauR[i]*10000)/100 : 0;
     });
     allCharts.churn.update('none');
   }
 
   // 11. WAU/MAU Stickiness
   if (allCharts.wauMau) {
-    var wau = totalMau.map(function(m,i){ return Math.round(m * WAU_MAU_RATIOS[i]); });
-    var mauOnly = totalMau.map(function(m,i){ return Math.round(m - wau[i]); });
-    var wauPct = totalMau.map(function(m,i){ return m>0 ? Math.round(WAU_MAU_RATIOS[i]*1000)/10 : 0; });
+    allCharts.wauMau.data.labels = labels;
+    var slicedMau11 = sliceTime(totalMau);
+    var slicedWAU11 = sliceTime(WAU_MAU_RATIOS);
+    var wau = slicedMau11.map(function(m,i){ return Math.round(m * slicedWAU11[i]); });
+    var mauOnly = slicedMau11.map(function(m,i){ return Math.round(m - wau[i]); });
+    var wauPct = slicedWAU11.map(function(r){ return Math.round(r*1000)/10; });
     allCharts.wauMau.data.datasets[0].data = wau;
     allCharts.wauMau.data.datasets[1].data = mauOnly;
     allCharts.wauMau.data.datasets[2].data = wauPct;
@@ -809,33 +857,104 @@ function rebuildAll() {
 
   // 12. DAU/WAU Stickiness
   if (allCharts.dauWau) {
-    var wauForDau = totalMau.map(function(m,i){ return Math.round(m * WAU_MAU_RATIOS[i]); });
-    var dauArr = wauForDau.map(function(w,i){ return Math.round(w * DAU_WAU_RATIOS[i]); });
+    allCharts.dauWau.data.labels = labels;
+    var slicedMau12 = sliceTime(totalMau);
+    var slicedWAU12 = sliceTime(WAU_MAU_RATIOS);
+    var slicedDAU12 = sliceTime(DAU_WAU_RATIOS);
+    var wauForDau = slicedMau12.map(function(m,i){ return Math.round(m * slicedWAU12[i]); });
+    var dauArr = wauForDau.map(function(w,i){ return Math.round(w * slicedDAU12[i]); });
     var wauMinusDauArr = wauForDau.map(function(w,i){ return w - dauArr[i]; });
-    var dauPct = wauForDau.map(function(w,i){ return w>0 ? Math.round(DAU_WAU_RATIOS[i]*1000)/10 : 0; });
+    var dauPct = slicedDAU12.map(function(r){ return Math.round(r*1000)/10; });
     allCharts.dauWau.data.datasets[0].data = dauArr;
     allCharts.dauWau.data.datasets[1].data = wauMinusDauArr;
     allCharts.dauWau.data.datasets[2].data = dauPct;
     allCharts.dauWau.update('none');
   }
 
-  // 13. MAU by Surface — latest month per surface
+  // 13. MAU by Product Surface (line chart over time)
   if (allCharts.mauSurface) {
-    var surfTotals = SURFACE_LIST.map(function(surf) {
-      var total = 0;
-      SKU_LIST.forEach(function(sku) {
-        if (!skuState[sku]) return;
-        if (DATA.mau[sku] && DATA.mau[sku][surf]) {
-          total += DATA.mau[sku][surf][11];
-        }
-      });
-      return Math.round(total);
+    allCharts.mauSurface.data.labels = labels;
+    var surfaceMauFull = {
+      Completions:[850,880,910,940,970,1000,1030,1060,1100,1140,1180,1220],
+      Chat:[400,440,480,530,580,630,690,750,820,890,960,1040],
+      'VS Code':[300,320,340,360,380,400,420,450,480,510,540,570],
+      CLI:[80,85,90,95,100,110,120,130,140,155,170,190],
+      'PR Summaries':[50,55,60,65,70,80,90,100,110,125,140,160],
+      Agent:[20,25,30,40,50,65,80,100,125,155,190,230]
+    };
+    allCharts.mauSurface.data.datasets.forEach(function(ds) {
+      if (surfaceMauFull[ds.label]) {
+        ds.data = sliceTime(surfaceMauFull[ds.label]);
+      }
     });
-    allCharts.mauSurface.data.datasets[0].data = surfTotals;
     allCharts.mauSurface.update('none');
   }
 
-  // 14. Overage — rebuild if showing Total
+  // 14. Multi-Surface Users (stacked bar)
+  if (allCharts.multiSurface) {
+    allCharts.multiSurface.data.labels = labels;
+    allCharts.multiSurface.data.datasets[0].data = sliceTime([8,9,10,12,14,15,17,19,21,23,25,28]);
+    allCharts.multiSurface.data.datasets[1].data = sliceTime([22,23,24,25,26,27,27,28,28,29,29,30]);
+    allCharts.multiSurface.data.datasets[2].data = sliceTime([70,68,66,63,60,58,56,53,51,48,46,42]);
+    allCharts.multiSurface.update('none');
+  }
+
+  // 15. Usage Share by Product Surface (100% stacked area)
+  if (allCharts.chatComp) {
+    allCharts.chatComp.data.labels = labels;
+    var usageShareFull = {
+      Completions:[50,48,46,44,42,40,38,36,34,33,32,31],
+      Chat:[25,26,27,28,29,30,31,32,33,33,34,34],
+      'VS Code':[12,12,13,13,14,14,14,15,15,15,15,15],
+      CLI:[6,6,6,7,7,7,7,7,8,8,8,8],
+      'PR Summaries':[4,5,5,5,5,5,6,6,6,6,6,6],
+      Agent:[3,3,3,3,3,4,4,4,4,5,5,6]
+    };
+    allCharts.chatComp.data.datasets.forEach(function(ds) {
+      if (usageShareFull[ds.label]) {
+        ds.data = sliceTime(usageShareFull[ds.label]);
+      }
+    });
+    allCharts.chatComp.update('none');
+  }
+
+  // 16. IDE Distribution Over Time (stacked bar)
+  if (allCharts.ide) {
+    allCharts.ide.data.labels = labels;
+    var ideFull = {
+      'VS Code':[75,74,73,73,72,72,71,71,70,70,69,69],
+      JetBrains:[13,13,14,14,14,14,15,15,15,15,16,16],
+      'Visual Studio':[7,7,7,7,8,8,8,8,8,8,8,8],
+      Neovim:[3,3,3,3,3,3,3,3,3,4,4,4],
+      Other:[2,3,3,3,3,3,3,3,4,3,3,3]
+    };
+    allCharts.ide.data.datasets.forEach(function(ds) {
+      if (ideFull[ds.label]) {
+        ds.data = sliceTime(ideFull[ds.label]);
+      }
+    });
+    allCharts.ide.update('none');
+  }
+
+  // 17. Interactions per User per Day (stacked bar)
+  if (allCharts.interactions) {
+    allCharts.interactions.data.labels = labels;
+    var intFull = {
+      'Code Completions':[6,6.2,6.5,6.8,7,7.2,7.5,7.8,8,8.3,8.5,8.8],
+      'Chat Messages':[3,3.2,3.5,3.8,4.1,4.4,4.8,5.2,5.6,6,6.5,7],
+      'Agent Actions':[0.5,0.6,0.8,1.0,1.2,1.5,1.8,2.2,2.6,3,3.5,4],
+      'CLI Commands':[1.5,1.5,1.6,1.6,1.7,1.7,1.8,1.8,1.9,1.9,2,2],
+      'PR Reviews':[1,1,1.1,1.1,1.2,1.2,1.3,1.3,1.4,1.4,1.5,1.5]
+    };
+    allCharts.interactions.data.datasets.forEach(function(ds) {
+      if (intFull[ds.label]) {
+        ds.data = sliceTime(intFull[ds.label]);
+      }
+    });
+    allCharts.interactions.update('none');
+  }
+
+  // 18. Overage
   if (typeof buildOverageChart === 'function' && activeOverageSku === 'Total') {
     buildOverageChart();
   }
@@ -1280,9 +1399,11 @@ function buildOverageChart() {
     sub = overageSkuData[sku].sub.slice();
     ov = overageSkuData[sku].ov.slice();
   }
+  sub = adjustFlow(sliceTime(sub));
+  ov = adjustFlow(sliceTime(ov));
   allCharts.overage = new Chart(document.getElementById('ch-overage'), {
     type:'bar',
-    data:{ labels:MONTHS, datasets:[
+    data:{ labels:getCurrentLabels(), datasets:[
       { label:'Subscription', data:sub, backgroundColor:a(BLUE,.6), borderRadius:2 },
       { label:'Overage', data:ov, backgroundColor:a(ORANGE,.7), borderRadius:2 }
     ]},
@@ -1390,63 +1511,130 @@ new Chart(document.getElementById('ch-freq-dist'), {
     aspectRatio:1.7 }
 });
 
-// Interactions per User per Day — line chart
-new Chart(document.getElementById('ch-interactions'), {
-  type:'line',
-  data:{ labels:MONTHS, datasets:[{ label:'Interactions/User/Day', data:[12,13,13.5,14,15,16,17,17.5,18.5,19.5,21,22],
-    borderColor:ORANGE, backgroundColor:a(ORANGE,.1), fill:true, tension:.3, borderWidth:2.5 }] },
-  options:{ plugins:{legend:{display:false}, datalabels:{display:false}},
-    scales:{x:{grid:{display:false}}, y:{min:8,max:26, title:{display:true,text:'Avg Interactions/User/Day'}}},
+// Interactions per User per Day — stacked bar by interaction type
+allCharts.interactions = new Chart(document.getElementById('ch-interactions'), {
+  type:'bar',
+  data:{ labels:MONTHS, datasets:[
+    { label:'Code Completions', data:[6,6.2,6.5,6.8,7,7.2,7.5,7.8,8,8.3,8.5,8.8], backgroundColor:PURPLE, borderRadius:2 },
+    { label:'Chat Messages', data:[3,3.2,3.5,3.8,4.1,4.4,4.8,5.2,5.6,6,6.5,7], backgroundColor:BLUE, borderRadius:2 },
+    { label:'Agent Actions', data:[0.5,0.6,0.8,1.0,1.2,1.5,1.8,2.2,2.6,3,3.5,4], backgroundColor:ORANGE, borderRadius:2 },
+    { label:'CLI Commands', data:[1.5,1.5,1.6,1.6,1.7,1.7,1.8,1.8,1.9,1.9,2,2], backgroundColor:TEAL, borderRadius:2 },
+    { label:'PR Reviews', data:[1,1,1.1,1.1,1.2,1.2,1.3,1.3,1.4,1.4,1.5,1.5], backgroundColor:PINK, borderRadius:2 }
+  ]},
+  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}},
+    datalabels: stackedDatalabels(function(v){ return v.toFixed(1); }, 0.08),
+    stackedTotal:{display:true, formatter:function(v){ return v.toFixed(1); }}},
+    scales:{x:{stacked:true, grid:{display:false}},
+      y:{stacked:true, title:{display:true,text:'Avg Interactions/User/Day'}}},
     aspectRatio:1.7 }
 });
 
 // ══════════════════════════════
 //  5. SURFACE ADOPTION
 // ══════════════════════════════
+// MAU by Product Surface — line chart over time (6 surfaces)
+var surfaceChartColors = {Completions:PURPLE, Chat:BLUE, 'VS Code':GREEN, CLI:TEAL, 'PR Summaries':PINK, Agent:ORANGE};
+var surfaceMauTimeline = {
+  Completions:[850,880,910,940,970,1000,1030,1060,1100,1140,1180,1220],
+  Chat:[400,440,480,530,580,630,690,750,820,890,960,1040],
+  'VS Code':[300,320,340,360,380,400,420,450,480,510,540,570],
+  CLI:[80,85,90,95,100,110,120,130,140,155,170,190],
+  'PR Summaries':[50,55,60,65,70,80,90,100,110,125,140,160],
+  Agent:[20,25,30,40,50,65,80,100,125,155,190,230]
+};
 allCharts.mauSurface = new Chart(document.getElementById('ch-mau-surface'), {
-  type:'bar',
-  data:{ labels:['Completions','Chat','CLI','PR Summaries','Agent'], datasets:[{
-    data: SURFACE_LIST.map(function(surf) {
-      var total = 0;
-      SKU_LIST.forEach(function(sku) {
-        if (DATA.mau[sku] && DATA.mau[sku][surf]) total += DATA.mau[sku][surf][11];
-      });
-      return Math.round(total);
-    }),
-    backgroundColor:[PURPLE,BLUE,TEAL,PINK,ORANGE], borderRadius:6, barPercentage:.55
-  }]},
-  options:{ plugins:{legend:{display:false}}, scales:{x:{grid:{display:false}}, y:{ticks:{callback:v=>v>=1000?(v/1000)+'M':v+'K'},
-    title:{display:true,text:'MAU (K)'}}}, aspectRatio:1.7 }
-});
-
-new Chart(document.getElementById('ch-multi-surface'), {
   type:'line',
-  data:{ labels:MONTHS, datasets:[
-    { label:'3+ Surfaces', data:[8,9,10,12,14,15,17,19,21,23,25,28], backgroundColor:a(PURPLE,.5), borderColor:PURPLE, fill:true, tension:.3 },
-    { label:'2 Surfaces', data:[22,23,24,25,26,27,27,28,28,29,29,30], backgroundColor:a(BLUE,.4), borderColor:BLUE, fill:true, tension:.3 },
-    { label:'1 Surface', data:[70,68,66,63,60,58,56,53,51,48,46,42], backgroundColor:a(TEAL,.3), borderColor:TEAL, fill:true, tension:.3 }
-  ]},
-  options:{ plugins:{legend:{position:'bottom'}}, scales:{x:{grid:{display:false}},
-    y:{stacked:true, max:100, ticks:{callback:v=>v+'%'}}}, aspectRatio:1.7 }
+  data:{ labels:MONTHS, datasets: SURFACE_LIST.map(function(surf) {
+    return {
+      label: surf,
+      data: surfaceMauTimeline[surf],
+      borderColor: surfaceChartColors[surf],
+      backgroundColor: a(surfaceChartColors[surf], .1),
+      fill: false,
+      tension: .3,
+      borderWidth: 2.5,
+      pointRadius: 2
+    };
+  })},
+  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}, datalabels:{display:false}},
+    scales:{x:{grid:{display:false}},
+      y:{ticks:{callback:function(v){ return v >= 1000 ? (v/1000).toFixed(1)+'M' : v+'K'; }},
+        title:{display:true,text:'MAU (thousands)'}}},
+    aspectRatio:1.7 }
 });
 
-new Chart(document.getElementById('ch-chat-comp'), {
-  type:'line',
-  data:{ labels:MONTHS, datasets:[
-    { label:'Chat', data:[25,26,28,29,30,31,32,34,35,37,38,40], backgroundColor:a(BLUE,.5), borderColor:BLUE, fill:true, tension:.3 },
-    { label:'Completions', data:[75,74,72,71,70,69,68,66,65,63,62,60], backgroundColor:a(PURPLE,.4), borderColor:PURPLE, fill:true, tension:.3 }
-  ]},
-  options:{ plugins:{legend:{position:'bottom'}}, scales:{x:{grid:{display:false}},
-    y:{stacked:true, max:100, ticks:{callback:v=>v+'%'}}}, aspectRatio:1.7 }
-});
-
-new Chart(document.getElementById('ch-ide'), {
+// Multi-Surface Users — stacked bar (% of MAU)
+allCharts.multiSurface = new Chart(document.getElementById('ch-multi-surface'), {
   type:'bar',
-  data:{ labels:['VS Code','JetBrains','Visual Studio','Neovim','Other'], datasets:[{
-    data:[72,15,8,3,2], backgroundColor:[PURPLE,BLUE,TEAL,PINK,ORANGE], borderRadius:4, barPercentage:.5
-  }]},
-  options:{ indexAxis:'y', plugins:{legend:{display:false}}, scales:{x:{ticks:{callback:v=>v+'%'},max:80},
-    y:{grid:{display:false}}}, aspectRatio:1.7 }
+  data:{ labels:MONTHS, datasets:[
+    { label:'3+ Surfaces', data:[8,9,10,12,14,15,17,19,21,23,25,28], backgroundColor:a(PURPLE,.7), borderRadius:2 },
+    { label:'2 Surfaces', data:[22,23,24,25,26,27,27,28,28,29,29,30], backgroundColor:a(BLUE,.6), borderRadius:2 },
+    { label:'1 Surface', data:[70,68,66,63,60,58,56,53,51,48,46,42], backgroundColor:a(TEAL,.5), borderRadius:2 }
+  ]},
+  options:{ plugins:{legend:{position:'bottom'},
+    datalabels: stackedDatalabels(function(v){ return v+'%'; }, 0.06),
+    stackedTotal:{display:true, formatter:function(v){ return '100%'; }}},
+    scales:{x:{stacked:true, grid:{display:false}},
+      y:{stacked:true, max:100, ticks:{callback:function(v){return v+'%'}}}},
+    aspectRatio:1.7 }
+});
+
+// Usage Share by Product Surface — 100% stacked area (6 surfaces)
+var usageShareData = {
+  Completions:[50,48,46,44,42,40,38,36,34,33,32,31],
+  Chat:[25,26,27,28,29,30,31,32,33,33,34,34],
+  'VS Code':[12,12,13,13,14,14,14,15,15,15,15,15],
+  CLI:[6,6,6,7,7,7,7,7,8,8,8,8],
+  'PR Summaries':[4,5,5,5,5,5,6,6,6,6,6,6],
+  Agent:[3,3,3,3,3,4,4,4,4,5,5,6]
+};
+allCharts.chatComp = new Chart(document.getElementById('ch-chat-comp'), {
+  type:'line',
+  data:{ labels:MONTHS, datasets: SURFACE_LIST.map(function(surf) {
+    return {
+      label: surf,
+      data: usageShareData[surf],
+      backgroundColor: a(surfaceChartColors[surf], .5),
+      borderColor: surfaceChartColors[surf],
+      fill: true,
+      tension: .3,
+      borderWidth: 1.5,
+      pointRadius: 1
+    };
+  })},
+  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}, datalabels:{display:false}},
+    scales:{x:{grid:{display:false}},
+      y:{stacked:true, max:100, ticks:{callback:function(v){return v+'%'}},
+        title:{display:true,text:'% of Total Interactions'}}},
+    aspectRatio:1.7 }
+});
+
+// IDE Distribution Over Time — monthly stacked bar
+var ideColors = {'VS Code':'#2EA043', JetBrains:PURPLE, 'Visual Studio':BLUE, Neovim:TEAL, Other:'#8B949E'};
+var ideTimeData = {
+  'VS Code':[75,74,73,73,72,72,71,71,70,70,69,69],
+  JetBrains:[13,13,14,14,14,14,15,15,15,15,16,16],
+  'Visual Studio':[7,7,7,7,8,8,8,8,8,8,8,8],
+  Neovim:[3,3,3,3,3,3,3,3,3,4,4,4],
+  Other:[2,3,3,3,3,3,3,3,4,3,3,3]
+};
+var ideNameList = ['VS Code','JetBrains','Visual Studio','Neovim','Other'];
+allCharts.ide = new Chart(document.getElementById('ch-ide'), {
+  type:'bar',
+  data:{ labels:MONTHS, datasets: ideNameList.map(function(ide) {
+    return {
+      label: ide,
+      data: ideTimeData[ide],
+      backgroundColor: ideColors[ide],
+      borderRadius: 2
+    };
+  })},
+  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}},
+    datalabels: stackedDatalabels(function(v){ return v+'%'; }, 0.06),
+    stackedTotal:{display:true, formatter:function(v){ return '100%'; }}},
+    scales:{x:{stacked:true, grid:{display:false}},
+      y:{stacked:true, max:100, ticks:{callback:function(v){return v+'%'}}}},
+    aspectRatio:1.7 }
 });
 
 // ══════════════════════════════
