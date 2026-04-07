@@ -224,6 +224,10 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zm.25-11.25a.75.75 0 0 0-1.5 0v1h-.5a2.25 2.25 0 0 0 0 4.5h.5v1.5h-.75a.75.75 0 0 0 0 1.5h.75v.5a.75.75 0 0 0 1.5 0v-.5H9a2.25 2.25 0 0 0 0-4.5H7.75v-1.5h.5a.75.75 0 0 0 0-1.5h-.5v-.5z"/></svg></span>
     <span class="nav-label">Revenue & Monetization</span>
   </a>
+  <a class="nav-item" href="#cost" data-section="cost">
+    <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M2 2h12v12H2V2zm1.5 1.5v9h9v-9h-9zM5 5h2v6H5V5zm4 2h2v4H9V7z"/></svg></span>
+    <span class="nav-label">Cost & Unit Economics</span>
+  </a>
   <a class="nav-item" href="#utilization" data-section="utilization">
     <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0zm7.25-3.25v2.992l2.028 1.064a.75.75 0 0 1-.557 1.392l-2.5-1.312A.75.75 0 0 1 7.25 8.5v-3.75a.75.75 0 0 1 1.5 0z"/></svg></span>
     <span class="nav-label">Utilization & Engagement</span>
@@ -231,10 +235,6 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
   <a class="nav-item" href="#surface" data-section="surface">
     <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M1.5 3.25c0-.966.784-1.75 1.75-1.75h9.5c.966 0 1.75.784 1.75 1.75v9.5A1.75 1.75 0 0 1 12.75 14.5h-9.5A1.75 1.75 0 0 1 1.5 12.75v-9.5zM3.25 3a.25.25 0 0 0-.25.25v9.5c0 .138.112.25.25.25h9.5a.25.25 0 0 0 .25-.25v-9.5A.25.25 0 0 0 12.75 3h-9.5z"/></svg></span>
     <span class="nav-label">Product Surface Adoption</span>
-  </a>
-  <a class="nav-item" href="#cost" data-section="cost">
-    <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M2 2h12v12H2V2zm1.5 1.5v9h9v-9h-9zM5 5h2v6H5V5zm4 2h2v4H9V7z"/></svg></span>
-    <span class="nav-label">Cost & Unit Economics</span>
   </a>
   <a class="nav-item" href="#retention" data-section="retention">
     <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M7.655 14.916v-.001h-.002l-.006-.003-.018-.01a22 22 0 0 1-.306-.17 27.4 27.4 0 0 1-3.504-2.498C2.012 10.747 0 8.42 0 5.5 0 2.836 2.086 1 4.25 1 5.797 1 7.153 1.802 8 3.02 8.847 1.802 10.203 1 11.75 1 13.914 1 16 2.836 16 5.5c0 2.92-2.012 5.247-3.819 6.734a27.4 27.4 0 0 1-3.81 2.668l-.018.01-.006.003h-.002z"/></svg></span>
@@ -298,6 +298,21 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
   </div>
 </section>
 
+<!-- ── COST ── -->
+<section class="section" id="cost">
+  <div class="section-header"><h2>Cost, Unit Economics &amp; Financial Metrics</h2><p>Revenue, COGS, margins, ARR, retention, and seat growth</p></div>
+  <div class="grid grid-2">
+    <div class="card"><div class="card-title">Revenue, COGS & Gross Margin <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Combined view of revenue, cost structure, and resulting margins. The "is this a real business" chart.</div><div class="info-takeaway">📌 Gross margin entering 65-75% goal band. Revenue growing faster than COGS — unit economics improving.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-rev-cogs-gm"></canvas></div></div>
+    <div class="card"><div class="card-title">MAU vs COGS Distribution by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Compares each SKU's share of users vs share of cost. Highlights cross-subsidization.</div><div class="info-takeaway">📌 Free users are 28% of MAU but only 10% of COGS. Pro+ is 7% of MAU but 17% of COGS — power users cost disproportionately.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-mau-vs-cogs"></canvas></div></div>
+    <div class="card"><div class="card-title">COGS per Seat / Month <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Unit economics north star — cost per seat must trend down for margin expansion.</div><div class="info-takeaway">📌 COGS/seat dropped from $9.50 to $7.20 — approaching the $7.00 target. Model routing and caching driving improvement.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cogs-seat"></canvas></div></div>
+    <div class="card"><div class="card-title">ARR Trend <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> ARR trajectory with growth rate. The #1 top-line metric.</div><div class="info-takeaway">📌 ARR growing at 8-12% MoM. On track to exit the year above $500M.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-arr-deep"></canvas></div></div>
+    <div class="card"><div class="card-title">ARPU by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Revenue per user by plan tier. Same as Revenue section view for cross-reference.</div><div class="info-takeaway">📌 Enterprise ARPU highest at ~$47/mo. Pro+ growing fastest driven by overage.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-arpu-cost"></canvas></div></div>
+    <div class="card"><div class="card-title">COGS per User by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Cost to serve each user by plan tier. Compare with ARPU to see per-user profitability.</div><div class="info-takeaway">📌 Pro+ costs $14/user/mo — highest per-user cost. Free at $0.26 is efficient but generates no subscription revenue.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cogspu"></canvas></div></div>
+    <div class="card"><div class="card-title">Total Seats by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Assigned seats by plan tier. Volume growth engine.</div><div class="info-takeaway">📌 Approaching 2.7M total seats. Business and Enterprise driving growth.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-seats-sku"></canvas></div></div>
+    <div class="card"><div class="card-title">Net Seat Adds by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly net new seats by plan tier. Shows which SKUs are expanding.</div><div class="info-takeaway">📌 Enterprise net adds accelerating. Free tier adds steady — healthy top of funnel.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-netadds-sku"></canvas></div></div>
+  </div>
+</section>
+
 <!-- ── UTILIZATION ── -->
 <section class="section" id="utilization">
   <div class="section-header"><h2>Utilization &amp; Engagement</h2><p>Stickiness, engagement depth, and usage patterns</p></div>
@@ -317,19 +332,6 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <div class="card"><div class="card-title">Multi-Surface Users <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Multi-surface users are stickier and harder to churn. 3+ surface adoption = platform lock-in.</div><div class="info-takeaway">📌 3+ surface users grew from 8% to 28% — strong platform stickiness trend.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-multi-surface"></canvas></div></div>
     <div class="card"><div class="card-title">Usage Share by Product Surface <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Tracks the shift from inline completions to conversational AI. Is Chat cannibalizing or complementing?</div><div class="info-takeaway">📌 Chat grew from 25% to 40% of usage mix. Evidence suggests complementary — total usage is growing alongside the mix shift.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-chat-comp"></canvas></div></div>
     <div class="card"><div class="card-title">IDE Distribution Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Market penetration by IDE. Strategic for partnership and investment decisions.</div><div class="info-takeaway">📌 VS Code dominates at 72%. JetBrains at 15% represents a significant enterprise opportunity.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-ide"></canvas></div></div>
-  </div>
-</section>
-
-<!-- ── COST ── -->
-<section class="section" id="cost">
-  <div class="section-header"><h2>Cost, Unit Economics &amp; Financial Metrics</h2><p>Revenue, COGS, margins, ARR, retention, and seat growth</p></div>
-  <div class="grid grid-2">
-    <div class="card"><div class="card-title">Revenue, COGS & Gross Margin <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Combined view of revenue, cost structure, and resulting margins. The "is this a real business" chart.</div><div class="info-takeaway">📌 Gross margin entering 65-75% goal band. Revenue growing faster than COGS — unit economics improving.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-rev-cogs-gm"></canvas></div></div>
-    <div class="card"><div class="card-title">MAU vs COGS Distribution by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Compares each SKU's share of users vs share of cost. Highlights cross-subsidization.</div><div class="info-takeaway">📌 Free users are 28% of MAU but only 10% of COGS. Pro+ is 7% of MAU but 17% of COGS — power users cost disproportionately.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-mau-vs-cogs"></canvas></div></div>
-    <div class="card"><div class="card-title">COGS per Seat / Month <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Unit economics north star — cost per seat must trend down for margin expansion.</div><div class="info-takeaway">📌 COGS/seat dropped from $9.50 to $7.20 — approaching the $7.00 target. Model routing and caching driving improvement.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cogs-seat"></canvas></div></div>
-    <div class="card"><div class="card-title">ARR Trend <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> ARR trajectory with growth rate. The #1 top-line metric.</div><div class="info-takeaway">📌 ARR growing at 8-12% MoM. On track to exit the year above $500M.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-arr-deep"></canvas></div></div>
-    <div class="card"><div class="card-title">Net Revenue Retention (NRR) <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> NRR > 100% means existing customers spend more over time. The SaaS gold standard.</div><div class="info-takeaway">📌 NRR at 118% — strong expansion. Driven by seat adds and overage within existing orgs.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-nrr"></canvas></div></div>
-    <div class="card"><div class="card-title">Total Seats & Net Adds <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Total assigned seats with net monthly additions. Volume growth engine.</div><div class="info-takeaway">📌 Approaching 2M total seats. Net adds accelerating — land-and-expand working in enterprise.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-seats-adds"></canvas></div></div>
   </div>
 </section>
 
@@ -1106,19 +1108,53 @@ function rebuildAll() {
     allCharts.arrDeep.update('none');
   }
 
-  // -- NRR
-  if (allCharts.nrr) {
-    allCharts.nrr.data.labels = labels;
-    allCharts.nrr.data.datasets[0].data = sliceTime(baseNrrData);
-    allCharts.nrr.update('none');
+  // -- ARPU by SKU (Cost section clone)
+  if (allCharts.arpuCost) {
+    allCharts.arpuCost.data.labels = labels;
+    allCharts.arpuCost.data.datasets.forEach(function(ds) {
+      var sku = ds.label;
+      if (arpuData[sku]) {
+        ds.data = sliceTime(arpuData[sku].total);
+      }
+    });
+    allCharts.arpuCost.update('none');
   }
 
-  // -- Seats & Net Adds
-  if (allCharts.seatsAdds) {
-    allCharts.seatsAdds.data.labels = labels;
-    allCharts.seatsAdds.data.datasets[0].data = sliceTime(baseSeatsTotalData);
-    allCharts.seatsAdds.data.datasets[1].data = adjustFlow(sliceTime(baseSeatsNetAddsData));
-    allCharts.seatsAdds.update('none');
+  // -- COGS per User by SKU
+  if (allCharts.cogspu) {
+    allCharts.cogspu.data.labels = labels;
+    allCharts.cogspu.data.datasets.forEach(function(ds) {
+      var sku = ds.label;
+      if (cogspuData[sku]) {
+        ds.data = sliceTime(cogspuData[sku]);
+      }
+    });
+    allCharts.cogspu.update('none');
+  }
+
+  // -- Total Seats by SKU
+  if (allCharts.seatsSku) {
+    allCharts.seatsSku.data.labels = labels;
+    allCharts.seatsSku.data.datasets.forEach(function(ds) {
+      var sku = ds.label;
+      if (seatsData[sku]) {
+        ds.data = sliceTime(seatsData[sku]);
+      }
+    });
+    allCharts.seatsSku.update('none');
+  }
+
+  // -- Net Seat Adds by SKU
+  if (allCharts.netaddsSku) {
+    allCharts.netaddsSku.data.labels = labels;
+    allCharts.netaddsSku.data.datasets.forEach(function(ds) {
+      var sku = ds.label;
+      if (seatsData[sku]) {
+        var raw = sliceTime(seatsData[sku]);
+        ds.data = raw.map(function(v, i) { return i === 0 ? Math.round(v * 0.06) : v - sliceTime(seatsData[sku])[i - 1]; });
+      }
+    });
+    allCharts.netaddsSku.update('none');
   }
 
   // 18. Overage
@@ -1977,6 +2013,57 @@ allCharts.cogsSeat = new Chart(document.getElementById('ch-cogs-seat'), {
     scales:{x:{grid:{display:false}}, y:{min:6,max:10.5, ticks:{callback:function(v){return '$'+v.toFixed(2)}}}}, aspectRatio:1.7 }
 });
 
+// Chart 3b: ARPU by SKU (clone for Cost section)
+allCharts.arpuCost = new Chart(document.getElementById('ch-arpu-cost'), {
+  type:'line',
+  data:{ labels:MONTHS, datasets:[
+    { label:'Free', data:arpuData.Free.total, borderColor:skuColors.Free, backgroundColor:a(skuColors.Free,.05), fill:false, tension:.3, borderWidth:2, borderDash:[4,3] },
+    { label:'Edu', data:arpuData.Edu.total, borderColor:skuColors.Edu, backgroundColor:a(skuColors.Edu,.05), fill:false, tension:.3, borderWidth:2, borderDash:[4,3] },
+    { label:'Pro', data:arpuData.Pro.total, borderColor:skuColors.Pro, backgroundColor:a(skuColors.Pro,.05), fill:false, tension:.3, borderWidth:2.5 },
+    { label:'Pro+', data:arpuData['Pro+'].total, borderColor:skuColors['Pro+'], backgroundColor:a(skuColors['Pro+'],.05), fill:false, tension:.3, borderWidth:2.5 },
+    { label:'Business', data:arpuData.Business.total, borderColor:skuColors.Business, backgroundColor:a(skuColors.Business,.05), fill:false, tension:.3, borderWidth:2.5 },
+    { label:'Enterprise', data:arpuData.Enterprise.total, borderColor:skuColors.Enterprise, backgroundColor:a(skuColors.Enterprise,.05), fill:false, tension:.3, borderWidth:2.5 }
+  ]},
+  options:{ interaction:{mode:'index', intersect:false},
+    plugins:{legend:{position:'bottom'}, datalabels:{display:false},
+      tooltip:{displayColors:true, callbacks:{
+        label: function(ctx) {
+          var sku = ctx.dataset.label;
+          var i = ctx.dataIndex;
+          var d = arpuData[sku];
+          if (!d) return ctx.dataset.label + ': $' + ctx.parsed.y.toFixed(2);
+          return sku + ': $' + d.total[i].toFixed(2) + '  (Sub: $' + d.sub[i].toFixed(2) + ' + Overage: $' + d.ov[i].toFixed(2) + ')';
+        }
+      }}},
+    scales:{x:{grid:{display:false}}, y:{ticks:{callback:function(v){return '$'+v}}, title:{display:true,text:'ARPU ($/user/mo)'}}},
+    aspectRatio:1.7 }
+});
+
+// Chart 3c: COGS per User by SKU — line chart
+var cogspuData = {
+  Free: [0.15,0.16,0.17,0.18,0.19,0.20,0.21,0.22,0.23,0.24,0.25,0.26],
+  Edu: [0.40,0.42,0.44,0.46,0.48,0.50,0.52,0.54,0.56,0.58,0.60,0.62],
+  Pro: [4.50,4.60,4.70,4.80,4.90,5.00,5.10,5.20,5.30,5.40,5.50,5.60],
+  'Pro+': [12.00,12.20,12.40,12.60,12.80,13.00,13.20,13.40,13.60,13.80,14.00,14.20],
+  Business: [7.80,7.90,8.00,8.10,8.20,8.30,8.40,8.50,8.60,8.70,8.80,8.90],
+  Enterprise: [9.50,9.60,9.70,9.80,9.90,10.00,10.10,10.20,10.30,10.40,10.50,10.60]
+};
+allCharts.cogspu = new Chart(document.getElementById('ch-cogspu'), {
+  type:'line',
+  data:{ labels:MONTHS, datasets:[
+    { label:'Free', data:cogspuData.Free.slice(), borderColor:skuColors.Free, backgroundColor:a(skuColors.Free,.05), fill:false, tension:.3, borderWidth:2, borderDash:[4,3] },
+    { label:'Edu', data:cogspuData.Edu.slice(), borderColor:skuColors.Edu, backgroundColor:a(skuColors.Edu,.05), fill:false, tension:.3, borderWidth:2, borderDash:[4,3] },
+    { label:'Pro', data:cogspuData.Pro.slice(), borderColor:skuColors.Pro, backgroundColor:a(skuColors.Pro,.05), fill:false, tension:.3, borderWidth:2.5 },
+    { label:'Pro+', data:cogspuData['Pro+'].slice(), borderColor:skuColors['Pro+'], backgroundColor:a(skuColors['Pro+'],.05), fill:false, tension:.3, borderWidth:2.5 },
+    { label:'Business', data:cogspuData.Business.slice(), borderColor:skuColors.Business, backgroundColor:a(skuColors.Business,.05), fill:false, tension:.3, borderWidth:2.5 },
+    { label:'Enterprise', data:cogspuData.Enterprise.slice(), borderColor:skuColors.Enterprise, backgroundColor:a(skuColors.Enterprise,.05), fill:false, tension:.3, borderWidth:2.5 }
+  ]},
+  options:{ interaction:{mode:'index', intersect:false},
+    plugins:{legend:{position:'bottom'}, datalabels:{display:false}},
+    scales:{x:{grid:{display:false}}, y:{ticks:{callback:function(v){return '$'+v.toFixed(2)}}, title:{display:true,text:'COGS/User ($/user/mo)'}}},
+    aspectRatio:1.7 }
+});
+
 // Chart 4: ARR Trend
 (function() {
   var initRev = getFilteredSkuOnly('revenue');
@@ -1994,36 +2081,54 @@ allCharts.cogsSeat = new Chart(document.getElementById('ch-cogs-seat'), {
   });
 })();
 
-// Chart 5: Net Revenue Retention (NRR)
-var baseNrrData = [108,109,110,111,112,112,113,114,115,116,117,118];
-allCharts.nrr = new Chart(document.getElementById('ch-nrr'), {
-  type:'line',
-  data:{ labels:MONTHS, datasets:[{ label:'NRR %', data:baseNrrData.slice(),
-    borderColor:PURPLE, backgroundColor:a(PURPLE,.12), fill:true, tension:.3, borderWidth:2.5, pointRadius:3,
-    pointBackgroundColor:PURPLE }] },
-  options:{ plugins:{legend:{display:false}, datalabels:{display:false},
-    annotation:{annotations:{goal:goalLine(110,'Goal: 110%',GREEN)}}},
-    scales:{x:{grid:{display:false}},
-      y:{min:105,max:125, ticks:{callback:function(v){return v+'%'}}, title:{display:true,text:'NRR %'}}},
+// Chart 5: Total Seats by SKU — stacked bar
+var seatsData = {
+  Free: [500,530,560,580,600,620,640,660,680,700,720,740],
+  Edu: [45,47,49,51,53,55,57,59,61,63,65,67],
+  Pro: [320,330,340,350,360,370,380,390,400,410,420,430],
+  'Pro+': [65,73,81,89,97,105,115,125,135,147,160,175],
+  Business: [440,470,500,530,560,590,620,660,700,740,780,820],
+  Enterprise: [130,145,160,180,200,220,250,280,310,350,390,430]
+};
+allCharts.seatsSku = new Chart(document.getElementById('ch-seats-sku'), {
+  type:'bar',
+  data:{ labels:MONTHS, datasets:[
+    { label:'Free',       data:seatsData.Free.slice(), backgroundColor:skuColors.Free, borderRadius:2 },
+    { label:'Edu',        data:seatsData.Edu.slice(), backgroundColor:skuColors.Edu, borderRadius:2 },
+    { label:'Pro',        data:seatsData.Pro.slice(), backgroundColor:skuColors.Pro, borderRadius:2 },
+    { label:'Pro+',       data:seatsData['Pro+'].slice(), backgroundColor:skuColors['Pro+'], borderRadius:2 },
+    { label:'Business',   data:seatsData.Business.slice(), backgroundColor:skuColors.Business, borderRadius:2 },
+    { label:'Enterprise', data:seatsData.Enterprise.slice(), backgroundColor:skuColors.Enterprise, borderRadius:2 }
+  ]},
+  options:{ plugins:{legend:{position:'bottom'},
+    datalabels: stackedDatalabels(function(v){ return v >= 1000 ? (v/1000).toFixed(1)+'M' : v+'K'; }, 0.05),
+    stackedTotal:{display:true, formatter:function(v){ return (v/1000).toFixed(1)+'M'; }}},
+    scales:{x:{stacked:true, grid:{display:false}},
+      y:{stacked:true, ticks:{callback:function(v){ return v >= 1000 ? (v/1000).toFixed(1)+'M' : v+'K'; }},
+        title:{display:true,text:'Seats (thousands)'}}},
     aspectRatio:1.7 }
 });
 
-// Chart 6: Total Seats & Net Seat Adds
-var baseSeatsTotalData = [920,980,1040,1100,1160,1230,1310,1400,1490,1590,1700,1820];
-var baseSeatsNetAddsData = [55,60,60,60,60,70,80,90,90,100,110,120];
-allCharts.seatsAdds = new Chart(document.getElementById('ch-seats-adds'), {
-  type:'bar',
-  data:{ labels:MONTHS, datasets:[
-    { label:'Total Seats (K)', data:baseSeatsTotalData.slice(), backgroundColor:a(BLUE,.5), borderRadius:3, yAxisID:'y' },
-    { type:'line', label:'Net Adds (K)', data:baseSeatsNetAddsData.slice(), borderColor:TEAL, borderWidth:2.5,
-      pointRadius:3, tension:.3, fill:false, yAxisID:'y1', datalabels:{display:false} }
-  ]},
-  options:{ plugins:{legend:{position:'bottom'}, datalabels:{display:false}},
-    scales:{x:{grid:{display:false}},
-      y:{ticks:{callback:function(v){return v >= 1000 ? (v/1000).toFixed(1)+'M' : v+'K'}}, title:{display:true,text:'Total Seats (K)'}},
-      y1:{position:'right', grid:{display:false}, ticks:{callback:function(v){return v+'K'}}, title:{display:true,text:'Net Adds (K)'}}},
-    aspectRatio:1.7 }
-});
+// Chart 6: Net Seat Adds by SKU — stacked bar
+(function() {
+  var skuList = ['Free','Edu','Pro','Pro+','Business','Enterprise'];
+  var netAddsDatasets = skuList.map(function(sku) {
+    var raw = seatsData[sku];
+    var adds = raw.map(function(v, i) { return i === 0 ? Math.round(v * 0.06) : v - raw[i - 1]; });
+    return { label:sku, data:adds, backgroundColor:skuColors[sku], borderRadius:2 };
+  });
+  allCharts.netaddsSku = new Chart(document.getElementById('ch-netadds-sku'), {
+    type:'bar',
+    data:{ labels:MONTHS, datasets:netAddsDatasets },
+    options:{ plugins:{legend:{position:'bottom'},
+      datalabels: stackedDatalabels(function(v){ return v+'K'; }, 0.08),
+      stackedTotal:{display:true, formatter:function(v){ return v+'K'; }}},
+      scales:{x:{stacked:true, grid:{display:false}},
+        y:{stacked:true, ticks:{callback:function(v){ return v+'K'; }},
+          title:{display:true,text:'Net Adds (thousands)'}}},
+      aspectRatio:1.7 }
+  });
+})();
 
 // ══════════════════════════════
 //  7. RETENTION
