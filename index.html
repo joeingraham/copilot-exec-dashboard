@@ -107,7 +107,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 .funnel-toggle:hover { border-color: var(--purple); color: var(--text); }
 .funnel-toggle.active { background: rgba(123,104,238,.15); border-color: var(--purple); color: #fff; }
 .funnel-toggle .ft-dot { width: 8px; height: 8px; border-radius: 50%; }
-.funnel-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0; align-items: center; }
+.funnel-grid2 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; align-items: center; }
 .funnel-step-cell { display: flex; align-items: center; gap: 8px; padding: 6px 12px 6px 0; }
 .funnel-comment-cell { display: flex; align-items: center; padding: 6px 0 6px 16px;
   border-left: 3px solid rgba(123,104,238,.2); font-size: 12px; line-height: 1.5; color: var(--text); }
@@ -277,8 +277,8 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 <section class="section" id="finance">
   <div class="section-header"><h2>Finance</h2><p>Revenue, cost, margins, and unit economics</p></div>
   <div class="grid grid-2">
-    <div class="card"><div class="card-title">Revenue, COGS &amp; Gross Margin <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Revenue above x-axis, COGS below. GM% line on right axis shows margin trajectory.</div><div class="info-takeaway">📌 Revenue growing faster than COGS — margins improving toward 70% target.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-rev-cogs-gm"></canvas></div></div>
-    <div class="card"><div class="card-title">Gross Profit by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Per-SKU profitability. Negative = SKU costs more to serve than it earns. Stacked bar shows which SKUs subsidize others.</div><div class="info-takeaway">📌 Free and Edu are negative GP. Business and Enterprise carry the business. Pro+ improving.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-gp-sku"></canvas></div></div>
+    <div class="card"><div class="card-title">Revenue, COGS &amp; Gross Margin <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Revenue above x-axis, COGS below. GM% line on right axis shows margin trajectory.</div><div class="info-takeaway">📌 COGS growing faster than revenue — gross margins are deeply negative (~-41% to -69%) and worsening as usage scales.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-rev-cogs-gm"></canvas></div></div>
+    <div class="card"><div class="card-title">Gross Profit by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Per-SKU profitability. Negative = SKU costs more to serve than it earns. Stacked bar shows which SKUs subsidize others.</div><div class="info-takeaway">📌 All SKUs have negative GP — COGS exceed revenue across every tier. Business has the largest absolute deficit.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-gp-sku"></canvas></div></div>
     <div class="card"><div class="card-title">ARPU by Plan (Subscription + Overage) <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Average Revenue Per User by plan tier over time, split into subscription base and overage.</div><div class="info-takeaway">📌 Enterprise ARPU growing fastest driven by overage. Pro+ overage contribution increasing.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-arpu"></canvas></div></div>
     <div class="card"><div class="card-title">Subscription vs Overage <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Split between base subscription revenue and usage-based overage charges.</div><div class="info-takeaway">📌 Overage growing as share of total — usage-based pricing working.</div></div></span><span class="illustrative">(Illustrative Data)</span></div>
       <div class="funnel-toggles" id="overage-toggles">
@@ -296,8 +296,8 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
   </div>
   <div class="grid grid-3" style="margin-top:20px">
     <div class="card"><div class="card-title">ARPU by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Revenue per user by plan. Positive values.</div><div class="info-takeaway">📌 Enterprise highest at ~$47/mo. All paid SKUs trending up.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-arpu-cost"></canvas></div></div>
-    <div class="card"><div class="card-title">COGS per User by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Cost to serve each user. Shown as negative values for visual comparison with ARPU.</div><div class="info-takeaway">📌 Pro+ costs $14/user/mo — highest. Free at $0.26 is efficient.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cogspu"></canvas></div></div>
-    <div class="card"><div class="card-title">Gross Profit per User by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> ARPU minus COGS per user. Positive = profitable, negative = subsidized. The unit economics truth.</div><div class="info-takeaway">📌 Enterprise most profitable at ~$37/user/mo. Free is -$0.26 (cost only). Pro+ margins improving.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-gppu"></canvas></div></div>
+    <div class="card"><div class="card-title">COGS per User by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Cost to serve each user. Shown as negative values for visual comparison with ARPU.</div><div class="info-takeaway">📌 COGSPU rising across all SKUs as usage intensity grows. Pro+ highest at ~$33-45/user/mo. Free at ~$0.40-0.97.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cogspu"></canvas></div></div>
+    <div class="card"><div class="card-title">Gross Profit per User by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> ARPU minus COGS per user. Positive = profitable, negative = subsidized. The unit economics truth.</div><div class="info-takeaway">📌 All SKUs show negative unit economics — COGSPU exceeds ARPU. Enterprise least negative; Pro+ most underwater.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-gppu"></canvas></div></div>
   </div>
 </section>
 
@@ -554,12 +554,12 @@ var skuData = {
     Enterprise:[22,26,30,35,40,46,52,58,65,73,82,92]
   },
   cogs: {
-    Free:[0.8,0.9,0.9,1.0,1.0,1.1,1.1,1.2,1.2,1.3,1.3,1.4],
-    Edu:[0.2,0.2,0.2,0.2,0.2,0.3,0.3,0.3,0.3,0.3,0.3,0.3],
-    Pro:[1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.5,2.6],
-    'Pro+':[0.8,0.9,1.0,1.1,1.2,1.3,1.4,1.5,1.7,1.9,2.1,2.3],
-    Business:[3.5,3.7,3.9,4.1,4.4,4.7,5.0,5.4,5.8,6.2,6.6,7.0],
-    Enterprise:[1.2,1.4,1.6,1.8,2.0,2.2,2.4,2.6,2.9,3.2,3.5,3.8]
+    Free:[2.0,2.2,2.5,2.8,3.1,3.5,3.9,4.4,4.9,5.5,6.2,7.0],
+    Edu:[1.2,1.3,1.5,1.7,1.9,2.1,2.4,2.7,3.0,3.4,3.8,4.3],
+    Pro:[38,40,43,46,50,54,58,63,68,74,80,87],
+    'Pro+':[20,22,25,28,32,36,41,46,52,59,67,76],
+    Business:[80,86,93,100,108,117,126,136,147,159,172,186],
+    Enterprise:[35,39,44,49,55,62,70,79,89,100,113,127]
   },
   churn: {
     Free:[12,13,12,14,14,13,15,14,15,16,15,17],
@@ -1466,6 +1466,15 @@ allCharts.upgradeRates = new Chart(document.getElementById('ch-upgrade-rates'), 
 });
 
 // ── Conversion Funnel — toggleable by channel ──
+var funnelRatesTrend = {
+  'Signup %': [18,18.5,19,19.2,19.5,19.8,20,20.2,20.5,20.8,21,21.5],
+  'Account %': [3.5,3.6,3.7,3.8,3.9,4.0,4.1,4.2,4.2,4.3,4.4,4.5],
+  'Activated %': [0.8,0.85,0.9,0.92,0.95,0.98,1.0,1.02,1.05,1.08,1.1,1.15],
+  'D7 Retained %': [0.55,0.58,0.62,0.65,0.68,0.7,0.72,0.74,0.76,0.78,0.8,0.82],
+  'D30 Retained %': [0.42,0.45,0.48,0.5,0.52,0.55,0.57,0.59,0.61,0.63,0.65,0.68],
+  'Paid %': [0.28,0.3,0.32,0.33,0.35,0.36,0.38,0.39,0.4,0.42,0.43,0.45]
+};
+
 (function() {
   var steps = ['Page Visits','Signup Initiated','Account Created','Activated (MAU)','D7 Retained','D30 Retained','Paid Conversion'];
   var channels = [
@@ -1543,13 +1552,11 @@ allCharts.upgradeRates = new Chart(document.getElementById('ch-upgrade-rates'), 
 
   function renderFunnel() {
     var ch = channels.find(function(c){ return c.id === activeChannel; });
-    // Scale data by time range
-    var timeMult = timeRange === '3M' ? 0.25 : timeRange === '6M' ? 0.5 : 1;
+    var timeMult = timeRange === 3 ? 0.25 : timeRange === 6 ? 0.5 : 1;
     var scaledData = ch.data.map(function(v){ return Math.round(v * timeMult); });
     var maxVal = scaledData[0];
     var container = document.getElementById('funnel-container');
-    // Time range label
-    var trLabel = timeRange === '3M' ? 'Last 3 Months' : timeRange === '6M' ? 'Last 6 Months' : 'Last 12 Months';
+    var trLabel = timeRange === 3 ? 'Last 3 Months' : timeRange === 6 ? 'Last 6 Months' : 'Last 12 Months';
     // Toggle buttons
     var html = '<div class="funnel-toggles">';
     channels.forEach(function(c) {
@@ -1559,14 +1566,15 @@ allCharts.upgradeRates = new Chart(document.getElementById('ch-upgrade-rates'), 
     });
     html += '<span style="margin-left:auto;font-size:10px;color:#8B949E;align-self:center">'+trLabel+'</span>';
     html += '</div>';
-    // Grid: step + commentary
-    html += '<div class="funnel-grid2">';
+    // 3-column layout: funnel bars | rates chart | commentary
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start">';
+    // Column 1: Funnel bars
+    html += '<div>';
     steps.forEach(function(step, i) {
       var val = scaledData[i];
       var barPct = Math.max(5, (val / maxVal) * 100);
       var pctOfTop = (val / scaledData[0] * 100).toFixed(1);
       var prevConv = i > 0 ? (val / scaledData[i-1] * 100).toFixed(1) : null;
-      // Left: label + bar
       html += '<div class="funnel-step-cell">';
       html += '<div class="funnel-row-label">'+step;
       html += '<span class="fl-total">'+fmt(val)+'</span>';
@@ -1576,11 +1584,56 @@ allCharts.upgradeRates = new Chart(document.getElementById('ch-upgrade-rates'), 
       if (i > 0) html += '<div class="funnel-row-rate">\u2193 '+prevConv+'% conversion</div>';
       html += '<div class="funnel-bar-single" style="width:'+barPct+'%;background:'+ch.color+'">'+fmt(val)+'</div>';
       html += '</div></div>';
-      // Right: commentary
+    });
+    html += '</div>';
+    // Column 2: Conversion rates line chart
+    html += '<div><canvas id="ch-funnel-rates" style="max-height:300px"></canvas></div>';
+    // Column 3: Commentary
+    html += '<div>';
+    steps.forEach(function(step, i) {
       html += '<div class="funnel-comment-cell">'+ch.commentary[i]+'</div>';
     });
     html += '</div>';
+    html += '</div>';
     container.innerHTML = html;
+
+    // Build funnel rates line chart
+    var sliceN = timeRange === 3 ? 3 : timeRange === 6 ? 6 : 12;
+    var rateLabels = MONTHS.slice(12 - sliceN);
+    var rateKeys = ['Signup %','Account %','Activated %','D7 Retained %','D30 Retained %','Paid %'];
+    var rateColors = [BLUE, TEAL, GREEN, ORANGE, PINK, PURPLE];
+    if (window._funnelRatesChart) window._funnelRatesChart.destroy();
+    window._funnelRatesChart = new Chart(document.getElementById('ch-funnel-rates'), {
+      type: 'line',
+      data: {
+        labels: rateLabels,
+        datasets: rateKeys.map(function(key, idx) {
+          return {
+            label: key,
+            data: funnelRatesTrend[key].slice(12 - sliceN),
+            borderColor: rateColors[idx],
+            backgroundColor: a(rateColors[idx], .08),
+            fill: false,
+            tension: .3,
+            borderWidth: 2,
+            pointRadius: 2
+          };
+        })
+      },
+      options: {
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } },
+          datalabels: { display: false }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { size: 9 } } },
+          y: { ticks: { callback: function(v) { return v + '%'; }, font: { size: 9 } },
+            title: { display: true, text: '% of Visits', font: { size: 9 } } }
+        },
+        aspectRatio: 1.2
+      }
+    });
   }
 
   window.switchFunnelChannel = function(id) {
@@ -1931,12 +1984,11 @@ allCharts.ide = new Chart(document.getElementById('ch-ide'), {
       datalabels:{display:function(ctx){ if(ctx.dataset.type==='line') return false; var v=Math.abs(ctx.dataset.data[ctx.dataIndex]||0); return v>=5; }, color:'#E6EDF3', font:{size:9,weight:'bold'}, formatter:function(v){return '$'+Math.abs(Math.round(v))+'M';}, anchor:'center', align:'center'},
       stackedTotal:{display:false},
       annotation:{annotations:{
-        band:goalBand(65,75,'GM Goal 65–75%'),
         zero:{type:'line',yMin:0,yMax:0,borderColor:'rgba(255,255,255,.2)',borderWidth:1}
       }}},
       scales:{x:{stacked:true, grid:{display:false}},
         y:{stacked:true, ticks:{callback:function(v){return '$'+Math.abs(v)+'M'}}, title:{display:true,text:'Revenue / COGS ($M)'}},
-        y1:{position:'right', grid:{display:false}, ticks:{callback:function(v){return v+'%'}}, min:0, max:100,
+        y1:{position:'right', grid:{display:false}, ticks:{callback:function(v){return v+'%'}},
           title:{display:true,text:'Gross Margin %'}}},
       aspectRatio:1.7 }
   });
@@ -1974,12 +2026,12 @@ allCharts.arpuCost = new Chart(document.getElementById('ch-arpu-cost'), {
 
 // Chart 3c: COGS per User by SKU — line chart
 var cogspuData = {
-  Free: [0.15,0.16,0.17,0.18,0.19,0.20,0.21,0.22,0.23,0.24,0.25,0.26],
-  Edu: [0.40,0.42,0.44,0.46,0.48,0.50,0.52,0.54,0.56,0.58,0.60,0.62],
-  Pro: [4.50,4.60,4.70,4.80,4.90,5.00,5.10,5.20,5.30,5.40,5.50,5.60],
-  'Pro+': [12.00,12.20,12.40,12.60,12.80,13.00,13.20,13.40,13.60,13.80,14.00,14.20],
-  Business: [7.80,7.90,8.00,8.10,8.20,8.30,8.40,8.50,8.60,8.70,8.80,8.90],
-  Enterprise: [9.50,9.60,9.70,9.80,9.90,10.00,10.10,10.20,10.30,10.40,10.50,10.60]
+  Free: [0.40,0.43,0.46,0.50,0.53,0.58,0.63,0.69,0.74,0.81,0.89,0.97],
+  Edu: [2.8,3.0,3.3,3.6,3.9,4.2,4.6,5.0,5.4,5.9,6.3,6.9],
+  Pro: [12.7,12.9,13.4,13.9,14.7,15.4,16.1,17.1,17.9,19.0,20.0,21.2],
+  'Pro+': [33.3,32.4,32.9,33.3,34.8,36.0,37.3,38.3,40.0,41.5,43.2,44.7],
+  Business: [19.0,19.1,19.4,19.6,20.0,20.5,21.0,21.3,21.6,22.0,22.4,22.8],
+  Enterprise: [26.9,26.7,27.5,27.8,27.5,28.1,28.0,27.5,27.4,27.1,26.8,26.7]
 };
 allCharts.cogspu = new Chart(document.getElementById('ch-cogspu'), {
   type:'line',
@@ -2053,12 +2105,12 @@ allCharts.seatsSku = new Chart(document.getElementById('ch-seats-sku'), {
 
 // Chart: Gross Profit by SKU (ch-gp-sku) — stacked bar
 var gpSkuData = {
-  Free: [-0.8,-0.9,-0.9,-1.0,-1.0,-1.1,-1.1,-1.2,-1.2,-1.3,-1.3,-1.4],
-  Edu: [0.8,0.8,0.8,0.8,0.8,0.7,0.7,0.7,0.7,0.7,0.7,0.7],
-  Pro: [28.5,29.4,30.3,30.2,31.1,31.0,31.9,31.8,32.7,32.6,33.5,33.4],
-  'Pro+': [11.2,13.1,15.0,16.9,18.8,20.7,23.6,26.5,29.3,32.1,35.9,39.7],
-  Business: [56.5,60.3,64.1,67.9,73.6,79.3,83.0,86.8,92.2,97.8,103.4,111.0],
-  Enterprise: [20.8,24.6,28.4,33.2,38.0,43.8,49.6,55.4,62.1,69.8,78.5,88.2]
+  Free: [-2.0,-2.2,-2.5,-2.8,-3.1,-3.5,-3.9,-4.4,-4.9,-5.5,-6.2,-7.0],
+  Edu: [-0.2,-0.3,-0.5,-0.7,-0.9,-1.1,-1.4,-1.7,-2.0,-2.4,-2.8,-3.3],
+  Pro: [-8,-9,-11,-14,-17,-21,-24,-29,-33,-39,-44,-51],
+  'Pro+': [-8,-8,-9,-10,-12,-14,-16,-18,-21,-25,-29,-34],
+  Business: [-20,-22,-25,-28,-30,-33,-38,-44,-49,-55,-62,-68],
+  Enterprise: [-13,-13,-14,-14,-15,-16,-18,-21,-24,-27,-31,-35]
 };
 allCharts.gpSku = new Chart(document.getElementById('ch-gp-sku'), {
   type:'bar',
