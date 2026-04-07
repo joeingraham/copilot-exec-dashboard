@@ -66,6 +66,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 
 /* ── Grid ── */
 .grid { display: grid; gap: 20px; }
+.grid-1 { grid-template-columns: 1fr; }
 .grid-2 { grid-template-columns: repeat(2, 1fr); }
 .grid-3 { grid-template-columns: repeat(3, 1fr); }
 .grid-4 { grid-template-columns: repeat(4, 1fr); }
@@ -330,14 +331,25 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 
 <!-- ── RETENTION ── -->
 <section class="section" id="retention">
-  <div class="section-header"><h2>Retention &amp; Health</h2><p>Churn, cohort retention, and NPS</p></div>
+  <div class="section-header"><h2>Retention &amp; Health</h2><p>Cohort retention, LTV, and return rates</p></div>
   <div class="grid grid-2">
-    <div class="card"><div class="card-title">Monthly Churn Rate <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Direct measure of customer dissatisfaction. Monthly seat churn rate — target < 3%.</div><div class="info-takeaway">📌 Churn dropped below 3% goal to 2.8% — improving product quality and engagement are driving retention.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-churn"></canvas></div></div>
-    <div class="card"><div class="card-title">NPS Trend <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Net Promoter Score — qualitative health check alongside quantitative metrics. Goal: 50+.</div><div class="info-takeaway">📌 NPS reached 52, crossing the goal threshold. Strongest scores among Enterprise users.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-nps"></canvas></div></div>
-    <div class="card span-full">
-      <div class="card-title">Retention Cohort Heatmap <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Gold-standard retention view. Shows if newer cohorts retain better than older ones (improving product-market fit).</div><div class="info-takeaway">📌 Newer cohorts (Mar-Jun 2026) show higher M1-M3 retention — onboarding improvements and feature additions are working.</div></div></span><span class="illustrative">(Illustrative Data)</span></div>
+    <div class="card"><div class="card-title">Retention J-Curves by Cohort <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly retention curves for each cohort. J-curve shape = initial churn then stabilization. Newer cohorts above older = improving product.</div><div class="info-takeaway">📌 Recent cohorts show higher floor retention — onboarding improvements are working.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-jcurves"></canvas></div></div>
+    <div class="card"><div class="card-title">Retention Milestones Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Tracks M1, M3, M6, M12 retention rates over time. Are retention milestones improving?</div><div class="info-takeaway">📌 M1 retention improved from 72% to 81%. M12 retention steady at ~58% — long-term stickiness holding.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-ret-milestones"></canvas></div></div>
+  </div>
+  <div class="grid grid-1" style="margin-top:20px">
+    <div class="card">
+      <div class="card-title">Retention Cohort Heatmap <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Gold-standard retention view. Shows if newer cohorts retain better (improving product-market fit).</div><div class="info-takeaway">📌 Newer cohorts show higher M1-M3 retention — product improvements are compounding.</div></div></span><span class="illustrative">(Illustrative Data)</span></div>
       <div style="overflow-x:auto" id="heatmap-wrap"></div>
     </div>
+  </div>
+  <div class="grid grid-3" style="margin-top:20px">
+    <div class="card"><div class="card-title">Cohorted Revenue Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Revenue trajectory by cohort. Shows if cohorts expand revenue over time (land-and-expand).</div><div class="info-takeaway">📌 Older cohorts show steady revenue — minimal contraction. Newer cohorts ramping faster.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-rev"></canvas></div></div>
+    <div class="card"><div class="card-title">Cohorted Gross Profit Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Gross profit by cohort. Shows when cohorts become profitable (or if they stay underwater).</div><div class="info-takeaway">📌 No cohort has reached positive GP yet. Older cohorts closest to breakeven at -15% margin.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-gp"></canvas></div></div>
+    <div class="card"><div class="card-title">5-Year LTV / NPV Projection <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Projects lifetime value and net present value per user over 5 years based on current retention and ARPU trends.</div><div class="info-takeaway">📌 5-year NPV is negative at current margins. Breakeven requires either 40% COGS reduction or 60% ARPU increase.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-ltv-npv"></canvas></div></div>
+  </div>
+  <div class="grid grid-2" style="margin-top:20px">
+    <div class="card"><div class="card-title">Return Rate (MAU / Total Ever Activated) <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> What % of all users ever activated are currently active? Low and declining = leaky bucket. Rising = strong pull-back.</div><div class="info-takeaway">📌 Return rate at 42% — less than half of ever-activated users are currently active. But trending up slightly.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-return-rate"></canvas></div></div>
+    <div class="card"><div class="card-title">Cumulative Activations vs Current MAU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Shows total ever activated growing vs current MAU. The gap = churned users. Narrowing gap = improving retention.</div><div class="info-takeaway">📌 6.2M ever activated, 2.6M currently active. 3.6M churned — large resurrection opportunity.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cum-vs-mau"></canvas></div></div>
   </div>
 </section>
 
@@ -867,15 +879,34 @@ function rebuildAll() {
 
   // 9. (removed — ch-gm replaced by ch-rev-cogs-gm)
 
-  // 10. Churn Rate
-  if (allCharts.churn) {
-    allCharts.churn.data.labels = labels;
-    var slicedChurnR = adjustFlow(sliceTime(totalChurn));
-    var slicedMauR = sliceTime(totalMau);
-    allCharts.churn.data.datasets[0].data = slicedChurnR.map(function(v,i){
-      return slicedMauR[i]>0 ? Math.round(v/slicedMauR[i]*10000)/100 : 0;
+  // 10. Retention Milestones (time-range aware)
+  if (allCharts.retMilestones) {
+    allCharts.retMilestones.data.labels = labels;
+    var retMileFull = {
+      'M1 Retention': [72,73,74,75,76,77,78,79,80,81,82,84],
+      'M3 Retention': [58,59,60,61,62,63,64,65,66,67,68,69],
+      'M6 Retention': [50,51,51,52,52,53,53,54,55,55,56,57],
+      'M12 Retention': [42,43,43,44,44,45,45,46,46,47,47,48]
+    };
+    allCharts.retMilestones.data.datasets.forEach(function(ds) {
+      if (retMileFull[ds.label]) { ds.data = sliceTime(retMileFull[ds.label]); }
     });
-    allCharts.churn.update('none');
+    allCharts.retMilestones.update('none');
+  }
+
+  // 10b. Return Rate (time-range aware)
+  if (allCharts.returnRate) {
+    allCharts.returnRate.data.labels = labels;
+    allCharts.returnRate.data.datasets[0].data = sliceTime(returnRate);
+    allCharts.returnRate.update('none');
+  }
+
+  // 10c. Cumulative Activations vs Current MAU (time-range aware)
+  if (allCharts.cumVsMau) {
+    allCharts.cumVsMau.data.labels = labels;
+    allCharts.cumVsMau.data.datasets[0].data = sliceTime(totalEverActivated);
+    allCharts.cumVsMau.data.datasets[1].data = sliceTime(returnMau);
+    allCharts.cumVsMau.update('none');
   }
 
   // 11. WAU/MAU Stickiness
@@ -2203,57 +2234,194 @@ allCharts.gpSku = new Chart(document.getElementById('ch-gp-sku'), {
   });
 })();
 // ══════════════════════════════
-//  7. RETENTION
+//  7. RETENTION & HEALTH
 // ══════════════════════════════
-allCharts.churn = new Chart(document.getElementById('ch-churn'), {
-  type:'line',
-  data:{ labels:MONTHS, datasets:[{ label:'Churn Rate', data:[4.2,4.0,3.9,3.8,3.6,3.5,3.4,3.3,3.2,3.1,2.9,2.8],
-    borderColor:RED, backgroundColor:a(RED,.1), fill:true, tension:.3, borderWidth:2 }] },
-  options:{ plugins:{legend:{display:false}, annotation:{annotations:{goal:goalLine(3.0,'Goal: < 3%')}}},
-    scales:{x:{grid:{display:false}}, y:{min:2,max:5, ticks:{callback:v=>v+'%'}}}, aspectRatio:1.7 }
+
+// Retention J-Curves by Cohort
+var cohortNames = ['Oct 2025','Nov 2025','Dec 2025','Jan 2026','Feb 2026','Mar 2026'];
+var jCurveData = {
+  'Oct 2025': [100,76,68,63,60,58,57],
+  'Nov 2025': [100,78,70,65,62,60,null],
+  'Dec 2025': [100,79,72,67,64,null,null],
+  'Jan 2026': [100,80,73,69,null,null,null],
+  'Feb 2026': [100,82,75,null,null,null,null],
+  'Mar 2026': [100,84,null,null,null,null,null]
+};
+var jCurveColors = [PURPLE, BLUE, TEAL, ORANGE, PINK, GREEN];
+var jCurveLabels = ['M0','M1','M2','M3','M4','M5','M6'];
+
+allCharts.jcurves = new Chart(document.getElementById('ch-jcurves'), {
+  type: 'line',
+  data: { labels: jCurveLabels, datasets: cohortNames.map(function(name, idx) {
+    return { label: name, data: jCurveData[name], borderColor: jCurveColors[idx],
+      borderWidth: 2, tension: .3, fill: false, pointRadius: 3, spanGaps: false };
+  })},
+  options: { interaction: { mode: 'index', intersect: false },
+    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } }, datalabels: { display: false } },
+    scales: { x: { grid: { display: false } }, y: { min: 50, max: 100, ticks: { callback: function(v) { return v + '%'; } },
+      title: { display: true, text: '% Retained' } } },
+    aspectRatio: 1.7 }
 });
 
-new Chart(document.getElementById('ch-nps'), {
-  type:'line',
-  data:{ labels:MONTHS, datasets:[{ label:'NPS', data:[42,43,44,44,45,46,47,48,49,50,51,52],
-    borderColor:PURPLE, backgroundColor:a(PURPLE,.1), fill:true, tension:.3, borderWidth:2.5 }] },
-  options:{ plugins:{legend:{display:false}, annotation:{annotations:{goal:goalLine(50,'Goal: 50')}}},
-    scales:{x:{grid:{display:false}}, y:{min:38,max:58}}, aspectRatio:1.7 }
+// Retention Milestones Over Time (M1, M3, M6, M12 for each cohort month)
+allCharts.retMilestones = new Chart(document.getElementById('ch-ret-milestones'), {
+  type: 'line',
+  data: { labels: MONTHS, datasets: [
+    { label: 'M1 Retention', data: [72,73,74,75,76,77,78,79,80,81,82,84], borderColor: PURPLE, borderWidth: 2.5, tension: .3, fill: false },
+    { label: 'M3 Retention', data: [58,59,60,61,62,63,64,65,66,67,68,69], borderColor: BLUE, borderWidth: 2, tension: .3, fill: false },
+    { label: 'M6 Retention', data: [50,51,51,52,52,53,53,54,55,55,56,57], borderColor: TEAL, borderWidth: 2, tension: .3, fill: false },
+    { label: 'M12 Retention', data: [42,43,43,44,44,45,45,46,46,47,47,48], borderColor: ORANGE, borderWidth: 2, tension: .3, fill: false, borderDash: [4,3] }
+  ]},
+  options: { interaction: { mode: 'index', intersect: false },
+    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } }, datalabels: { display: false } },
+    scales: { x: { grid: { display: false } }, y: { min: 30, max: 90, ticks: { callback: function(v) { return v + '%'; } },
+      title: { display: true, text: '% Retained' } } },
+    aspectRatio: 1.7 }
 });
 
 // Heatmap
 (function() {
-  const cohorts = ['Jan 2026','Feb 2026','Mar 2026','Apr 2026','May 2026','Jun 2026'];
-  const mths = ['M0','M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12'];
-  const base = [
-    [100,88,82,78,75,72,70,68,67,66,65,64,64],
-    [100,89,83,79,76,73,71,69,68,67,66,65,null],
-    [100,90,84,80,77,74,72,70,69,68,67,null,null],
-    [100,91,85,81,78,75,73,71,70,null,null,null,null],
-    [100,92,86,82,79,76,null,null,null,null,null,null,null],
-    [100,93,87,null,null,null,null,null,null,null,null,null,null]
+  var cohorts = ['Oct 2025','Nov 2025','Dec 2025','Jan 2026','Feb 2026','Mar 2026'];
+  var mths = ['M0','M1','M2','M3','M4','M5','M6'];
+  var base = [
+    [100,76,68,63,60,58,57],
+    [100,78,70,65,62,60,null],
+    [100,79,72,67,64,null,null],
+    [100,80,73,69,null,null,null],
+    [100,82,75,null,null,null,null],
+    [100,84,null,null,null,null,null]
   ];
   function heatColor(v) {
     if (v === null) return 'transparent';
-    if (v >= 90) return a(TEAL,.55);
-    if (v >= 80) return a(TEAL,.4);
-    if (v >= 70) return a(BLUE,.35);
-    if (v >= 65) return a(PURPLE,.3);
-    return a(PINK,.25);
+    if (v >= 90) return 'rgba(121,217,185,.55)';
+    if (v >= 80) return 'rgba(121,217,185,.4)';
+    if (v >= 70) return 'rgba(73,204,249,.35)';
+    if (v >= 60) return 'rgba(123,104,238,.3)';
+    return 'rgba(253,113,175,.25)';
   }
-  let html = '<table class="heatmap"><thead><tr><th>Cohort</th>';
-  mths.forEach(m => html += '<th>'+m+'</th>');
+  var html = '<table class="heatmap"><thead><tr><th>Cohort</th>';
+  mths.forEach(function(m) { html += '<th>'+m+'</th>'; });
   html += '</tr></thead><tbody>';
-  cohorts.forEach((c, i) => {
+  cohorts.forEach(function(c, i) {
     html += '<tr><td style="text-align:left;color:#E6EDF3;font-weight:500">'+c+'</td>';
-    base[i].forEach(v => {
-      html += '<td style="background:'+heatColor(v)+';color:'+(v===null?'transparent':'#E6EDF3')+'">'+(v!==null?v+'%':'')+'</td>';
+    base[i].forEach(function(v) {
+      html += '<td style="background:'+heatColor(v)+';color:'+(v===null?'transparent':'#E6EDF3')+'">'+
+        (v!==null?v+'%':'')+'</td>';
     });
     html += '</tr>';
   });
   html += '</tbody></table>';
   document.getElementById('heatmap-wrap').innerHTML = html;
 })();
+
+// Cohorted Revenue Over Time
+allCharts.cohortRev = new Chart(document.getElementById('ch-cohort-rev'), {
+  type: 'line',
+  data: { labels: ['M0','M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12'], datasets: [
+    { label: 'H1 2025 Cohort', data: [0.8,1.2,1.4,1.5,1.5,1.6,1.6,1.6,1.7,1.7,1.7,1.8,1.8], borderColor: PURPLE, borderWidth: 2, tension: .3, fill: false },
+    { label: 'H2 2025 Cohort', data: [1.0,1.5,1.7,1.8,1.9,1.9,2.0,2.0,2.1,null,null,null,null], borderColor: BLUE, borderWidth: 2, tension: .3, fill: false, spanGaps: false },
+    { label: 'H1 2026 Cohort', data: [1.2,1.8,2.1,2.3,null,null,null,null,null,null,null,null,null], borderColor: TEAL, borderWidth: 2, tension: .3, fill: false, spanGaps: false }
+  ]},
+  options: { interaction: { mode: 'index', intersect: false },
+    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } }, datalabels: { display: false } },
+    scales: { x: { grid: { display: false } }, y: { ticks: { callback: function(v) { return '$'+v+'M'; } },
+      title: { display: true, text: 'Monthly Revenue ($M)' } } },
+    aspectRatio: 1.4 }
+});
+
+// Cohorted Gross Profit Over Time (all negative since COGS > Rev)
+allCharts.cohortGp = new Chart(document.getElementById('ch-cohort-gp'), {
+  type: 'line',
+  data: { labels: ['M0','M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12'], datasets: [
+    { label: 'H1 2025 Cohort', data: [-0.6,-0.7,-0.6,-0.5,-0.5,-0.4,-0.4,-0.3,-0.3,-0.3,-0.2,-0.2,-0.2], borderColor: PURPLE, borderWidth: 2, tension: .3, fill: false },
+    { label: 'H2 2025 Cohort', data: [-0.8,-0.9,-0.8,-0.7,-0.6,-0.6,-0.5,-0.5,-0.4,null,null,null,null], borderColor: BLUE, borderWidth: 2, tension: .3, fill: false, spanGaps: false },
+    { label: 'H1 2026 Cohort', data: [-1.0,-1.2,-1.1,-0.9,null,null,null,null,null,null,null,null,null], borderColor: TEAL, borderWidth: 2, tension: .3, fill: false, spanGaps: false }
+  ]},
+  options: { interaction: { mode: 'index', intersect: false },
+    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } }, datalabels: { display: false },
+      annotation: { annotations: { zero: { type: 'line', yMin: 0, yMax: 0, borderColor: 'rgba(255,255,255,.2)', borderWidth: 1 } } } },
+    scales: { x: { grid: { display: false } }, y: { ticks: { callback: function(v) { return '$'+v+'M'; } },
+      title: { display: true, text: 'Monthly Gross Profit ($M)' } } },
+    aspectRatio: 1.4 }
+});
+
+// 5-Year LTV / NPV Projection
+(function() {
+  var months60 = [];
+  for (var m = 0; m <= 60; m++) months60.push('M'+m);
+  var retention = [100];
+  for (var m = 1; m <= 60; m++) retention.push(Math.round(100 * Math.pow(0.88, Math.sqrt(m)) * 10) / 10);
+  var arpu = 16.40, cogspu = 28.00;
+  var cumRev = [0], cumGP = [0];
+  for (var m = 1; m <= 60; m++) {
+    cumRev.push(Math.round((cumRev[m-1] + arpu * retention[m] / 100) * 100) / 100);
+    cumGP.push(Math.round((cumGP[m-1] + (arpu - cogspu) * retention[m] / 100) * 100) / 100);
+  }
+  var discountRate = 0.10 / 12;
+  var cumNPV = [0];
+  for (var m = 1; m <= 60; m++) {
+    var discountFactor = Math.pow(1 + discountRate, -m);
+    cumNPV.push(Math.round((cumNPV[m-1] + (arpu - cogspu) * retention[m] / 100 * discountFactor) * 100) / 100);
+  }
+
+  new Chart(document.getElementById('ch-ltv-npv'), {
+    type: 'line',
+    data: { labels: months60.filter(function(_,i){return i%6===0||i===60;}), datasets: [
+      { label: 'Cumulative Revenue/User', data: cumRev.filter(function(_,i){return i%6===0||i===60;}),
+        borderColor: BLUE, borderWidth: 2, tension: .3, fill: false },
+      { label: 'Cumulative GP/User', data: cumGP.filter(function(_,i){return i%6===0||i===60;}),
+        borderColor: RED, borderWidth: 2, tension: .3, fill: false },
+      { label: 'NPV (10% discount)', data: cumNPV.filter(function(_,i){return i%6===0||i===60;}),
+        borderColor: ORANGE, borderWidth: 2, tension: .3, fill: false, borderDash: [4,3] }
+    ]},
+    options: { interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } }, datalabels: { display: false },
+        annotation: { annotations: { zero: { type: 'line', yMin: 0, yMax: 0, borderColor: 'rgba(255,255,255,.2)', borderWidth: 1 } } } },
+      scales: { x: { grid: { display: false }, ticks: { font: { size: 8 } } },
+        y: { ticks: { callback: function(v) { return '$'+v; } }, title: { display: true, text: 'Cumulative $/User' } } },
+      aspectRatio: 1.4 }
+  });
+})();
+
+// Return Rate: MAU / Total Ever Activated
+var totalEverActivated = [3200,3400,3600,3800,4000,4200,4500,4800,5100,5400,5800,6200];
+var returnMau = [1420,1515,1610,1706,1800,1895,2002,2114,2226,2350,2495,2662];
+var returnRate = returnMau.map(function(v,i) { return Math.round(v / totalEverActivated[i] * 1000) / 10; });
+
+allCharts.returnRate = new Chart(document.getElementById('ch-return-rate'), {
+  type: 'line',
+  data: { labels: MONTHS, datasets: [
+    { label: 'Return Rate %', data: returnRate, borderColor: PURPLE, borderWidth: 2.5, tension: .3,
+      fill: true, backgroundColor: 'rgba(123,104,238,.08)' }
+  ]},
+  options: { interaction: { mode: 'index', intersect: false },
+    plugins: { legend: { display: false }, datalabels: { display: false },
+      tooltip: { callbacks: { label: function(ctx) {
+        return 'Return Rate: ' + ctx.parsed.y + '% (' + returnMau[ctx.dataIndex] + 'K MAU / ' + totalEverActivated[ctx.dataIndex] + 'K ever activated)';
+      }}}},
+    scales: { x: { grid: { display: false } }, y: { ticks: { callback: function(v) { return v + '%'; } },
+      title: { display: true, text: 'Return Rate (%)' } } },
+    aspectRatio: 1.7 }
+});
+
+// Cumulative Activations vs Current MAU
+allCharts.cumVsMau = new Chart(document.getElementById('ch-cum-vs-mau'), {
+  type: 'line',
+  data: { labels: MONTHS, datasets: [
+    { label: 'Total Ever Activated', data: totalEverActivated, borderColor: BLUE, borderWidth: 2.5, tension: .3,
+      fill: true, backgroundColor: 'rgba(73,204,249,.08)' },
+    { label: 'Current MAU', data: returnMau, borderColor: TEAL, borderWidth: 2.5, tension: .3,
+      fill: true, backgroundColor: 'rgba(121,217,185,.08)' }
+  ]},
+  options: { interaction: { mode: 'index', intersect: false },
+    plugins: { legend: { position: 'bottom' }, datalabels: { display: false },
+      tooltip: { callbacks: { label: function(ctx) { return ctx.dataset.label + ': ' + ctx.parsed.y + 'K'; },
+        footer: function(items) { if (items.length >= 2) { var gap = items[0].parsed.y - items[1].parsed.y; return 'Churned: ' + gap + 'K'; } return ''; }
+      }}},
+    scales: { x: { grid: { display: false } }, y: { ticks: { callback: function(v) { return v + 'K'; } },
+      title: { display: true, text: 'Users (thousands)' } } },
+    aspectRatio: 1.7 }
+});
 
 // ══════════════════════════════
 //  8. PIPELINE
