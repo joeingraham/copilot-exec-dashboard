@@ -216,10 +216,6 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M0 1.75A.75.75 0 0 1 .75 1h14.5a.75.75 0 0 1 0 1.5H.75A.75.75 0 0 1 0 1.75zm0 5A.75.75 0 0 1 .75 6h14.5a.75.75 0 0 1 0 1.5H.75A.75.75 0 0 1 0 6.75zm0 5A.75.75 0 0 1 .75 11h14.5a.75.75 0 0 1 0 1.5H.75a.75.75 0 0 1-.75-.75z"/></svg></span>
     <span class="nav-label">Executive Summary</span>
   </a>
-  <a class="nav-item" href="#goals" data-section="goals">
-    <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zm3.28 5.22a.75.75 0 0 0-1.06 0L7 8.44 5.78 7.22a.75.75 0 0 0-1.06 1.06l1.75 1.75a.75.75 0 0 0 1.06 0l3.75-3.75a.75.75 0 0 0 0-1.06z"/></svg></span>
-    <span class="nav-label">Goals & Targets</span>
-  </a>
   <a class="nav-item" href="#growth" data-section="growth">
     <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zm.75 4.75a.75.75 0 0 0-1.5 0v2.5h-2.5a.75.75 0 0 0 0 1.5h2.5v2.5a.75.75 0 0 0 1.5 0v-2.5h2.5a.75.75 0 0 0 0-1.5h-2.5v-2.5z"/></svg></span>
     <span class="nav-label">User Growth & Acquisition</span>
@@ -248,6 +244,10 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M1 2.75A.75.75 0 0 1 1.75 2h12.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 2.75zm2 3A.75.75 0 0 1 3.75 5h8.5a.75.75 0 0 1 0 1.5h-8.5A.75.75 0 0 1 3 5.75zm2 3A.75.75 0 0 1 5.75 8h4.5a.75.75 0 0 1 0 1.5h-4.5A.75.75 0 0 1 5 8.75zm2 3a.75.75 0 0 1 .75-.75h.5a.75.75 0 0 1 0 1.5h-.5a.75.75 0 0 1-.75-.75z"/></svg></span>
     <span class="nav-label">Sales Pipeline</span>
   </a>
+  <a class="nav-item" href="#goals" data-section="goals">
+    <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zm3.28 5.22a.75.75 0 0 0-1.06 0L7 8.44 5.78 7.22a.75.75 0 0 0-1.06 1.06l1.75 1.75a.75.75 0 0 0 1.06 0l3.75-3.75a.75.75 0 0 0 0-1.06z"/></svg></span>
+    <span class="nav-label">Goals & Targets</span>
+  </a>
   <a class="nav-item" href="#experiments" data-section="experiments">
     <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M5.433.868l1.49 3.02 3.333.485-2.411 2.35.57 3.318L5.432 8.49l-2.982 1.568.569-3.318L.608 4.39l3.334-.486L5.433.868zM11 11.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5zm-3 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z"/></svg></span>
     <span class="nav-label">Experiments</span>
@@ -261,51 +261,6 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 <section class="section" id="exec">
   <div class="section-header"><h2>Executive Summary</h2><p>Key performance indicators at a glance</p></div>
   <div class="grid grid-4" id="kpi-tiles"></div>
-</section>
-
-<!-- ── GOALS ── -->
-<section class="section" id="goals">
-  <div class="section-header"><h2>Goals &amp; Targets</h2><p>Weekly actuals vs. targets by product area</p></div>
-  
-  <h3 style="color:#E6EDF3;font-size:15px;font-weight:600;margin:16px 0 10px;padding-left:4px;border-left:3px solid #7B68EE;padding-left:12px">GitHub Copilot (Total)</h3>
-  <div class="grid grid-2">
-    <div class="card"><div class="card-title">Rolling 7-Day DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ghcp-dau"></canvas></div></div>
-    <div class="card"><div class="card-title">New Users per Week <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ghcp-newusers"></canvas></div></div>
-    <div class="card"><div class="card-title">Week 1 Retention <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ghcp-retention"></canvas></div></div>
-    <div class="card"><div class="card-title">Gross Margin <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ghcp-margin"></canvas></div></div>
-  </div>
-
-  <h3 style="color:#E6EDF3;font-size:15px;font-weight:600;margin:24px 0 10px;padding-left:12px;border-left:3px solid #2EA043">VS Code</h3>
-  <div class="grid grid-2">
-    <div class="card"><div class="card-title">Rolling 7-Day DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-vsc-dau"></canvas></div></div>
-    <div class="card"><div class="card-title">New Users per Week <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-vsc-newusers"></canvas></div></div>
-    <div class="card"><div class="card-title">Week 1 Retention <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-vsc-retention"></canvas></div></div>
-    <div class="card"><div class="card-title">Cost per User <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-vsc-cost"></canvas></div></div>
-  </div>
-
-  <h3 style="color:#E6EDF3;font-size:15px;font-weight:600;margin:24px 0 10px;padding-left:12px;border-left:3px solid #79D9B9">CLI</h3>
-  <div class="grid grid-2">
-    <div class="card"><div class="card-title">Rolling 7-Day DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cli-dau"></canvas></div></div>
-    <div class="card"><div class="card-title">Week 1 Retention <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cli-retention"></canvas></div></div>
-    <div class="card"><div class="card-title">Cost per User <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cli-cost"></canvas></div></div>
-  </div>
-
-  <h3 style="color:#E6EDF3;font-size:15px;font-weight:600;margin:24px 0 10px;padding-left:12px;border-left:3px solid #49CCF9">CCA (Copilot Chat / Agent)</h3>
-  <div class="grid grid-2">
-    <div class="card"><div class="card-title">Rolling 7-Day DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cca-dau"></canvas></div></div>
-    <div class="card"><div class="card-title">Week 1 Retention <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cca-retention"></canvas></div></div>
-    <div class="card"><div class="card-title">Merging Users as % of DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cca-merging"></canvas></div></div>
-    <div class="card"><div class="card-title">Cost per User <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cca-cost"></canvas></div></div>
-  </div>
-
-  <h3 style="color:#E6EDF3;font-size:15px;font-weight:600;margin:24px 0 10px;padding-left:12px;border-left:3px solid #FD71AF">CCR (Copilot Code Review)</h3>
-  <div class="grid grid-2">
-    <div class="card"><div class="card-title">Positive Feedback Rate <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ccr-feedback"></canvas></div></div>
-    <div class="card"><div class="card-title">PRs with CCR Review <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ccr-prs"></canvas></div></div>
-    <div class="card"><div class="card-title">WAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ccr-wau"></canvas></div></div>
-    <div class="card"><div class="card-title">Reviews by CB/CE <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ccr-reviews"></canvas></div></div>
-    <div class="card"><div class="card-title">Cost per User <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ccr-cost"></canvas></div></div>
-  </div>
 </section>
 
 <!-- ── USER GROWTH ── -->
@@ -396,6 +351,51 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
   <div class="grid grid-2">
     <div class="card"><div class="card-title">Pipeline by Stage <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Total pipeline value segmented by sales stage. Tracks deal progression and pipeline health.</div><div class="info-takeaway">📌 $120M closed/won from $800M pipeline = 15% win rate. Pipeline coverage of 6.7× is healthy.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-pipeline"></canvas></div></div>
     <div class="card"><div class="card-title">Quota Attainment <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Sales team performance against target. 100% = on plan.</div><div class="info-takeaway">📌 At 87% attainment — slightly below plan but improving. Enterprise segment over-performing at 102%.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-quota"></canvas></div></div>
+  </div>
+</section>
+
+<!-- ── GOALS ── -->
+<section class="section" id="goals">
+  <div class="section-header"><h2>Goals &amp; Targets</h2><p>Weekly actuals vs. targets by product area</p></div>
+  
+  <h3 style="color:#E6EDF3;font-size:15px;font-weight:600;margin:16px 0 10px;padding-left:4px;border-left:3px solid #7B68EE;padding-left:12px">GitHub Copilot (Total)</h3>
+  <div class="grid grid-4">
+    <div class="card"><div class="card-title">Rolling 7-Day DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ghcp-dau"></canvas></div></div>
+    <div class="card"><div class="card-title">New Users per Week <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ghcp-newusers"></canvas></div></div>
+    <div class="card"><div class="card-title">Week 1 Retention <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ghcp-retention"></canvas></div></div>
+    <div class="card"><div class="card-title">Gross Margin <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ghcp-margin"></canvas></div></div>
+  </div>
+
+  <h3 style="color:#E6EDF3;font-size:15px;font-weight:600;margin:24px 0 10px;padding-left:12px;border-left:3px solid #2EA043">VS Code</h3>
+  <div class="grid grid-4">
+    <div class="card"><div class="card-title">Rolling 7-Day DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-vsc-dau"></canvas></div></div>
+    <div class="card"><div class="card-title">New Users per Week <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-vsc-newusers"></canvas></div></div>
+    <div class="card"><div class="card-title">Week 1 Retention <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-vsc-retention"></canvas></div></div>
+    <div class="card"><div class="card-title">Cost per User <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-vsc-cost"></canvas></div></div>
+  </div>
+
+  <h3 style="color:#E6EDF3;font-size:15px;font-weight:600;margin:24px 0 10px;padding-left:12px;border-left:3px solid #79D9B9">CLI</h3>
+  <div class="grid grid-3">
+    <div class="card"><div class="card-title">Rolling 7-Day DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cli-dau"></canvas></div></div>
+    <div class="card"><div class="card-title">Week 1 Retention <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cli-retention"></canvas></div></div>
+    <div class="card"><div class="card-title">Cost per User <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cli-cost"></canvas></div></div>
+  </div>
+
+  <h3 style="color:#E6EDF3;font-size:15px;font-weight:600;margin:24px 0 10px;padding-left:12px;border-left:3px solid #49CCF9">CCA (Copilot Chat / Agent)</h3>
+  <div class="grid grid-4">
+    <div class="card"><div class="card-title">Rolling 7-Day DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cca-dau"></canvas></div></div>
+    <div class="card"><div class="card-title">Week 1 Retention <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cca-retention"></canvas></div></div>
+    <div class="card"><div class="card-title">Merging Users as % of DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cca-merging"></canvas></div></div>
+    <div class="card"><div class="card-title">Cost per User <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cca-cost"></canvas></div></div>
+  </div>
+
+  <h3 style="color:#E6EDF3;font-size:15px;font-weight:600;margin:24px 0 10px;padding-left:12px;border-left:3px solid #FD71AF">CCR (Copilot Code Review)</h3>
+  <div class="grid grid-5">
+    <div class="card"><div class="card-title">Positive Feedback Rate <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ccr-feedback"></canvas></div></div>
+    <div class="card"><div class="card-title">PRs with CCR Review <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ccr-prs"></canvas></div></div>
+    <div class="card"><div class="card-title">WAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ccr-wau"></canvas></div></div>
+    <div class="card"><div class="card-title">Reviews by CB/CE <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ccr-reviews"></canvas></div></div>
+    <div class="card"><div class="card-title">Cost per User <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ccr-cost"></canvas></div></div>
   </div>
 </section>
 
@@ -654,14 +654,36 @@ function getPerSku(metric) {
 }
 
 // ── Time Range / Granularity Helpers ──
-function getCurrentLabels() {
-  var base = MONTHS.slice(12 - timeRange);
-  if (timeGranularity === 'weekly') {
-    return base.map(function(m) { return m + ' (wk avg)'; });
+function getWeeklyLabels() {
+  var labels = [];
+  ['May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr'].forEach(function(m) {
+    labels.push(m+' W1', m+' W2', m+' W3', m+' W4');
+  });
+  return labels;
+}
+function interpolateToWeekly(monthlyData) {
+  var weekly = [];
+  for (var m = 0; m < 12; m++) {
+    var curr = monthlyData[m];
+    var next = m < 11 ? monthlyData[m + 1] : curr;
+    for (var w = 0; w < 4; w++) {
+      weekly.push(Math.round((curr + (next - curr) * w / 4) * 100) / 100);
+    }
   }
-  return base;
+  return weekly;
+}
+function getCurrentLabels() {
+  if (timeGranularity === 'weekly') {
+    var all = getWeeklyLabels();
+    return all.slice(all.length - timeRange * 4);
+  }
+  return MONTHS.slice(12 - timeRange);
 }
 function sliceTime(arr) {
+  if (timeGranularity === 'weekly') {
+    var data = arr.length <= 12 ? interpolateToWeekly(arr) : arr;
+    return data.slice(data.length - timeRange * 4);
+  }
   return arr.slice(12 - timeRange);
 }
 function adjustFlow(arr) {
@@ -1093,20 +1115,22 @@ kpis.forEach((k, i) => {
 // ══════════════════════════════
 //  1b. GOALS & TARGETS
 // ══════════════════════════════
-var GOAL_WEEKS = ['May W1','May W3','Jun W1','Jun W3','Jul W1','Jul W3','Aug W1','Aug W3',
-                  'Sep W1','Sep W3','Oct W1','Oct W3','Nov W1','Nov W3','Dec W1','Dec W3',
-                  'Jan W1','Jan W3','Feb W1','Feb W3','Mar W1','Mar W3','Apr W1','Apr W3'];
+var GOAL_WEEKS = [];
+['May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr'].forEach(function(m) {
+  GOAL_WEEKS.push(m+' W1', m+' W2', m+' W3', m+' W4');
+});
 
-var NOISE = [0.3,-0.5,0.8,-0.2,0.6,-0.7,0.1,0.9,-0.4,0.5,-0.8,0.2,-0.6,0.7,-0.1,0.4,-0.9,0.3,0.5,-0.3,0.8,-0.5,0.2,-0.7];
+var NOISE = [0.3,-0.5,0.8,-0.2,0.6,-0.7,0.1,0.9,-0.4,0.5,-0.8,0.2,-0.6,0.7,-0.1,0.4,-0.9,0.3,0.5,-0.3,0.8,-0.5,0.2,-0.7,
+             -0.3,0.5,-0.8,0.2,-0.6,0.7,-0.1,-0.9,0.4,-0.5,0.8,-0.2,0.6,-0.7,0.1,0.4,0.9,-0.3,-0.5,0.3,-0.8,0.5,-0.2,0.7];
 
 function genActuals(start, end, noiseAmt) {
-  var d = []; var step = (end - start) / 23;
-  for (var i = 0; i < 24; i++) d.push(Math.round((start + step * i + NOISE[i] * noiseAmt) * 100) / 100);
+  var d = []; var step = (end - start) / 47;
+  for (var i = 0; i < 48; i++) d.push(Math.round((start + step * i + NOISE[i] * noiseAmt) * 100) / 100);
   return d;
 }
 function genGoal(start, end) {
-  var d = []; var step = (end - start) / 23;
-  for (var i = 0; i < 24; i++) d.push(Math.round((start + step * i) * 100) / 100);
+  var d = []; var step = (end - start) / 47;
+  for (var i = 0; i < 48; i++) d.push(Math.round((start + step * i) * 100) / 100);
   return d;
 }
 
@@ -1118,22 +1142,22 @@ function buildGoalChart(canvasId, actualData, goalData, opts) {
     type: 'line',
     data: { labels: GOAL_WEEKS, datasets: [
       { label: 'Actual', data: actualData, borderColor: color, backgroundColor: a(color, .08),
-        fill: true, tension: .3, borderWidth: 2.5, pointRadius: 2, pointHoverRadius: 5 },
+        fill: true, tension: .3, borderWidth: 2, pointRadius: 1, pointHoverRadius: 4 },
       { label: 'Goal', data: goalData, borderColor: goalColor, backgroundColor: 'transparent',
-        borderDash: [6, 4], borderWidth: 2, pointRadius: 0, fill: false, tension: .3 }
+        borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: .3 }
     ]},
     options: {
       interaction: { mode: 'index', intersect: false },
-      plugins: { legend: { position: 'bottom' }, datalabels: { display: false },
+      plugins: { legend: { position: 'bottom', labels: { font: { size: 9 }, boxWidth: 10 } }, datalabels: { display: false },
         tooltip: { callbacks: {
           label: function(ctx) { return ctx.dataset.label + ': ' + fmt(ctx.parsed.y); }
         }}
       },
       scales: {
-        x: { grid: { display: false }, ticks: { font: { size: 8 }, maxRotation: 45 } },
-        y: { ticks: { callback: function(v) { return fmt(v); } }, title: { display: true, text: opts.yLabel || '' } }
+        x: { grid: { display: false }, ticks: { font: { size: 6 }, maxRotation: 45, maxTicksLimit: 12 } },
+        y: { ticks: { callback: function(v) { return fmt(v); }, font: { size: 9 } }, title: { display: true, text: opts.yLabel || '', font: { size: 9 } } }
       },
-      aspectRatio: 1.7
+      aspectRatio: 1.4
     }
   });
 }
