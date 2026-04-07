@@ -1601,10 +1601,15 @@ var funnelRatesTrend = {
     html += '</div>';
     // 3-column grid: each step is a row with [bar | chart-space | commentary]
     // Build all rows, chart goes in a spanning div
-    html += '<div style="display:grid;grid-template-columns:280px 1fr 1fr;gap:0 16px;align-items:center">';
+    html += '<div style="display:grid;grid-template-columns:220px 2fr 1fr;gap:0 16px;align-items:center">';
     steps.forEach(function(step, i) {
       var val = scaledData[i];
-      var barPct = Math.max(5, (val / maxVal) * 100);
+      // Cap top bar at 2x the second bar, label "not to scale"
+      var refMax = scaledData[1] * 2;
+      var barBase = (i === 0 && scaledData[0] > refMax) ? refMax : maxVal;
+      var barPct = Math.max(5, (val / barBase) * 100);
+      if (i === 0 && scaledData[0] > refMax) barPct = 100;
+      var notToScale = (i === 0 && scaledData[0] > refMax);
       var pctOfTop = (val / scaledData[0] * 100).toFixed(1);
       var prevConv = i > 0 ? (val / scaledData[i-1] * 100).toFixed(1) : null;
       // Col 1: funnel bar
@@ -1615,7 +1620,7 @@ var funnelRatesTrend = {
       html += '</div>';
       html += '<div class="funnel-row-bar">';
       if (i > 0) html += '<div class="funnel-row-rate">\u2193 '+prevConv+'%</div>';
-      html += '<div class="funnel-bar-single" style="width:'+barPct+'%;background:'+ch.color+'">'+fmt(val)+'</div>';
+      html += '<div class="funnel-bar-single" style="width:'+barPct+'%;background:'+ch.color+'">'+fmt(val)+(notToScale?' <span style="font-size:7px;opacity:.6;font-weight:400">(not to scale)</span>':'')+'</div>';
       html += '</div></div>';
       // Col 2: chart (only on first row, spans all rows)
       if (i === 0) {
