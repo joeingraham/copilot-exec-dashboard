@@ -189,6 +189,14 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <button class="toggle-btn active" data-sku="Business" onclick="toggleSku(this)"><span class="dot" style="background:#79D9B9"></span>Biz</button>
     <button class="toggle-btn active" data-sku="Enterprise" onclick="toggleSku(this)"><span class="dot" style="background:#FFB08E"></span>Ent</button>
   </div>
+  <div class="toggle-wrap" id="surface-filters">
+    <button class="toggle-btn active" data-surface="all" onclick="toggleSurface(this)" style="background:rgba(255,255,255,.1)">All Surfaces</button>
+    <button class="toggle-btn active" data-surface="Completions" onclick="toggleSurface(this)"><span class="dot" style="background:#7B68EE"></span>Completions</button>
+    <button class="toggle-btn active" data-surface="Chat" onclick="toggleSurface(this)"><span class="dot" style="background:#49CCF9"></span>Chat</button>
+    <button class="toggle-btn active" data-surface="CLI" onclick="toggleSurface(this)"><span class="dot" style="background:#79D9B9"></span>CLI</button>
+    <button class="toggle-btn active" data-surface="PR Summaries" onclick="toggleSurface(this)"><span class="dot" style="background:#FD71AF"></span>PR Sum</button>
+    <button class="toggle-btn active" data-surface="Agent" onclick="toggleSurface(this)"><span class="dot" style="background:#FFB08E"></span>Agent</button>
+  </div>
   <span class="updated">Last Updated: April 6, 2026</span>
 </header>
 
@@ -262,18 +270,28 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <div class="card"><div class="card-title">ARR Run-Rate by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Annual Recurring Revenue by plan tier. Current month revenue × 12, stacked to show mix.</div><div class="info-takeaway">📌 ARR has more than doubled YoY. Business + Enterprise drive 75% of ARR growth.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-arr"></canvas></div></div>
     <div class="card"><div class="card-title">Monthly Revenue by Plan <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly revenue breakdown by plan tier. Shows where dollars come from and how the mix is shifting.</div><div class="info-takeaway">📌 Enterprise revenue is growing fastest (4× in 12 months). Business remains the largest contributor at ~$118M/mo.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-rev-plan"></canvas></div></div>
     <div class="card"><div class="card-title">ARPU by Plan (Subscription + Overage) <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Average Revenue Per User by plan tier over time, split into subscription base and overage. Tracks pricing power.</div><div class="info-takeaway">📌 Enterprise ARPU growing fastest driven by overage. Pro+ overage contribution increasing — power users consuming premium requests.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-arpu"></canvas></div></div>
-    <div class="card"><div class="card-title">Subscription vs Overage <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Shows the split between base subscription revenue and usage-based overage charges.</div><div class="info-takeaway">📌 Overage is growing to 15% of total — usage-based pricing is working, but monitor for customer friction.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-overage"></canvas></div></div>
+    <div class="card"><div class="card-title">Subscription vs Overage <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Shows the split between base subscription revenue and usage-based overage charges.</div><div class="info-takeaway">📌 Overage is growing to 15% of total — usage-based pricing is working, but monitor for customer friction.</div></div></span><span class="illustrative">(Illustrative Data)</span></div>
+      <div class="funnel-toggles" id="overage-toggles">
+        <button class="funnel-toggle active" data-overage-sku="Total" onclick="switchOverageSku('Total')">Total</button>
+        <button class="funnel-toggle" data-overage-sku="Free" onclick="switchOverageSku('Free')"><span class="ft-dot" style="background:#8B949E"></span>Free</button>
+        <button class="funnel-toggle" data-overage-sku="Edu" onclick="switchOverageSku('Edu')"><span class="ft-dot" style="background:#FD71AF"></span>Edu</button>
+        <button class="funnel-toggle" data-overage-sku="Pro" onclick="switchOverageSku('Pro')"><span class="ft-dot" style="background:#49CCF9"></span>Pro</button>
+        <button class="funnel-toggle" data-overage-sku="Pro+" onclick="switchOverageSku('Pro+')"><span class="ft-dot" style="background:#7B68EE"></span>Pro+</button>
+        <button class="funnel-toggle" data-overage-sku="Business" onclick="switchOverageSku('Business')"><span class="ft-dot" style="background:#79D9B9"></span>Biz</button>
+        <button class="funnel-toggle" data-overage-sku="Enterprise" onclick="switchOverageSku('Enterprise')"><span class="ft-dot" style="background:#FFB08E"></span>Ent</button>
+      </div>
+      <div class="chart-wrap"><canvas id="ch-overage"></canvas></div></div>
   </div>
 </section>
 
 <!-- ── UTILIZATION ── -->
 <section class="section" id="utilization">
-  <div class="section-header"><h2>Utilization &amp; Engagement</h2><p>Stickiness, acceptance, and depth of usage</p></div>
+  <div class="section-header"><h2>Utilization &amp; Engagement</h2><p>Stickiness, engagement depth, and usage patterns</p></div>
   <div class="grid grid-2">
-    <div class="card"><div class="card-title">DAU/MAU Stickiness <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Industry-standard engagement benchmark. Ratio of daily to monthly active users. >30% is strong for dev tools.</div><div class="info-takeaway">📌 Stickiness at 42% is world-class — Copilot is becoming a daily-driver tool, not an occasional assistant.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-stickiness"></canvas></div></div>
-    <div class="card"><div class="card-title">Acceptance Rate <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> % of code completions shown that users accept. Core value metric — are suggestions useful?</div><div class="info-takeaway">📌 Acceptance rate at 33% exceeds the 30% goal. Steady improvement driven by model quality gains.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-acceptance"></canvas></div></div>
-    <div class="card"><div class="card-title">User Tier Distribution <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Shows if engagement is broad-based or power-user driven. Heavy/Medium/Light tiers by actions per day.</div><div class="info-takeaway">📌 Heavy users growing from 15% → 20% while Light shrinks — engagement is deepening across the base.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-tiers"></canvas></div></div>
-    <div class="card"><div class="card-title">Chat Turns per User / Day <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Measures chat engagement depth — are users having real conversations or just one-and-done queries?</div><div class="info-takeaway">📌 Chat turns nearly doubled (3.2 → 5.8) — users are engaging in multi-turn conversations, indicating high utility.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-chat-turns"></canvas></div></div>
+    <div class="card"><div class="card-title">WAU / MAU Stickiness <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Weekly-to-monthly active user ratio. Shows what share of MAU return weekly. Higher = stickier product.</div><div class="info-takeaway">📌 WAU/MAU at ~74% is excellent — 3 in 4 monthly users come back every week. Well above the 50% goal.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-wau-mau"></canvas></div></div>
+    <div class="card"><div class="card-title">DAU / WAU Stickiness <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Daily-to-weekly active user ratio. Measures daily habit formation among weekly users.</div><div class="info-takeaway">📌 DAU/WAU reaching 63% — daily usage habit is strengthening. On track for the 60% goal.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-dau-wau"></canvas></div></div>
+    <div class="card"><div class="card-title">Usage Frequency Distribution <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Shows % of MAU by days active per week. Healthy trends show shift from 0–2 days toward 5–7 days.</div><div class="info-takeaway">📌 7-day users grew from 4% to 10% of MAU — power user segment is expanding. 0-day (lapsed) users declining.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-freq-dist"></canvas></div></div>
+    <div class="card"><div class="card-title">Interactions per User per Day <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Average interactions (completions, chat turns, CLI commands, etc.) per active user per day across all surfaces.</div><div class="info-takeaway">📌 Interactions nearly doubled from 12 to 22/day — users are engaging more deeply across all product surfaces.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-interactions"></canvas></div></div>
   </div>
 </section>
 
@@ -449,6 +467,8 @@ function goalBand(min, max, label) {
 // ── SKU Filter Toggle — GLOBAL DATA MODEL ──
 var skuState = { Free:true, Edu:true, Pro:true, 'Pro+':true, Business:true, Enterprise:true };
 var SKU_LIST = ['Free','Edu','Pro','Pro+','Business','Enterprise'];
+var surfaceState = { Completions:true, Chat:true, CLI:true, 'PR Summaries':true, Agent:true };
+var SURFACE_LIST = ['Completions','Chat','CLI','PR Summaries','Agent'];
 
 // Per-SKU monthly data for all metrics (illustrative)
 // Each array = 12 monthly values. Charts sum active SKUs.
@@ -533,6 +553,28 @@ function toggleSku(btn) {
     btn.classList.toggle('active', skuState[sku]);
     var allBtn = document.querySelector('.toggle-btn[data-sku="all"]');
     var allActive = Object.values(skuState).every(function(v){ return v; });
+    allBtn.classList.toggle('active', allActive);
+    allBtn.style.background = allActive ? 'rgba(255,255,255,.1)' : 'transparent';
+  }
+  rebuildAll();
+}
+
+function toggleSurface(btn) {
+  var surface = btn.dataset.surface;
+  if (surface === 'all') {
+    var allOn = Object.values(surfaceState).every(function(v){ return v; });
+    var newState = !allOn;
+    Object.keys(surfaceState).forEach(function(k){ surfaceState[k] = newState; });
+    document.querySelectorAll('.toggle-btn[data-surface]').forEach(function(b){
+      if (b.dataset.surface !== 'all') b.classList.toggle('active', newState);
+    });
+    btn.classList.add('active');
+    btn.style.background = 'rgba(255,255,255,.1)';
+  } else {
+    surfaceState[surface] = !surfaceState[surface];
+    btn.classList.toggle('active', surfaceState[surface]);
+    var allBtn = document.querySelector('.toggle-btn[data-surface="all"]');
+    var allActive = Object.values(surfaceState).every(function(v){ return v; });
     allBtn.classList.toggle('active', allActive);
     allBtn.style.background = allActive ? 'rgba(255,255,255,.1)' : 'transparent';
   }
@@ -656,6 +698,11 @@ function rebuildAll() {
       return totalMau[i]>0 ? Math.round(v/totalMau[i]*10000)/100 : 0;
     });
     allCharts.churn.update('none');
+  }
+
+  // Overage chart — rebuild if showing Total (responds to SKU filter)
+  if (typeof buildOverageChart === 'function' && activeOverageSku === 'Total') {
+    buildOverageChart();
   }
 }
 
@@ -1072,54 +1119,143 @@ new Chart(document.getElementById('ch-arpu'), {
     aspectRatio:1.7 }
 });
 
-new Chart(document.getElementById('ch-overage'), {
-  type:'bar',
-  data:{ labels:MONTHS, datasets:[
-    { label:'Subscription', data:[119,122,127,131,138,144,149,155,163,171,180,189], backgroundColor:a(BLUE,.6), borderRadius:2 },
-    { label:'Overage', data:[6,8,10,13,16,20,24,29,34,39,46,54], backgroundColor:a(ORANGE,.7), borderRadius:2 }
-  ]},
-  options:{ plugins:{legend:{position:'bottom'},
-    datalabels: stackedDatalabels(function(v){return '$'+v+'M'}, 0.05),
-    stackedTotal:{display:true, formatter:function(v){return '$'+v+'M'}}},
-    scales:{x:{stacked:true, grid:{display:false}}, y:{stacked:true, ticks:{callback:function(v){return '$'+v+'M'}},
-      title:{display:true,text:'Revenue ($M)'}}}, aspectRatio:1.7 }
-});
+// Per-SKU subscription vs overage data ($M/mo)
+var overageSkuData = {
+  Free:       {sub:[0,0,0,0,0,0,0,0,0,0,0,0], ov:[0.5,0.6,0.7,0.8,1.0,1.2,1.4,1.6,1.8,2.0,2.2,2.5]},
+  Edu:        {sub:[1,1,1,1,1,1,1,1,1,1,1,1], ov:[0.1,0.1,0.1,0.2,0.2,0.2,0.2,0.3,0.3,0.3,0.3,0.4]},
+  Pro:        {sub:[28,29,30,30,31,31,32,32,33,33,34,34], ov:[2,2,2,2,2,2,2,2,2,2,2,2]},
+  'Pro+':     {sub:[10,12,14,16,18,20,22,24,27,30,33,36], ov:[2,2,2,2,2,2,3,4,4,4,5,6]},
+  Business:   {sub:[55,58,62,65,70,75,79,83,88,93,98,104], ov:[5,6,6,7,8,9,9,9,10,11,12,14]},
+  Enterprise: {sub:[19,22,25,28,32,36,40,45,50,56,63,70], ov:[3,4,5,7,8,10,12,13,15,17,19,22]},
+};
+var activeOverageSku = 'Total';
+
+function buildOverageChart() {
+  if (allCharts.overage) allCharts.overage.destroy();
+  var sku = activeOverageSku;
+  var sub, ov;
+  if (sku === 'Total') {
+    sub = MONTHS.map(function(_,i){
+      var t = 0; SKU_LIST.forEach(function(k){ if(skuState[k]) t += overageSkuData[k].sub[i]; }); return Math.round(t*10)/10;
+    });
+    ov = MONTHS.map(function(_,i){
+      var t = 0; SKU_LIST.forEach(function(k){ if(skuState[k]) t += overageSkuData[k].ov[i]; }); return Math.round(t*10)/10;
+    });
+  } else {
+    sub = overageSkuData[sku].sub.slice();
+    ov = overageSkuData[sku].ov.slice();
+  }
+  allCharts.overage = new Chart(document.getElementById('ch-overage'), {
+    type:'bar',
+    data:{ labels:MONTHS, datasets:[
+      { label:'Subscription', data:sub, backgroundColor:a(BLUE,.6), borderRadius:2 },
+      { label:'Overage', data:ov, backgroundColor:a(ORANGE,.7), borderRadius:2 }
+    ]},
+    options:{ plugins:{legend:{position:'bottom'},
+      datalabels: stackedDatalabels(function(v){return '$'+Math.round(v*10)/10+'M'}, 0.05),
+      stackedTotal:{display:true, formatter:function(v){return '$'+Math.round(v*10)/10+'M'}}},
+      scales:{x:{stacked:true, grid:{display:false}}, y:{stacked:true, ticks:{callback:function(v){return '$'+v+'M'}},
+        title:{display:true,text:'Revenue ($M)'}}}, aspectRatio:1.7 }
+  });
+  document.querySelectorAll('#overage-toggles .funnel-toggle').forEach(function(btn) {
+    btn.classList.toggle('active', btn.dataset.overageSku === sku);
+  });
+}
+window.switchOverageSku = function(sku) {
+  activeOverageSku = sku;
+  buildOverageChart();
+};
+buildOverageChart();
 
 // ══════════════════════════════
 //  4. UTILIZATION
 // ══════════════════════════════
-new Chart(document.getElementById('ch-stickiness'), {
-  type:'line',
-  data:{ labels:MONTHS, datasets:[{ label:'DAU/MAU', data:[35,35.5,36,36.5,37,37.5,38,38.5,39,40,41,42],
-    borderColor:TEAL, backgroundColor:a(TEAL,.1), fill:true, tension:.3, borderWidth:2 }] },
-  options:{ plugins:{legend:{display:false}, annotation:{annotations:{goal:goalLine(30,'Goal: 30%')}}},
-    scales:{x:{grid:{display:false}}, y:{min:25,max:48, ticks:{callback:v=>v+'%'}}}, aspectRatio:1.7 }
-});
+// WAU/MAU Stickiness — stacked bar (WAU + MAU-only) with line (WAU/MAU %)
+var wauData = [1200,1260,1320,1380,1440,1500,1560,1620,1700,1770,1840,1900];
+var mauOnlyData = [220,255,290,320,350,380,422,474,506,560,615,682];
+var wauMauPct = wauData.map(function(w,i){ return Math.round(w/(w+mauOnlyData[i])*1000)/10; });
 
-new Chart(document.getElementById('ch-acceptance'), {
-  type:'line',
-  data:{ labels:MONTHS, datasets:[{ label:'Acceptance Rate', data:[28,28.4,28.8,29.2,29.6,30,30.3,30.8,31.2,31.8,32.4,33],
-    borderColor:PINK, backgroundColor:a(PINK,.1), fill:true, tension:.3, borderWidth:2 }] },
-  options:{ plugins:{legend:{display:false}, annotation:{annotations:{goal:goalLine(30,'Goal: 30%')}}},
-    scales:{x:{grid:{display:false}}, y:{min:24,max:38, ticks:{callback:v=>v+'%'}}}, aspectRatio:1.7 }
-});
-
-new Chart(document.getElementById('ch-tiers'), {
-  type:'line',
+allCharts.wauMau = new Chart(document.getElementById('ch-wau-mau'), {
+  type:'bar',
   data:{ labels:MONTHS, datasets:[
-    { label:'Heavy', data:[15,15.5,16,16.5,17,17,17.5,18,18.5,19,19.5,20], backgroundColor:a(PURPLE,.5), borderColor:PURPLE, fill:true, tension:.3 },
-    { label:'Medium', data:[35,35.5,36,36.5,37,37,37.5,38,38.5,39,39.5,40], backgroundColor:a(BLUE,.4), borderColor:BLUE, fill:true, tension:.3 },
-    { label:'Light', data:[50,49,48,47,46,46,45,44,43,42,41,40], backgroundColor:a(TEAL,.3), borderColor:TEAL, fill:true, tension:.3 }
+    { label:'WAU (Weekly Active)', data:wauData, backgroundColor:a(TEAL,.6), borderRadius:2, yAxisID:'y' },
+    { label:'MAU-only (Monthly only)', data:mauOnlyData, backgroundColor:a(BLUE,.3), borderRadius:2, yAxisID:'y' },
+    { type:'line', label:'WAU/MAU %', data:wauMauPct, borderColor:PURPLE, borderWidth:2.5, pointRadius:3,
+      tension:.3, fill:false, yAxisID:'y1', datalabels:{display:false} }
   ]},
-  options:{ plugins:{legend:{position:'bottom'}}, scales:{x:{grid:{display:false}},
-    y:{stacked:true, max:100, ticks:{callback:v=>v+'%'}}}, aspectRatio:1.7 }
+  options:{ plugins:{legend:{position:'bottom'},
+    datalabels: stackedDatalabels(function(v){ return v>=1000?(v/1000).toFixed(1)+'M':v+'K'; }, 0.08),
+    stackedTotal:{display:true, formatter:function(v){ return (v/1000).toFixed(1)+'M'; }},
+    annotation:{annotations:{goal:{type:'line',yScaleID:'y1',yMin:50,yMax:50,borderColor:GREEN,borderWidth:1.5,borderDash:[6,4],
+      label:{display:true,content:'Goal: 50%',position:'end',backgroundColor:'transparent',
+        color:GREEN,font:{size:10,weight:'500'},padding:2}}}}},
+    scales:{x:{stacked:true, grid:{display:false}},
+      y:{stacked:true, position:'left', ticks:{callback:function(v){ return v>=1000?(v/1000).toFixed(1)+'M':v+'K'; }},
+        title:{display:true,text:'Users (thousands)'}},
+      y1:{position:'right', grid:{display:false}, ticks:{callback:function(v){return v+'%'}}, min:0, max:100}},
+    aspectRatio:1.7 }
 });
 
-new Chart(document.getElementById('ch-chat-turns'), {
+// DAU/WAU Stickiness — stacked bar (DAU + WAU-only) with line (DAU/WAU %)
+var dauData = [700,740,780,820,860,900,940,980,1020,1060,1120,1200];
+var wauMinusDau = wauData.map(function(w,i){ return w - dauData[i]; });
+var dauWauPct = dauData.map(function(d,i){ return Math.round(d/wauData[i]*1000)/10; });
+
+allCharts.dauWau = new Chart(document.getElementById('ch-dau-wau'), {
+  type:'bar',
+  data:{ labels:MONTHS, datasets:[
+    { label:'DAU (Daily Active)', data:dauData, backgroundColor:a(PURPLE,.6), borderRadius:2, yAxisID:'y' },
+    { label:'WAU-only (Weekly only)', data:wauMinusDau, backgroundColor:a(TEAL,.3), borderRadius:2, yAxisID:'y' },
+    { type:'line', label:'DAU/WAU %', data:dauWauPct, borderColor:PINK, borderWidth:2.5, pointRadius:3,
+      tension:.3, fill:false, yAxisID:'y1', datalabels:{display:false} }
+  ]},
+  options:{ plugins:{legend:{position:'bottom'},
+    datalabels: stackedDatalabels(function(v){ return v>=1000?(v/1000).toFixed(1)+'M':v+'K'; }, 0.08),
+    stackedTotal:{display:true, formatter:function(v){ return (v/1000).toFixed(1)+'M'; }},
+    annotation:{annotations:{goal:{type:'line',yScaleID:'y1',yMin:60,yMax:60,borderColor:GREEN,borderWidth:1.5,borderDash:[6,4],
+      label:{display:true,content:'Goal: 60%',position:'end',backgroundColor:'transparent',
+        color:GREEN,font:{size:10,weight:'500'},padding:2}}}}},
+    scales:{x:{stacked:true, grid:{display:false}},
+      y:{stacked:true, position:'left', ticks:{callback:function(v){ return v>=1000?(v/1000).toFixed(1)+'M':v+'K'; }},
+        title:{display:true,text:'Users (thousands)'}},
+      y1:{position:'right', grid:{display:false}, ticks:{callback:function(v){return v+'%'}}, min:0, max:100}},
+    aspectRatio:1.7 }
+});
+
+// Usage Frequency Distribution — stacked area (% of MAU by days active per week)
+var freqData = {
+  '0 days': [15,14,13,13,12,12,11,10,10,9,9,8],
+  '1 day':  [20,19,19,18,18,17,17,16,16,15,15,14],
+  '2 days': [18,18,17,17,17,16,16,16,15,15,15,15],
+  '3 days': [15,15,15,15,15,15,15,15,15,15,15,15],
+  '4 days': [12,12,13,13,13,13,13,14,14,14,14,14],
+  '5 days': [10,11,11,12,12,13,13,13,14,14,14,14],
+  '6 days': [6,7,7,7,8,8,9,9,9,10,10,10],
+  '7 days': [4,4,5,5,5,6,6,7,7,8,8,10]
+};
+var freqLabels = Object.keys(freqData);
+var freqColors = ['#555D6E','#6B7394','#7B68EE','#6366F1','#49CCF9','#79D9B9','#2EA043','#FFB08E'];
+
+new Chart(document.getElementById('ch-freq-dist'), {
   type:'line',
-  data:{ labels:MONTHS, datasets:[{ label:'Turns/User/Day', data:[3.2,3.4,3.6,3.9,4.1,4.3,4.6,4.8,5.0,5.3,5.5,5.8],
-    borderColor:ORANGE, backgroundColor:a(ORANGE,.1), fill:true, tension:.3, borderWidth:2 }] },
-  options:{ plugins:{legend:{display:false}}, scales:{x:{grid:{display:false}}, y:{min:2,max:7}}, aspectRatio:1.7 }
+  data:{ labels:MONTHS, datasets: freqLabels.map(function(label, idx) {
+    return { label:label, data:freqData[label], backgroundColor:a(freqColors[idx],.5),
+      borderColor:freqColors[idx], fill:true, tension:.3, borderWidth:1.5, pointRadius:1 };
+  })},
+  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false}},
+    scales:{x:{grid:{display:false}},
+      y:{stacked:true, max:100, ticks:{callback:function(v){return v+'%'}}, title:{display:true,text:'% of MAU'}}},
+    aspectRatio:1.7 }
+});
+
+// Interactions per User per Day — line chart
+new Chart(document.getElementById('ch-interactions'), {
+  type:'line',
+  data:{ labels:MONTHS, datasets:[{ label:'Interactions/User/Day', data:[12,13,13.5,14,15,16,17,17.5,18.5,19.5,21,22],
+    borderColor:ORANGE, backgroundColor:a(ORANGE,.1), fill:true, tension:.3, borderWidth:2.5 }] },
+  options:{ plugins:{legend:{display:false}, datalabels:{display:false}},
+    scales:{x:{grid:{display:false}}, y:{min:8,max:26, title:{display:true,text:'Avg Interactions/User/Day'}}},
+    aspectRatio:1.7 }
 });
 
 // ══════════════════════════════
