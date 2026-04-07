@@ -108,14 +108,17 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 .funnel-toggle.active { background: rgba(123,104,238,.15); border-color: var(--purple); color: #fff; }
 .funnel-toggle .ft-dot { width: 8px; height: 8px; border-radius: 50%; }
 .funnel-grid2 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; align-items: center; }
-.funnel-step-cell { display: flex; align-items: center; gap: 8px; padding: 6px 12px 6px 0; }
-.funnel-comment-cell { display: flex; align-items: center; padding: 6px 0 6px 16px;
-  border-left: 3px solid rgba(123,104,238,.2); font-size: 12px; line-height: 1.5; color: var(--text); }
+.funnel-step-cell { display: flex; align-items: center; gap: 6px; padding: 3px 8px 3px 0; }
+.funnel-comment-cell { display: flex; align-items: center; padding: 3px 0 3px 12px;
+  border-left: 3px solid rgba(123,104,238,.2); font-size: 11px; line-height: 1.4; color: var(--text); }
 .funnel-comment-cell b { color: var(--purple); }
-.funnel-row-label { font-size: 10px; color: var(--text-muted); width: 95px; text-align: right; flex-shrink: 0; font-weight: 500; line-height: 1.3; }
-.funnel-row-label .fl-total { color: #E6EDF3; font-weight: 700; font-size: 13px; display: block; }
-.funnel-row-label .fl-pcts { font-size: 8px; opacity: .7; display: block; }
+.funnel-row-label { font-size: 8px; color: var(--text-muted); width: 70px; text-align: right; flex-shrink: 0; font-weight: 500; line-height: 1.2; }
+.funnel-row-label .fl-total { color: #E6EDF3; font-weight: 700; font-size: 10px; display: block; }
+.funnel-row-label .fl-pcts { font-size: 7px; opacity: .7; display: block; }
 .funnel-row-bar { flex: 1; display: flex; flex-direction: column; align-items: center; }
+.funnel-row-rate { font-size: 7px; color: var(--text-muted); margin: 0; }
+.funnel-bar-single { height: 22px; border-radius: 4px; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 9px; color: #fff; transition: all .25s; min-width: 22px; }
 .funnel-row-rate { font-size: 8px; color: var(--text-muted); margin: 0; }
 .funnel-bar-single { height: 28px; border-radius: 5px; display: flex; align-items: center; justify-content: center;
   font-weight: 700; font-size: 12px; color: #fff; transition: all .25s; min-width: 28px; }
@@ -1601,15 +1604,21 @@ var funnelRatesTrend = {
     html += '</div>';
     // 3-column grid: each step is a row with [bar | chart-space | commentary]
     // Build all rows, chart goes in a spanning div
-    html += '<div style="display:grid;grid-template-columns:220px 2fr 1fr;gap:0 16px;align-items:center">';
+    html += '<div style="display:grid;grid-template-columns:160px 3fr 1fr;gap:0 12px;align-items:center">';
     steps.forEach(function(step, i) {
       var val = scaledData[i];
-      // Cap top bar at 2x the second bar, label "not to scale"
-      var refMax = scaledData[1] * 2;
-      var barBase = (i === 0 && scaledData[0] > refMax) ? refMax : maxVal;
-      var barPct = Math.max(5, (val / barBase) * 100);
-      if (i === 0 && scaledData[0] > refMax) barPct = 100;
-      var notToScale = (i === 0 && scaledData[0] > refMax);
+      // Scale relative to signup initiated (step 1), cap page visits at 2x
+      var scaleBase = scaledData[1]; // signup initiated is the reference
+      var barPct;
+      var notToScale = false;
+      if (i === 0) {
+        // Page visits: cap at 2x signup initiated
+        barPct = Math.min(100, (val / scaleBase) * 50); // 50% = 1x signup, 100% = 2x
+        barPct = 100; // always full width for top
+        notToScale = (scaledData[0] > scaleBase * 2);
+      } else {
+        barPct = Math.max(5, (val / scaleBase) * 50); // scale so signup=50%
+      }
       var pctOfTop = (val / scaledData[0] * 100).toFixed(1);
       var prevConv = i > 0 ? (val / scaledData[i-1] * 100).toFixed(1) : null;
       // Col 1: funnel bar
