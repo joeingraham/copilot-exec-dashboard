@@ -1603,7 +1603,7 @@ var funnelRatesTrend = {
     html += '<span style="margin-left:auto;font-size:10px;color:#8B949E;align-self:center">'+trLabel+'</span>';
     html += '</div>';
     // 3-column grid equal thirds: [line chart | funnel bars | commentary]
-    html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 16px;align-items:center">';
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 16px;align-items:center;max-height:280px">';
     steps.forEach(function(step, i) {
       var val = scaledData[i];
       var scaleBase = scaledData[1];
@@ -1620,7 +1620,7 @@ var funnelRatesTrend = {
       // Col 1: chart (only on first row, spans all rows)
       if (i === 0) {
         html += '<div style="grid-row:1/'+String(steps.length+1)+'">';
-        html += '<canvas id="ch-funnel-rates"></canvas></div>';
+        html += '<canvas id="ch-funnel-rates" style="max-height:250px"></canvas></div>';
       }
       // Col 2: funnel bar
       html += '<div class="funnel-step-cell">';
@@ -1682,7 +1682,7 @@ var funnelRatesTrend = {
           y: { ticks: { callback: function(v) { return v + '%'; }, font: { size: 9 } },
             title: { display: true, text: '% of Visits', font: { size: 9 } } }
         },
-        aspectRatio: 1.2
+        aspectRatio: 2.2
       }
     });
   }
