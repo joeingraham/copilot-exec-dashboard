@@ -264,17 +264,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
   <div class="grid grid-2">
     <div class="card"><div class="card-title">Revenue, COGS &amp; Gross Margin <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Revenue above x-axis, COGS below. GM% line on right axis shows margin trajectory.</div><div class="info-takeaway">📌 COGS growing faster than revenue — gross margins are deeply negative (~-41% to -69%) and worsening as usage scales.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-rev-cogs-gm"></canvas></div></div>
     <div class="card"><div class="card-title">Gross Profit by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Per-SKU profitability. Negative = SKU costs more to serve than it earns. Stacked bar shows which SKUs subsidize others.</div><div class="info-takeaway">📌 All SKUs have negative GP — COGS exceed revenue across every tier. Business has the largest absolute deficit.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-gp-sku"></canvas></div></div>
-    <div class="card"><div class="card-title">ARPU by Plan (Subscription + Overage) <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Average Revenue Per User by plan tier over time, split into subscription base and overage.</div><div class="info-takeaway">📌 Enterprise ARPU growing fastest driven by overage. Pro+ overage contribution increasing.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-arpu"></canvas></div></div>
     <div class="card"><div class="card-title">Subscription vs Overage <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Split between base subscription revenue and usage-based overage charges.</div><div class="info-takeaway">📌 Overage growing as share of total — usage-based pricing working.</div></div></span><span class="illustrative">(Illustrative Data)</span></div>
-      <div class="funnel-toggles" id="overage-toggles">
-        <button class="funnel-toggle active" data-overage-sku="Total" onclick="switchOverageSku('Total')">Total</button>
-        <button class="funnel-toggle" data-overage-sku="Free" onclick="switchOverageSku('Free')"><span class="ft-dot" style="background:#8B949E"></span>Free</button>
-        <button class="funnel-toggle" data-overage-sku="Edu" onclick="switchOverageSku('Edu')"><span class="ft-dot" style="background:#FD71AF"></span>Edu</button>
-        <button class="funnel-toggle" data-overage-sku="Pro" onclick="switchOverageSku('Pro')"><span class="ft-dot" style="background:#49CCF9"></span>Pro</button>
-        <button class="funnel-toggle" data-overage-sku="Pro+" onclick="switchOverageSku('Pro+')"><span class="ft-dot" style="background:#7B68EE"></span>Pro+</button>
-        <button class="funnel-toggle" data-overage-sku="Business" onclick="switchOverageSku('Business')"><span class="ft-dot" style="background:#79D9B9"></span>Biz</button>
-        <button class="funnel-toggle" data-overage-sku="Enterprise" onclick="switchOverageSku('Enterprise')"><span class="ft-dot" style="background:#FFB08E"></span>Ent</button>
-      </div>
       <div class="chart-wrap"><canvas id="ch-overage"></canvas></div></div>
   </div>
   <div class="grid grid-3" style="margin-top:20px">
@@ -1115,18 +1105,6 @@ function rebuildAll() {
     allCharts.upgradeRates.update('none');
   }
 
-  // -- ARPU by Plan
-  if (allCharts.arpu) {
-    allCharts.arpu.data.labels = labels;
-    allCharts.arpu.data.datasets.forEach(function(ds) {
-      var sku = ds.label;
-      if (arpuData[sku]) {
-        ds.data = sliceTime(arpuData[sku].total);
-      }
-    });
-    allCharts.arpu.update('none');
-  }
-
   // -- Usage Frequency Distribution
   if (allCharts.freqDist) {
     allCharts.freqDist.data.labels = labels;
@@ -1202,8 +1180,8 @@ function rebuildAll() {
     allCharts.gppu.update('none');
   }
 
-  // 18. Overage
-  if (typeof buildOverageChart === 'function' && activeOverageSku === 'Total') {
+  // 18. Overage — uses master SKU toggle
+  if (typeof buildOverageChart === 'function') {
     buildOverageChart();
   }
 
@@ -1780,31 +1758,6 @@ Object.keys(arpuData).forEach(function(sku) {
   arpuData[sku].total = arpuData[sku].sub.map(function(v,i){ return Math.round((v + arpuData[sku].ov[i])*100)/100; });
 });
 
-allCharts.arpu = new Chart(document.getElementById('ch-arpu'), {
-  type:'line',
-  data:{ labels:MONTHS, datasets:[
-    { label:'Free', data:arpuData.Free.total, borderColor:skuColors.Free, backgroundColor:a(skuColors.Free,.05), fill:false, tension:.3, borderWidth:2, borderDash:[4,3] },
-    { label:'Edu', data:arpuData.Edu.total, borderColor:skuColors.Edu, backgroundColor:a(skuColors.Edu,.05), fill:false, tension:.3, borderWidth:2, borderDash:[4,3] },
-    { label:'Pro', data:arpuData.Pro.total, borderColor:skuColors.Pro, backgroundColor:a(skuColors.Pro,.05), fill:false, tension:.3, borderWidth:2.5 },
-    { label:'Pro+', data:arpuData['Pro+'].total, borderColor:skuColors['Pro+'], backgroundColor:a(skuColors['Pro+'],.05), fill:false, tension:.3, borderWidth:2.5 },
-    { label:'Business', data:arpuData.Business.total, borderColor:skuColors.Business, backgroundColor:a(skuColors.Business,.05), fill:false, tension:.3, borderWidth:2.5 },
-    { label:'Enterprise', data:arpuData.Enterprise.total, borderColor:skuColors.Enterprise, backgroundColor:a(skuColors.Enterprise,.05), fill:false, tension:.3, borderWidth:2.5 },
-  ]},
-  options:{ interaction:{mode:'index', intersect:false},
-    plugins:{legend:{position:'bottom'}, datalabels:{display:false},
-      tooltip:{displayColors:true, callbacks:{
-        label: function(ctx) {
-          var sku = ctx.dataset.label;
-          var i = ctx.dataIndex;
-          var d = arpuData[sku];
-          if (!d) return ctx.dataset.label + ': $' + ctx.parsed.y.toFixed(2);
-          return sku + ': $' + d.total[i].toFixed(2) + '  (Sub: $' + d.sub[i].toFixed(2) + ' + Overage: $' + d.ov[i].toFixed(2) + ')';
-        }
-      }}},
-    scales:{x:{grid:{display:false}}, y:{ticks:{callback:function(v){return '$'+v}}, title:{display:true,text:'ARPU ($/user/mo)'}}},
-    aspectRatio:1.7 }
-});
-
 // Per-SKU subscription vs overage data ($M/mo)
 var overageSkuData = {
   Free:       {sub:[0,0,0,0,0,0,0,0,0,0,0,0], ov:[0.5,0.6,0.7,0.8,1.0,1.2,1.4,1.6,1.8,2.0,2.2,2.5]},
@@ -1814,23 +1767,14 @@ var overageSkuData = {
   Business:   {sub:[55,58,62,65,70,75,79,83,88,93,98,104], ov:[5,6,6,7,8,9,9,9,10,11,12,14]},
   Enterprise: {sub:[19,22,25,28,32,36,40,45,50,56,63,70], ov:[3,4,5,7,8,10,12,13,15,17,19,22]},
 };
-var activeOverageSku = 'Total';
-
 function buildOverageChart() {
   if (allCharts.overage) allCharts.overage.destroy();
-  var sku = activeOverageSku;
-  var sub, ov;
-  if (sku === 'Total') {
-    sub = MONTHS.map(function(_,i){
-      var t = 0; SKU_LIST.forEach(function(k){ if(skuState[k]) t += overageSkuData[k].sub[i]; }); return Math.round(t*10)/10;
-    });
-    ov = MONTHS.map(function(_,i){
-      var t = 0; SKU_LIST.forEach(function(k){ if(skuState[k]) t += overageSkuData[k].ov[i]; }); return Math.round(t*10)/10;
-    });
-  } else {
-    sub = overageSkuData[sku].sub.slice();
-    ov = overageSkuData[sku].ov.slice();
-  }
+  var sub = MONTHS.map(function(_,i){
+    var t = 0; SKU_LIST.forEach(function(k){ if(skuState[k]) t += overageSkuData[k].sub[i]; }); return Math.round(t*10)/10;
+  });
+  var ov = MONTHS.map(function(_,i){
+    var t = 0; SKU_LIST.forEach(function(k){ if(skuState[k]) t += overageSkuData[k].ov[i]; }); return Math.round(t*10)/10;
+  });
   sub = adjustFlow(sliceTime(sub));
   ov = adjustFlow(sliceTime(ov));
   allCharts.overage = new Chart(document.getElementById('ch-overage'), {
@@ -1845,14 +1789,7 @@ function buildOverageChart() {
       scales:{x:{stacked:true, grid:{display:false}}, y:{stacked:true, ticks:{callback:function(v){return '$'+v+'M'}},
         title:{display:true,text:'Revenue ($M)'}}}, aspectRatio:1.7 }
   });
-  document.querySelectorAll('#overage-toggles .funnel-toggle').forEach(function(btn) {
-    btn.classList.toggle('active', btn.dataset.overageSku === sku);
-  });
 }
-window.switchOverageSku = function(sku) {
-  activeOverageSku = sku;
-  buildOverageChart();
-};
 buildOverageChart();
 
 // ══════════════════════════════
