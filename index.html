@@ -1166,19 +1166,18 @@ function rebuildAll() {
     allCharts.gpSku.update('none');
   }
 
-  // -- GP by Usage Percentile (time-range aware)
+  // -- GP by Usage Percentile (time-range + SKU aware)
   if (allCharts.gpPercentile) {
     allCharts.gpPercentile.data.labels = labels;
-    var gpPctFull = [
-      [2.0,2.1,2.2,2.1,2.0,1.9,1.8,1.7,1.6,1.5,1.4,1.3],
-      [0.5,0.4,0.3,0.1,-0.1,-0.3,-0.5,-0.8,-1.0,-1.3,-1.5,-1.8],
-      [-3,-4,-5,-6,-7,-8,-10,-12,-14,-16,-18,-21],
-      [-8,-9,-11,-13,-15,-18,-21,-24,-28,-32,-36,-41],
-      [-22,-25,-28,-32,-36,-41,-46,-52,-58,-65,-72,-80],
-      [-12,-14,-16,-18,-21,-24,-27,-31,-35,-40,-45,-51]
-    ];
+    var activeSkusPct = SKU_LIST.filter(function(s) { return skuState[s]; });
+    var pctScale = 1;
+    if (activeSkusPct.length < SKU_LIST.length) {
+      pctScale = activeSkusPct.reduce(function(s, sku) { return s + (gpPctSkuScale[sku] || 0); }, 0);
+    }
     allCharts.gpPercentile.data.datasets.forEach(function(ds, idx) {
-      if (gpPctFull[idx]) ds.data = sliceTime(gpPctFull[idx]);
+      if (gpPctBaseline[idx]) {
+        ds.data = sliceTime(gpPctBaseline[idx]).map(function(v) { return Math.round(v * pctScale * 10) / 10; });
+      }
     });
     allCharts.gpPercentile.update('none');
   }
@@ -2146,6 +2145,16 @@ allCharts.gpSku = new Chart(document.getElementById('ch-gp-sku'), {
 });
 
 // Chart: Gross Profit by Usage Intensity Percentile (ch-gp-percentile)
+// Per-SKU scale factors for percentile GP (reflects SKU share of total GP)
+var gpPctSkuScale = { Free: 0.04, Edu: 0.02, Pro: 0.26, 'Pro+': 0.17, Business: 0.34, Enterprise: 0.17 };
+var gpPctBaseline = [
+  [2.0,2.1,2.2,2.1,2.0,1.9,1.8,1.7,1.6,1.5,1.4,1.3],
+  [0.5,0.4,0.3,0.1,-0.1,-0.3,-0.5,-0.8,-1.0,-1.3,-1.5,-1.8],
+  [-3,-4,-5,-6,-7,-8,-10,-12,-14,-16,-18,-21],
+  [-8,-9,-11,-13,-15,-18,-21,-24,-28,-32,-36,-41],
+  [-22,-25,-28,-32,-36,-41,-46,-52,-58,-65,-72,-80],
+  [-12,-14,-16,-18,-21,-24,-27,-31,-35,-40,-45,-51]
+];
 allCharts.gpPercentile = new Chart(document.getElementById('ch-gp-percentile'), {
   type:'bar',
   data:{ labels:MONTHS, datasets: [
