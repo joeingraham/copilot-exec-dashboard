@@ -249,7 +249,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 <!-- ── USER GROWTH ── -->
 <section class="section" id="growth">
   <div class="section-header"><h2>User Growth &amp; Acquisition</h2><p>MAU trends, activations, channel mix, and plan migration</p></div>
-  <div class="grid grid-2">
+  <div class="grid grid-5">
     <div class="card"><div class="card-title">Monthly Active Users by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Shows total MAU broken out by plan tier over time. Reveals which SKUs drive user growth and mix shift.</div><div class="info-takeaway">📌 Business and Enterprise are the fastest-growing segments, now exceeding 1.2M combined MAU.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-mau-sku"></canvas></div></div>
     <div class="card"><div class="card-title">MAU Growth by Month <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Decomposes monthly MAU change into activations, resurrections, and churn. The net line shows whether growth is accelerating.</div><div class="info-takeaway">📌 Net growth is consistently positive at ~90K/mo. Resurrections contribute ~18% of gross adds — product pull is strong.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-mau-growth"></canvas></div></div>
     <div class="card"><div class="card-title">Activations by Channel <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> GTM attribution — where do new users come from? Tracks organic vs paid acquisition mix.</div><div class="info-takeaway">📌 In-Product and Organic Search drive ~65% of activations. Marketing/Paid share is declining — organic growth is self-sustaining.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-act-channel"></canvas></div></div>
@@ -261,7 +261,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <div class="card" style="display:flex;flex-direction:column"><div class="card-title">Funnel Visualization</div><div id="funnel-bars-wrap" style="flex:1"></div></div>
     <div class="card" style="display:flex;flex-direction:column"><div class="card-title">Funnel Insights</div><div id="funnel-text-wrap" style="flex:1"></div></div>
   </div>
-  <div class="grid grid-2" style="margin-top:8px">
+  <div class="grid grid-5" style="margin-top:8px">
     <div class="card"><div class="card-title">Plan Upgrade / Downgrade Volume <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Tracks monthly volume of users upgrading between plan tiers (Individual plans and B2B plans) vs downgrades.</div><div class="info-takeaway">📌 Individual upgrades (Free→Pro, Pro→Pro+) are accelerating. B2B downgrades are minimal at &lt;1K/mo — strong enterprise stickiness.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-plan-migration"></canvas></div></div>
     <div class="card"><div class="card-title">Upgrade &amp; Downgrade Rates Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly conversion rates for upgrades and downgrades across plan tiers. Upward upgrade curves + declining downgrades = healthy plan expansion.</div><div class="info-takeaway">📌 Pro → Pro+ conversion is accelerating (4.5% → 7.5%). Downgrade rates are declining across the board — value proposition is strengthening.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-upgrade-rates"></canvas></div></div>
   </div>
@@ -270,13 +270,13 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 <!-- ── FINANCE ── -->
 <section class="section" id="finance">
   <div class="section-header"><h2>Finance</h2><p>Revenue, cost, margins, and unit economics</p></div>
-  <div class="grid grid-3">
+  <div class="grid grid-5">
     <div class="card"><div class="card-title">Subscription vs Overage <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Split between base subscription revenue and usage-based overage charges.</div><div class="info-takeaway">📌 Overage growing as share of total — usage-based pricing working.</div></div></span><span class="illustrative">(Illustrative Data)</span></div>
       <div class="chart-wrap"><canvas id="ch-overage"></canvas></div></div>
     <div class="card"><div class="card-title">Revenue, COGS &amp; Gross Margin <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Revenue above x-axis, COGS below. GM% line on right axis shows margin trajectory.</div><div class="info-takeaway">📌 COGS growing faster than revenue — gross margins are deeply negative (~-41% to -69%) and worsening as usage scales.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-rev-cogs-gm"></canvas></div></div>
     <div class="card"><div class="card-title">Gross Profit by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Per-SKU profitability. Negative = SKU costs more to serve than it earns. Stacked bar shows which SKUs subsidize others.</div><div class="info-takeaway">📌 All SKUs have negative GP — COGS exceed revenue across every tier. Business has the largest absolute deficit.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-gp-sku"></canvas></div></div>
   </div>
-  <div class="grid grid-3" style="margin-top:20px">
+  <div class="grid grid-5" style="margin-top:20px">
     <div class="card"><div class="card-title">ARPU by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Revenue per user by plan. Positive values.</div><div class="info-takeaway">📌 Enterprise highest at ~$47/mo. All paid SKUs trending up.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-arpu-cost"></canvas></div></div>
     <div class="card"><div class="card-title">COGS per User by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Cost to serve each user. Shown as negative values for visual comparison with ARPU.</div><div class="info-takeaway">📌 COGSPU rising across all SKUs as usage intensity grows. Pro+ highest at ~$33-45/user/mo. Free at ~$0.40-0.97.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cogspu"></canvas></div></div>
     <div class="card"><div class="card-title">Gross Profit per User by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> ARPU minus COGS per user. Positive = profitable, negative = subsidized. The unit economics truth.</div><div class="info-takeaway">📌 All SKUs show negative unit economics — COGSPU exceeds ARPU. Enterprise least negative; Pro+ most underwater.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-gppu"></canvas></div></div>
@@ -288,7 +288,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 <!-- ── UTILIZATION ── -->
 <section class="section" id="utilization">
   <div class="section-header"><h2>Utilization &amp; Engagement</h2><p>Stickiness, engagement depth, and usage patterns</p></div>
-  <div class="grid grid-4">
+  <div class="grid grid-5">
     <div class="card"><div class="card-title">WAU / MAU Stickiness <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Weekly-to-monthly active user ratio. Shows what share of MAU return weekly. Higher = stickier product.</div><div class="info-takeaway">📌 WAU/MAU at ~74% is excellent — 3 in 4 monthly users come back every week. Well above the 50% goal.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-wau-mau"></canvas></div></div>
     <div class="card"><div class="card-title">DAU / WAU Stickiness <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Daily-to-weekly active user ratio. Measures daily habit formation among weekly users.</div><div class="info-takeaway">📌 DAU/WAU reaching 63% — daily usage habit is strengthening. On track for the 60% goal.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-dau-wau"></canvas></div></div>
     <div class="card"><div class="card-title">Usage Frequency Distribution <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Shows % of MAU by days active per week. Healthy trends show shift from 0–2 days toward 5–7 days.</div><div class="info-takeaway">📌 7-day users grew from 4% to 10% of MAU — power user segment is expanding. 0-day (lapsed) users declining.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-freq-dist"></canvas></div></div>
@@ -299,7 +299,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 <!-- ── SURFACE ── -->
 <section class="section" id="surface">
   <div class="section-header"><h2>Product Surface Adoption</h2><p>Feature-level usage and multi-surface expansion</p></div>
-  <div class="grid grid-4">
+  <div class="grid grid-5">
     <div class="card"><div class="card-title">MAU by Product Surface<span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Which product features have traction? Compares MAU across Completions, Chat, CLI, PR Summaries, Agent.</div><div class="info-takeaway">📌 Completions still dominates at 2.1M but Chat (1.4M) is closing fast — the shift to conversational AI is real.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-mau-surface"></canvas></div></div>
     <div class="card"><div class="card-title">Multi-Surface Users <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Multi-surface users are stickier and harder to churn. 3+ surface adoption = platform lock-in.</div><div class="info-takeaway">📌 3+ surface users grew from 8% to 28% — strong platform stickiness trend.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-multi-surface"></canvas></div></div>
     <div class="card"><div class="card-title">Usage Share by Product Surface <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Tracks the shift from inline completions to conversational AI. Is Chat cannibalizing or complementing?</div><div class="info-takeaway">📌 Chat grew from 25% to 40% of usage mix. Evidence suggests complementary — total usage is growing alongside the mix shift.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-chat-comp"></canvas></div></div>
@@ -310,12 +310,12 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 <!-- ── RETENTION ── -->
 <section class="section" id="retention">
   <div class="section-header"><h2>Retention &amp; Health</h2><p>Cohort retention and return rates</p></div>
-  <div class="grid grid-3">
+  <div class="grid grid-5">
     <div class="card"><div class="card-title">Return Rate &amp; User Base <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Shows cumulative activations, current MAU, returning users, and return rate on dual axes. Tracks user base health and re-engagement.</div><div class="info-takeaway">📌 Return rate at 42% — less than half of ever-activated users are currently active. But trending up slightly. 6.2M ever activated, 2.6M currently active.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-return-rate"></canvas></div></div>
     <div class="card"><div class="card-title">Retention J-Curves by Cohort <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly retention curves for each cohort. J-curve shape = initial churn then stabilization. Newer cohorts above older = improving product.</div><div class="info-takeaway">📌 Recent cohorts show higher floor retention — onboarding improvements are working.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-jcurves"></canvas></div></div>
     <div class="card"><div class="card-title">Retention Milestones Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Tracks M1, M3, M6, M12 retention rates over time. Are retention milestones improving?</div><div class="info-takeaway">📌 M1 retention improved from 72% to 81%. M12 retention steady at ~58% — long-term stickiness holding.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-ret-milestones"></canvas></div></div>
   </div>
-  <div class="grid grid-4" style="margin-top:20px">
+  <div class="grid grid-5" style="margin-top:20px">
     <div class="card"><div class="card-title">Cohorted Revenue Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Total revenue trajectory by cohort month.</div><div class="info-takeaway">📌 Newer cohorts ramping faster — product-led growth improving.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-rev"></canvas></div></div>
     <div class="card"><div class="card-title">Cohorted Gross Profit Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Total gross profit by cohort. Shows when cohorts approach breakeven.</div><div class="info-takeaway">📌 All cohorts still negative GP. Older cohorts trending toward breakeven.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-gp"></canvas></div></div>
     <div class="card"><div class="card-title">Cohorted Revenue per User <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Revenue per user by cohort month. Shows if per-user monetization is improving.</div><div class="info-takeaway">📌 Newer cohorts generating higher ARPU — pricing and overage adoption improving.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-rev-user"></canvas></div></div>
@@ -328,7 +328,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
   <div class="section-header"><h2>Goals &amp; Targets</h2><p>Weekly actuals vs. targets by product area</p></div>
   
   <h3 style="color:#E6EDF3;font-size:15px;font-weight:600;margin:16px 0 10px;padding-left:4px;border-left:3px solid #7B68EE;padding-left:12px">GitHub Copilot (Total)</h3>
-  <div class="grid grid-4">
+  <div class="grid grid-5">
     <div class="card"><div class="card-title">Rolling 7-Day DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ghcp-dau"></canvas></div></div>
     <div class="card"><div class="card-title">New Users per Week <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ghcp-newusers"></canvas></div></div>
     <div class="card"><div class="card-title">Week 1 Retention <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ghcp-retention"></canvas></div></div>
@@ -336,7 +336,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
   </div>
 
   <h3 style="color:#E6EDF3;font-size:15px;font-weight:600;margin:24px 0 10px;padding-left:12px;border-left:3px solid #2EA043">VS Code</h3>
-  <div class="grid grid-4">
+  <div class="grid grid-5">
     <div class="card"><div class="card-title">Rolling 7-Day DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-vsc-dau"></canvas></div></div>
     <div class="card"><div class="card-title">New Users per Week <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-vsc-newusers"></canvas></div></div>
     <div class="card"><div class="card-title">Week 1 Retention <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-vsc-retention"></canvas></div></div>
@@ -344,14 +344,14 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
   </div>
 
   <h3 style="color:#E6EDF3;font-size:15px;font-weight:600;margin:24px 0 10px;padding-left:12px;border-left:3px solid #79D9B9">CLI</h3>
-  <div class="grid grid-3">
+  <div class="grid grid-5">
     <div class="card"><div class="card-title">Rolling 7-Day DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cli-dau"></canvas></div></div>
     <div class="card"><div class="card-title">Week 1 Retention <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cli-retention"></canvas></div></div>
     <div class="card"><div class="card-title">Cost per User <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cli-cost"></canvas></div></div>
   </div>
 
   <h3 style="color:#E6EDF3;font-size:15px;font-weight:600;margin:24px 0 10px;padding-left:12px;border-left:3px solid #49CCF9">CCA (Copilot Chat / Agent)</h3>
-  <div class="grid grid-4">
+  <div class="grid grid-5">
     <div class="card"><div class="card-title">Rolling 7-Day DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cca-dau"></canvas></div></div>
     <div class="card"><div class="card-title">Week 1 Retention <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cca-retention"></canvas></div></div>
     <div class="card"><div class="card-title">Merging Users as % of DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cca-merging"></canvas></div></div>
