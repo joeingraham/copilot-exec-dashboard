@@ -221,10 +221,6 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0zm7.25-3.25v2.992l2.028 1.064a.75.75 0 0 1-.557 1.392l-2.5-1.312A.75.75 0 0 1 7.25 8.5v-3.75a.75.75 0 0 1 1.5 0z"/></svg></span>
     <span class="nav-label">Utilization & Engagement</span>
   </a>
-  <a class="nav-item" href="#surface" data-section="surface">
-    <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M1.5 3.25c0-.966.784-1.75 1.75-1.75h9.5c.966 0 1.75.784 1.75 1.75v9.5A1.75 1.75 0 0 1 12.75 14.5h-9.5A1.75 1.75 0 0 1 1.5 12.75v-9.5zM3.25 3a.25.25 0 0 0-.25.25v9.5c0 .138.112.25.25.25h9.5a.25.25 0 0 0 .25-.25v-9.5A.25.25 0 0 0 12.75 3h-9.5z"/></svg></span>
-    <span class="nav-label">Product Surface Adoption</span>
-  </a>
   <a class="nav-item" href="#retention" data-section="retention">
     <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M7.655 14.916v-.001h-.002l-.006-.003-.018-.01a22 22 0 0 1-.306-.17 27.4 27.4 0 0 1-3.504-2.498C2.012 10.747 0 8.42 0 5.5 0 2.836 2.086 1 4.25 1 5.797 1 7.153 1.802 8 3.02 8.847 1.802 10.203 1 11.75 1 13.914 1 16 2.836 16 5.5c0 2.92-2.012 5.247-3.819 6.734a27.4 27.4 0 0 1-3.81 2.668l-.018.01-.006.003h-.002z"/></svg></span>
     <span class="nav-label">Retention & Health</span>
@@ -289,23 +285,16 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 
 <!-- ── UTILIZATION ── -->
 <section class="section" id="utilization">
-  <div class="section-header"><h2>Utilization &amp; Engagement</h2><p>Stickiness, engagement depth, and usage patterns</p></div>
+  <div class="section-header"><h2>Utilization &amp; Engagement</h2><p>Stickiness, engagement depth, usage patterns, and surface adoption</p></div>
   <div class="grid grid-4">
     <div class="card"><div class="card-title">WAU / MAU Stickiness <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Weekly-to-monthly active user ratio. Shows what share of MAU return weekly. Higher = stickier product.</div><div class="info-takeaway">📌 WAU/MAU at ~74% is excellent — 3 in 4 monthly users come back every week. Well above the 50% goal.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-wau-mau"></canvas></div></div>
     <div class="card"><div class="card-title">DAU / WAU Stickiness <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Daily-to-weekly active user ratio. Measures daily habit formation among weekly users.</div><div class="info-takeaway">📌 DAU/WAU reaching 63% — daily usage habit is strengthening. On track for the 60% goal.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-dau-wau"></canvas></div></div>
     <div class="card"><div class="card-title">Usage Frequency Distribution <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Shows % of MAU by days active per week. Healthy trends show shift from 0–2 days toward 5–7 days.</div><div class="info-takeaway">📌 7-day users grew from 4% to 10% of MAU — power user segment is expanding. 0-day (lapsed) users declining.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-freq-dist"></canvas></div></div>
     <div class="card"><div class="card-title">Interactions per User per Day <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Average interactions (completions, chat turns, CLI commands, etc.) per active user per day across all surfaces.</div><div class="info-takeaway">📌 Interactions nearly doubled from 12 to 22/day — users are engaging more deeply across all product surfaces.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-interactions"></canvas></div></div>
-  </div>
-</section>
-
-<!-- ── SURFACE ── -->
-<section class="section" id="surface">
-  <div class="section-header"><h2>Product Surface Adoption</h2><p>Feature-level usage and multi-surface expansion</p></div>
-  <div class="grid grid-4">
-    <div class="card"><div class="card-title">MAU by Product Surface<span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Which product features have traction? Compares MAU across Completions, Chat, CLI, PR Summaries, Agent.</div><div class="info-takeaway">📌 Completions still dominates at 2.1M but Chat (1.4M) is closing fast — the shift to conversational AI is real.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-mau-surface"></canvas></div></div>
+    <div class="card"><div class="card-title">MAU by Product Surface <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Which product features have traction? Compares MAU across Completions, Chat, CLI, PR Summaries, Agent.</div><div class="info-takeaway">📌 Completions still dominates at 2.1M but Chat (1.4M) is closing fast — the shift to conversational AI is real.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-mau-surface"></canvas></div></div>
     <div class="card"><div class="card-title">Multi-Surface Users <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Multi-surface users are stickier and harder to churn. 3+ surface adoption = platform lock-in.</div><div class="info-takeaway">📌 3+ surface users grew from 8% to 28% — strong platform stickiness trend.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-multi-surface"></canvas></div></div>
     <div class="card"><div class="card-title">Usage Share by Product Surface <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Tracks the shift from inline completions to conversational AI. Is Chat cannibalizing or complementing?</div><div class="info-takeaway">📌 Chat grew from 25% to 40% of usage mix. Evidence suggests complementary — total usage is growing alongside the mix shift.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-chat-comp"></canvas></div></div>
-    <div class="card"><div class="card-title">IDE Distribution Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Market penetration by IDE. Strategic for partnership and investment decisions.</div><div class="info-takeaway">📌 VS Code dominates at 72%. JetBrains at 15% represents a significant enterprise opportunity.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-ide"></canvas></div></div>
+    <div class="card"><div class="card-title">M12 Retention by Surface <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> 12-month retention rate by product surface. Shows which features drive long-term stickiness.</div><div class="info-takeaway">📌 Multi-surface users retain at 72% vs 48% for single-surface. Chat users retain better than completions-only.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-ret-surface"></canvas></div></div>
   </div>
 </section>
 
@@ -314,9 +303,9 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
   <div class="section-header"><h2>Retention &amp; Health</h2><p>Cohort retention and return rates</p></div>
   <div class="grid grid-4">
     <div class="card"><div class="card-title">Return Rate &amp; User Base <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Shows cumulative activations, current MAU, returning users, and return rate on dual axes. Tracks user base health and re-engagement.</div><div class="info-takeaway">📌 Return rate at 42% — less than half of ever-activated users are currently active. But trending up slightly. 6.2M ever activated, 2.6M currently active.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-return-rate"></canvas></div></div>
-    <div class="card"><div class="card-title">Retention J-Curves by Cohort <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly retention curves for each cohort. J-curve shape = initial churn then stabilization. Newer cohorts above older = improving product.</div><div class="info-takeaway">📌 Recent cohorts show higher floor retention — onboarding improvements are working.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-jcurves"></canvas></div></div>
+    <div class="card"><div class="card-title">User Retention J-Curves by Cohort <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly user retention curves for each cohort. J-curve shape = initial churn then stabilization. Newer cohorts above older = improving product.</div><div class="info-takeaway">📌 Recent cohorts show higher floor retention — onboarding improvements are working.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-jcurves"></canvas></div></div>
+    <div class="card"><div class="card-title">Revenue Retention J-Curves by Cohort <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly revenue retention curves for each cohort. Shows how cohort revenue holds up over time — values &gt;100% indicate expansion revenue.</div><div class="info-takeaway">📌 Recent cohorts show improving revenue retention — upsells and overage are offsetting churn-driven revenue loss.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-rev-jcurves"></canvas></div></div>
     <div class="card"><div class="card-title">Retention Milestones Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Tracks M1, M3, M6, M12 retention rates over time. Are retention milestones improving?</div><div class="info-takeaway">📌 M1 retention improved from 72% to 81%. M12 retention steady at ~58% — long-term stickiness holding.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-ret-milestones"></canvas></div></div>
-    <div class="card-placeholder"><div class="card-title">Placeholder 6</div></div>
   </div>
   <div class="grid grid-4" style="margin-top:20px">
     <div class="card"><div class="card-title">Cohorted Revenue Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Total revenue trajectory by cohort month.</div><div class="info-takeaway">📌 Newer cohorts ramping faster — product-led growth improving.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-rev"></canvas></div></div>
@@ -349,16 +338,16 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
   <h3 style="color:#E6EDF3;font-size:15px;font-weight:600;margin:24px 0 10px;padding-left:12px;border-left:3px solid #79D9B9">CLI</h3>
   <div class="grid grid-4">
     <div class="card"><div class="card-title">Rolling 7-Day DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cli-dau"></canvas></div></div>
+    <div class="card"><div class="card-title">New Users per Week <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cli-newusers"></canvas></div></div>
     <div class="card"><div class="card-title">Week 1 Retention <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cli-retention"></canvas></div></div>
     <div class="card"><div class="card-title">Cost per User <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cli-cost"></canvas></div></div>
-    <div class="card-placeholder"><div class="card-title">Placeholder 7</div></div>
   </div>
 
   <h3style="color:#E6EDF3;font-size:15px;font-weight:600;margin:24px 0 10px;padding-left:12px;border-left:3px solid #49CCF9">CCA (Copilot Chat / Agent)</h3>
   <div class="grid grid-4">
     <div class="card"><div class="card-title">Rolling 7-Day DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cca-dau"></canvas></div></div>
-    <div class="card"><div class="card-title">Week 1 Retention <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cca-retention"></canvas></div></div>
     <div class="card"><div class="card-title">Merging Users as % of DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cca-merging"></canvas></div></div>
+    <div class="card"><div class="card-title">Week 1 Retention <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cca-retention"></canvas></div></div>
     <div class="card"><div class="card-title">Cost per User <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cca-cost"></canvas></div></div>
   </div>
 
@@ -368,10 +357,6 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <div class="card"><div class="card-title">PRs with CCR Review <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ccr-prs"></canvas></div></div>
     <div class="card"><div class="card-title">Positive Feedback Rate <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ccr-feedback"></canvas></div></div>
     <div class="card"><div class="card-title">Cost per User <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ccr-cost"></canvas></div></div>
-    <div class="card"><div class="card-title">Reviews by CB/CE <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ccr-reviews"></canvas></div></div>
-    <div class="card-placeholder"><div class="card-title">Placeholder 8</div></div>
-    <div class="card-placeholder"><div class="card-title">Placeholder 9</div></div>
-    <div class="card-placeholder"><div class="card-title">Placeholder 10</div></div>
   </div>
 </section>
 
@@ -1313,14 +1298,17 @@ function buildGoalChart(canvasId, actualData, goalData, opts) {
   var color = opts.color || PURPLE;
   var goalColor = opts.goalColor || GREEN;
   var fmt = opts.fmt || function(v){return v};
+  var datasets = [
+    { label: 'Actual', data: actualData, borderColor: color, backgroundColor: a(color, .08),
+      fill: true, tension: .3, borderWidth: 2, pointRadius: 1, pointHoverRadius: 4 }
+  ];
+  if (goalData) {
+    datasets.push({ label: 'Goal', data: goalData, borderColor: goalColor, backgroundColor: 'transparent',
+      borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: .3 });
+  }
   return new Chart(document.getElementById(canvasId), {
     type: 'line',
-    data: { labels: GOAL_WEEKS, datasets: [
-      { label: 'Actual', data: actualData, borderColor: color, backgroundColor: a(color, .08),
-        fill: true, tension: .3, borderWidth: 2, pointRadius: 1, pointHoverRadius: 4 },
-      { label: 'Goal', data: goalData, borderColor: goalColor, backgroundColor: 'transparent',
-        borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, fill: false, tension: .3 }
-    ]},
+    data: { labels: GOAL_WEEKS, datasets: datasets },
     options: {
       interaction: { mode: 'index', intersect: false },
       plugins: { legend: { position: 'bottom', labels: { font: { size: 9 }, boxWidth: 10 } }, datalabels: { display: false },
@@ -1356,6 +1344,7 @@ buildGoalChart('goal-vsc-cost', genActuals(0.35,0.22,0.02), genGoal(0.32,0.20), 
 
 // CLI
 buildGoalChart('goal-cli-dau', genActuals(40,95,5), genGoal(45,100), {color:TEAL, yLabel:'DAU (thousands)', fmt:fmtK1});
+buildGoalChart('goal-cli-newusers', genActuals(3,8,0.5), null, {color:TEAL, yLabel:'New Users (thousands)', fmt:fmtK1});
 buildGoalChart('goal-cli-retention', genActuals(55,68,2.5), genGoal(58,70), {color:TEAL, yLabel:'Retention %', fmt:fmtPct});
 buildGoalChart('goal-cli-cost', genActuals(0.28,0.18,0.02), genGoal(0.25,0.16), {color:TEAL, yLabel:'Cost per User', fmt:fmtCost});
 
@@ -1369,7 +1358,6 @@ buildGoalChart('goal-cca-cost', genActuals(0.52,0.35,0.03), genGoal(0.48,0.30), 
 buildGoalChart('goal-ccr-feedback', genActuals(72,84,2), genGoal(75,86), {color:PINK, yLabel:'Positive %', fmt:fmtPct});
 buildGoalChart('goal-ccr-prs', genActuals(15,45,3), genGoal(18,50), {color:PINK, yLabel:'PRs (thousands)', fmt:fmtK1});
 buildGoalChart('goal-ccr-wau', genActuals(80,200,12), genGoal(90,220), {color:PINK, yLabel:'WAU (thousands)', fmt:fmtK});
-buildGoalChart('goal-ccr-reviews', genActuals(5,18,1.5), genGoal(6,20), {color:PINK, yLabel:'Reviews (thousands)', fmt:fmtK1});
 buildGoalChart('goal-ccr-cost', genActuals(0.65,0.42,0.04), genGoal(0.58,0.38), {color:PINK, yLabel:'Cost per User', fmt:fmtCost});
 
 // ══════════════════════════════
@@ -2006,23 +1994,23 @@ var ideTimeData = {
   Other:[2,3,3,3,3,3,3,3,4,3,3,3]
 };
 var ideNameList = ['VS Code','JetBrains','Visual Studio','Neovim','Other'];
-allCharts.ide = new Chart(document.getElementById('ch-ide'), {
+// M12 Retention by Product Surface (replaces IDE Distribution)
+allCharts.retSurface = new Chart(document.getElementById('ch-ret-surface'), {
   type:'line',
-  data:{ labels:MONTHS, datasets: ideNameList.map(function(ide) {
-    return {
-      label: ide,
-      data: ideTimeData[ide],
-      backgroundColor: a(ideColors[ide], .5),
-      borderColor: ideColors[ide],
-      fill: true,
-      tension: .3,
-      borderWidth: 1.5,
-      pointRadius: 1
-    };
-  })},
-  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}, datalabels:{display:false}},
+  data:{ labels:MONTHS, datasets: [
+    { label: 'Completions', data: [52,53,54,55,55,56,57,57,58,58,59,60], borderColor: PURPLE, borderWidth: 2, tension: .3, fill: false, pointRadius: 2 },
+    { label: 'Chat', data: [48,50,52,53,55,56,58,59,60,61,62,63], borderColor: BLUE, borderWidth: 2, tension: .3, fill: false, pointRadius: 2 },
+    { label: 'CLI', data: [40,41,42,43,44,45,46,47,48,49,50,51], borderColor: TEAL, borderWidth: 2, tension: .3, fill: false, pointRadius: 2 },
+    { label: 'PR Summaries', data: [44,45,46,47,48,49,50,51,52,53,54,55], borderColor: ORANGE, borderWidth: 2, tension: .3, fill: false, pointRadius: 2 },
+    { label: 'Agent', data: [35,38,41,43,45,47,49,51,53,55,57,59], borderColor: PINK, borderWidth: 2, tension: .3, fill: false, pointRadius: 2 },
+    { label: 'VS Code', data: [55,56,57,58,58,59,60,60,61,62,62,63], borderColor: GREEN, borderWidth: 2, tension: .3, fill: false, pointRadius: 2, borderDash: [4,3] },
+    { label: 'Multi-Surface (3+)', data: [62,64,65,66,67,68,69,70,70,71,72,72], borderColor: '#F0C674', borderWidth: 2.5, tension: .3, fill: false, pointRadius: 2 }
+  ]},
+  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false}},
+    interaction: { mode: 'index', intersect: false },
     scales:{x:{grid:{display:false}},
-      y:{stacked:true, max:100, ticks:{callback:function(v){return v+'%'}}}},
+      y:{min:30, max:80, ticks:{callback:function(v){return v+'%'}},
+        title:{display:true, text:'M12 Retention %', font:{size:9}}}},
     aspectRatio:1.7 }
 });
 
@@ -2293,6 +2281,34 @@ allCharts.retMilestones = new Chart(document.getElementById('ch-ret-milestones')
     plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } }, datalabels: { display: false } },
     scales: { x: { grid: { display: false } }, y: { min: 30, max: 90, ticks: { callback: function(v) { return v + '%'; } },
       title: { display: true, text: '% Retained' } } },
+    aspectRatio: 1.7 }
+});
+
+// Revenue Retention J-Curves by Cohort (% of M0 revenue retained)
+var revRetData = {
+  'May 2025': [100,88,82,78,76,75,74,73,73,72,72,72],
+  'Jun 2025': [100,89,83,79,77,76,75,74,74,73,73,null],
+  'Jul 2025': [100,90,85,81,79,78,77,76,76,75,null,null],
+  'Aug 2025': [100,91,86,82,80,79,78,77,77,null,null,null],
+  'Sep 2025': [100,92,87,84,82,80,79,79,null,null,null,null],
+  'Oct 2025': [100,93,88,85,83,82,81,null,null,null,null,null],
+  'Nov 2025': [100,93,89,86,84,83,null,null,null,null,null,null],
+  'Dec 2025': [100,94,90,87,85,null,null,null,null,null,null,null],
+  'Jan 2026': [100,94,91,88,null,null,null,null,null,null,null,null],
+  'Feb 2026': [100,95,92,null,null,null,null,null,null,null,null,null],
+  'Mar 2026': [100,96,null,null,null,null,null,null,null,null,null,null],
+  'Apr 2026': [100,null,null,null,null,null,null,null,null,null,null,null]
+};
+allCharts.revJcurves = new Chart(document.getElementById('ch-rev-jcurves'), {
+  type: 'line',
+  data: { labels: jCurveLabels, datasets: cohortNames.map(function(name, idx) {
+    return { label: name, data: revRetData[name], borderColor: jCurveColors[idx],
+      borderWidth: 2, tension: .3, fill: false, pointRadius: 3, spanGaps: false };
+  })},
+  options: { interaction: { mode: 'index', intersect: false },
+    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } }, datalabels: { display: false } },
+    scales: { x: { grid: { display: false } }, y: { min: 60, max: 100, ticks: { callback: function(v) { return v + '%'; } },
+      title: { display: true, text: '% Revenue Retained' } } },
     aspectRatio: 1.7 }
 });
 
