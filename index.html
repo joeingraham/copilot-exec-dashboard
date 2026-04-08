@@ -2331,17 +2331,17 @@ allCharts.retMilestones = new Chart(document.getElementById('ch-ret-milestones')
 
 // Revenue Retention J-Curves by Cohort (% of M0 revenue — can exceed 100% with expansion)
 var revRetData = {
-  'May 2025': [100,160,180,200,200,220,220,220,240,240,240,240],
-  'Jun 2025': [100,180,200,200,220,220,220,240,240,240,240,null],
-  'Jul 2025': [100,150,167,183,183,183,200,200,200,200,null,null],
-  'Aug 2025': [100,167,183,183,200,200,200,200,217,null,null,null],
-  'Sep 2025': [100,143,157,171,171,171,186,186,null,null,null,null],
-  'Oct 2025': [100,157,171,171,186,186,186,null,null,null,null,null],
-  'Nov 2025': [100,150,175,188,200,200,null,null,null,null,null,null],
-  'Dec 2025': [100,144,167,178,189,null,null,null,null,null,null,null],
-  'Jan 2026': [100,140,160,170,null,null,null,null,null,null,null,null],
-  'Feb 2026': [100,136,155,null,null,null,null,null,null,null,null,null],
-  'Mar 2026': [100,133,null,null,null,null,null,null,null,null,null,null],
+  'May 2025': [100,108,115,121,126,130,134,137,140,142,144,146],
+  'Jun 2025': [100,108,115,121,126,130,134,137,140,142,144,null],
+  'Jul 2025': [100,108,115,121,126,130,134,137,140,142,null,null],
+  'Aug 2025': [100,108,115,121,126,130,134,137,140,null,null,null],
+  'Sep 2025': [100,108,115,121,126,130,134,137,null,null,null,null],
+  'Oct 2025': [100,108,115,121,126,130,134,null,null,null,null,null],
+  'Nov 2025': [100,108,115,121,126,130,null,null,null,null,null,null],
+  'Dec 2025': [100,108,115,121,126,null,null,null,null,null,null,null],
+  'Jan 2026': [100,108,115,121,null,null,null,null,null,null,null,null],
+  'Feb 2026': [100,108,115,null,null,null,null,null,null,null,null,null],
+  'Mar 2026': [100,108,null,null,null,null,null,null,null,null,null,null],
   'Apr 2026': [100,null,null,null,null,null,null,null,null,null,null,null]
 };
 allCharts.revJcurves = new Chart(document.getElementById('ch-rev-jcurves'), {
@@ -2353,7 +2353,7 @@ allCharts.revJcurves = new Chart(document.getElementById('ch-rev-jcurves'), {
   options: { interaction: { mode: 'index', intersect: false },
     plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } }, datalabels: { display: false },
       annotation: { annotations: { baseline: { type: 'line', yMin: 100, yMax: 100, borderColor: 'rgba(255,255,255,.3)', borderWidth: 1, borderDash: [4,3] } } } },
-    scales: { x: { grid: { display: false } }, y: { min: 80, max: 260, ticks: { callback: function(v) { return v + '%'; } },
+    scales: { x: { grid: { display: false } }, y: { min: 95, max: 155, ticks: { callback: function(v) { return v + '%'; } },
       title: { display: true, text: '% of M0 Revenue' } } },
     aspectRatio: 1.7 }
 });
@@ -2365,33 +2365,33 @@ var cohortRevColors = ['#8B949E','#A0A0A0','#BF8700','#CF222E','#1A7F37','#7B68E
                        '#49CCF9','#79D9B9','#FFB08E','#FD71AF','#2EA043','#4766F0'];
 
 var cohortRevData = {
-  'May 2025': [0.5,0.8,0.9,1.0,1.0,1.1,1.1,1.1,1.2,1.2,1.2,1.2],
-  'Jun 2025': [0.5,0.9,1.0,1.0,1.1,1.1,1.1,1.2,1.2,1.2,1.2,null],
-  'Jul 2025': [0.6,0.9,1.0,1.1,1.1,1.1,1.2,1.2,1.2,1.2,null,null],
-  'Aug 2025': [0.6,1.0,1.1,1.1,1.2,1.2,1.2,1.2,1.3,null,null,null],
-  'Sep 2025': [0.7,1.0,1.1,1.2,1.2,1.2,1.3,1.3,null,null,null,null],
-  'Oct 2025': [0.7,1.1,1.2,1.2,1.3,1.3,1.3,null,null,null,null,null],
-  'Nov 2025': [0.8,1.2,1.4,1.5,1.6,1.6,null,null,null,null,null,null],
-  'Dec 2025': [0.9,1.3,1.5,1.6,1.7,null,null,null,null,null,null,null],
-  'Jan 2026': [1.0,1.4,1.6,1.7,null,null,null,null,null,null,null,null],
-  'Feb 2026': [1.1,1.5,1.7,null,null,null,null,null,null,null,null,null],
-  'Mar 2026': [1.2,1.6,null,null,null,null,null,null,null,null,null,null],
+  'May 2025': [0.5,0.54,0.57,0.6,0.63,0.65,0.67,0.69,0.7,0.71,0.72,0.73],
+  'Jun 2025': [0.55,0.59,0.63,0.67,0.69,0.71,0.74,0.75,0.77,0.78,0.79,null],
+  'Jul 2025': [0.6,0.65,0.69,0.73,0.76,0.78,0.8,0.82,0.84,0.85,null,null],
+  'Aug 2025': [0.65,0.7,0.75,0.79,0.82,0.84,0.87,0.89,0.91,null,null,null],
+  'Sep 2025': [0.7,0.76,0.81,0.85,0.88,0.91,0.94,0.96,null,null,null,null],
+  'Oct 2025': [0.75,0.81,0.86,0.91,0.94,0.97,1.0,null,null,null,null,null],
+  'Nov 2025': [0.8,0.86,0.92,0.97,1.01,1.04,null,null,null,null,null,null],
+  'Dec 2025': [0.9,0.97,1.03,1.09,1.13,null,null,null,null,null,null,null],
+  'Jan 2026': [1.0,1.08,1.15,1.21,null,null,null,null,null,null,null,null],
+  'Feb 2026': [1.1,1.19,1.27,null,null,null,null,null,null,null,null,null],
+  'Mar 2026': [1.2,1.3,null,null,null,null,null,null,null,null,null,null],
   'Apr 2026': [1.3,null,null,null,null,null,null,null,null,null,null,null]
 };
 
 var cohortGpData = {
-  'May 2025': [0.9,0.85,0.82,0.80,0.78,0.76,0.74,0.72,0.71,0.70,0.69,0.68],
-  'Jun 2025': [0.9,0.86,0.83,0.81,0.79,0.77,0.75,0.73,0.72,0.71,0.70,null],
-  'Jul 2025': [1.0,0.95,0.92,0.89,0.87,0.85,0.83,0.81,0.80,0.79,null,null],
-  'Aug 2025': [1.0,0.96,0.93,0.90,0.88,0.86,0.84,0.82,0.81,null,null,null],
-  'Sep 2025': [1.1,1.05,1.01,0.98,0.96,0.94,0.92,0.90,null,null,null,null],
-  'Oct 2025': [1.1,1.06,1.02,0.99,0.97,0.95,0.93,null,null,null,null,null],
-  'Nov 2025': [1.2,1.15,1.11,1.08,1.05,1.03,null,null,null,null,null,null],
-  'Dec 2025': [1.3,1.25,1.20,1.17,1.14,null,null,null,null,null,null,null],
-  'Jan 2026': [1.5,1.44,1.39,1.35,null,null,null,null,null,null,null,null],
-  'Feb 2026': [1.6,1.54,1.48,null,null,null,null,null,null,null,null,null],
-  'Mar 2026': [1.8,1.73,null,null,null,null,null,null,null,null,null,null],
-  'Apr 2026': [2.0,null,null,null,null,null,null,null,null,null,null,null]
+  'May 2025': [0.9,0.79,0.74,0.71,0.69,0.68,0.67,0.66,0.65,0.65,0.64,0.64],
+  'Jun 2025': [0.95,0.84,0.78,0.75,0.73,0.71,0.7,0.69,0.69,0.68,0.68,null],
+  'Jul 2025': [1.0,0.88,0.82,0.79,0.77,0.75,0.74,0.73,0.73,0.72,null,null],
+  'Aug 2025': [1.05,0.92,0.87,0.83,0.81,0.79,0.78,0.77,0.76,null,null,null],
+  'Sep 2025': [1.1,0.97,0.91,0.87,0.85,0.83,0.82,0.8,null,null,null,null],
+  'Oct 2025': [1.15,1.01,0.95,0.91,0.88,0.87,0.85,null,null,null,null,null],
+  'Nov 2025': [1.2,1.05,0.99,0.95,0.92,0.9,null,null,null,null,null,null],
+  'Dec 2025': [1.3,1.14,1.07,1.03,1.0,null,null,null,null,null,null,null],
+  'Jan 2026': [1.4,1.23,1.15,1.11,null,null,null,null,null,null,null,null],
+  'Feb 2026': [1.5,1.32,1.24,null,null,null,null,null,null,null,null,null],
+  'Mar 2026': [1.6,1.41,null,null,null,null,null,null,null,null,null,null],
+  'Apr 2026': [1.7,null,null,null,null,null,null,null,null,null,null,null]
 };
 
 var revSkuMultiplier = { Free: 0.02, Edu: 0.02, Pro: 0.67, 'Pro+': 1.65, Business: 1.42, Enterprise: 2.87 };
@@ -2427,18 +2427,18 @@ allCharts.cohortGp = new Chart(document.getElementById('ch-cohort-gp'), {
 
 // Cohorted Revenue per User ($/user/mo)
 var cohortRevPerUserData = {
-  'May 2025': [8.50,10.20,11.80,13.00,13.80,14.50,15.00,15.30,15.60,15.80,16.00,16.20],
-  'Jun 2025': [8.80,10.50,12.10,13.30,14.10,14.80,15.20,15.60,15.90,16.10,16.30,null],
-  'Jul 2025': [9.00,10.80,12.40,13.60,14.40,15.00,15.50,15.80,16.10,16.30,null,null],
-  'Aug 2025': [9.20,11.00,12.70,13.90,14.70,15.20,15.70,16.00,16.30,null,null,null],
-  'Sep 2025': [9.50,11.30,13.00,14.10,14.90,15.50,15.90,16.20,null,null,null,null],
-  'Oct 2025': [9.80,11.60,13.20,14.40,15.10,15.70,16.10,null,null,null,null,null],
-  'Nov 2025': [10.00,12.00,13.50,14.60,15.40,15.90,null,null,null,null,null,null],
-  'Dec 2025': [10.30,12.30,13.80,14.80,15.60,null,null,null,null,null,null,null],
-  'Jan 2026': [10.50,12.60,14.00,15.00,null,null,null,null,null,null,null,null],
-  'Feb 2026': [10.80,12.90,14.30,null,null,null,null,null,null,null,null,null],
-  'Mar 2026': [11.00,13.20,null,null,null,null,null,null,null,null,null,null],
-  'Apr 2026': [11.30,null,null,null,null,null,null,null,null,null,null,null]
+  'May 2025': [8.5,11.77,14.38,16.59,18.47,20.09,21.49,22.83,23.8,24.63,25.5,26.4],
+  'Jun 2025': [8.8,12.18,14.88,17.17,19.12,20.8,22.25,23.64,24.64,25.5,26.4,null],
+  'Jul 2025': [9.0,12.46,15.22,17.56,19.55,21.27,22.75,24.18,25.2,26.08,null,null],
+  'Aug 2025': [9.2,12.74,15.56,17.95,19.99,21.75,23.26,24.71,25.76,null,null,null],
+  'Sep 2025': [9.5,13.15,16.07,18.54,20.64,22.45,24.02,25.52,null,null,null,null],
+  'Oct 2025': [9.8,13.57,16.57,19.13,21.29,23.16,24.78,null,null,null,null,null],
+  'Nov 2025': [10.0,13.85,16.91,19.52,21.72,23.64,null,null,null,null,null,null],
+  'Dec 2025': [10.3,14.26,17.42,20.1,22.38,null,null,null,null,null,null,null],
+  'Jan 2026': [10.5,14.54,17.76,20.49,null,null,null,null,null,null,null,null],
+  'Feb 2026': [10.8,14.95,18.26,null,null,null,null,null,null,null,null,null],
+  'Mar 2026': [11.0,15.23,null,null,null,null,null,null,null,null,null,null],
+  'Apr 2026': [11.3,null,null,null,null,null,null,null,null,null,null,null]
 };
 
 allCharts.cohortRevUser = new Chart(document.getElementById('ch-cohort-rev-user'), {
@@ -2456,20 +2456,20 @@ allCharts.cohortRevUser = new Chart(document.getElementById('ch-cohort-rev-user'
     aspectRatio: 1.4 }
 });
 
-// Cohorted COGS per User (increasing over time — remaining users are heavier users, but newer cohorts start lower)
+// Cohorted COGS per User (increases within cohort as light users churn; newer cohorts start lower)
 var cohortGpPerUserData = {
-  'May 2025': [15.00,15.80,16.50,17.10,17.60,18.00,18.30,18.60,18.80,19.00,19.10,19.20],
-  'Jun 2025': [14.80,15.60,16.30,16.90,17.40,17.80,18.10,18.40,18.60,18.80,18.90,null],
-  'Jul 2025': [14.50,15.30,16.00,16.60,17.10,17.50,17.80,18.10,18.30,18.50,null,null],
-  'Aug 2025': [14.20,15.00,15.70,16.30,16.80,17.20,17.50,17.80,18.00,null,null,null],
-  'Sep 2025': [13.90,14.70,15.40,16.00,16.50,16.90,17.20,17.50,null,null,null,null],
-  'Oct 2025': [13.60,14.40,15.10,15.70,16.20,16.60,16.90,null,null,null,null,null],
-  'Nov 2025': [13.30,14.10,14.80,15.40,15.90,16.30,null,null,null,null,null,null],
-  'Dec 2025': [13.00,13.80,14.50,15.10,15.60,null,null,null,null,null,null,null],
-  'Jan 2026': [12.70,13.50,14.20,14.80,null,null,null,null,null,null,null,null],
-  'Feb 2026': [12.40,13.20,13.90,null,null,null,null,null,null,null,null,null],
-  'Mar 2026': [12.10,12.90,null,null,null,null,null,null,null,null,null,null],
-  'Apr 2026': [11.80,null,null,null,null,null,null,null,null,null,null,null]
+  'May 2025': [15.0,16.88,18.14,19.09,19.83,20.61,21.07,21.57,21.67,22.11,22.22,22.7],
+  'Jun 2025': [14.8,16.78,17.87,18.85,19.61,20.11,20.58,21.08,21.5,21.62,22.07,null],
+  'Jul 2025': [14.5,16.36,17.49,18.48,19.25,19.77,20.25,20.75,21.17,21.31,null,null],
+  'Aug 2025': [14.2,15.95,17.3,18.1,18.89,19.43,19.9,20.42,20.56,null,null,null],
+  'Sep 2025': [13.9,15.71,16.91,17.73,18.52,19.07,19.55,19.82,null,null,null,null],
+  'Oct 2025': [13.6,15.31,16.52,17.36,17.94,18.71,18.97,null,null,null,null,null],
+  'Nov 2025': [13.3,14.92,16.14,16.98,17.58,18.14,null,null,null,null,null,null],
+  'Dec 2025': [13.0,14.62,15.74,16.61,17.24,null,null,null,null,null,null,null],
+  'Jan 2026': [12.7,14.3,15.34,16.24,null,null,null,null,null,null,null,null],
+  'Feb 2026': [12.4,13.99,15.07,null,null,null,null,null,null,null,null,null],
+  'Mar 2026': [12.1,13.67,null,null,null,null,null,null,null,null,null,null],
+  'Apr 2026': [11.8,null,null,null,null,null,null,null,null,null,null,null]
 };
 
 allCharts.cohortGpUser = new Chart(document.getElementById('ch-cohort-gp-user'), {
