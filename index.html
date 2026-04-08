@@ -381,18 +381,10 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 <section class="section" id="ideas">
   <div class="section-header"><h2>🧪 Growth Ideas (Experimental)</h2><p>Additional views under consideration — feedback welcome</p></div>
   <div class="grid grid-4">
-    <div class="card"><div class="card-title">Time to Value (Days to 1st Accept) <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="ch-ttv"></canvas></div></div>
-    <div class="card"><div class="card-title">Payback Period by SKU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="ch-payback"></canvas></div></div>
-    <div class="card"><div class="card-title">Power User Ratio (7-Day Streaks) <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="ch-power"></canvas></div></div>
-    <div class="card"><div class="card-title">Net Revenue Retention (NRR) <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="ch-nrr"></canvas></div></div>
-    <div class="card"><div class="card-title">Acceptance Rate Over Time <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="ch-accept"></canvas></div></div>
-    <div class="card"><div class="card-title">Latency P50 / P99 by Surface <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="ch-latency"></canvas></div></div>
-    <div class="card"><div class="card-title">Seat Utilization (Active / Assigned) <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="ch-seat-util"></canvas></div></div>
-    <div class="card"><div class="card-title">Expansion vs Contraction ARR <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="ch-expansion"></canvas></div></div>
-    <div class="card"><div class="card-title">Day-1 Activation Depth <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="ch-d1depth"></canvas></div></div>
-    <div class="card"><div class="card-title">Churn Risk Score Distribution <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="ch-churn-risk"></canvas></div></div>
-    <div class="card"><div class="card-title">Lines of Code Influenced / Day <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="ch-loc"></canvas></div></div>
-    <div class="card"><div class="card-title">Developer Time Saved (hrs/wk) <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="ch-timesaved"></canvas></div></div>
+    <div class="card"><div class="card-title">Seat Utilization (Active / Assigned) <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Active vs assigned seats with utilization % on dual axis. Low utilization = enterprise shelfware risk → churn signal.</div><div class="info-takeaway">📌 Utilization at 79% — 21% of assigned seats are unused. Target >85% to reduce churn risk.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-seat-util"></canvas></div></div>
+    <div class="card"><div class="card-title">Expansion vs Contraction ARR <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly ARR changes from upgrades/seat expansion (positive) vs downgrades/seat contraction (negative). Net line shows the revenue motion health. Excludes new logo and full churn.</div><div class="info-takeaway">📌 Net expansion accelerating to $19.5M/mo — upgrades outpacing downgrades 4.5:1.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-expansion"></canvas></div></div>
+    <div class="card-placeholder"><div class="card-title">Placeholder 1</div></div>
+    <div class="card-placeholder"><div class="card-title">Placeholder 2</div></div>
   </div>
 </section>
 
@@ -2543,92 +2535,34 @@ allCharts.returnRate = new Chart(document.getElementById('ch-return-rate'), {
 //  GROWTH IDEAS (Experimental)
 // ══════════════════════════════
 
-// 1. Time to Value — distribution of days until first completion acceptance
-new Chart(document.getElementById('ch-ttv'), {
-  type:'line',
-  data:{ labels:MONTHS, datasets:[
-    { label:'Median (days)', data:[3.2,3.0,2.8,2.6,2.5,2.3,2.2,2.1,2.0,1.9,1.8,1.7], borderColor:PURPLE, borderWidth:2.5, tension:.3, fill:false },
-    { label:'P75', data:[7.5,7.0,6.5,6.2,5.8,5.5,5.2,5.0,4.8,4.5,4.3,4.0], borderColor:BLUE, borderWidth:1.5, tension:.3, fill:false, borderDash:[4,3] },
-    { label:'P90', data:[14,13,12.5,12,11.5,11,10.5,10,9.5,9,8.5,8], borderColor:ORANGE, borderWidth:1.5, tension:.3, fill:false, borderDash:[4,3] }
-  ]},
-  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false}},
-    scales:{x:{grid:{display:false}}, y:{title:{display:true,text:'Days',font:{size:9}}}}, aspectRatio:1.7 }
-});
+// Seat Utilization — stacked bar with utilization % on dual axis
+(function() {
+  var active =   [680,720,760,800,840,880,920,960,1000,1050,1100,1150];
+  var unused =   [220,230,240,250,260,270,280,290,300,300,300,300];
+  var utilPct = active.map(function(a,i){ return Math.round(a/(a+unused[i])*1000)/10; });
 
-// 2. Payback Period by SKU — months until cumulative rev > cumulative COGS
-new Chart(document.getElementById('ch-payback'), {
-  type:'bar',
-  data:{ labels:MONTHS, datasets:[
-    { label:'Pro', data:[null,null,null,null,null,null,18,17,16,15,14,13], backgroundColor:skuColors.Pro, borderRadius:2 },
-    { label:'Pro+', data:[null,null,null,null,null,null,24,22,21,20,19,18], backgroundColor:skuColors['Pro+'], borderRadius:2 },
-    { label:'Business', data:[null,null,null,null,null,null,15,14,13,12,11,10], backgroundColor:skuColors.Business, borderRadius:2 },
-    { label:'Enterprise', data:[null,null,null,null,null,null,12,11,10,9,9,8], backgroundColor:skuColors.Enterprise, borderRadius:2 }
-  ]},
-  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false}},
-    scales:{x:{grid:{display:false}}, y:{title:{display:true,text:'Months to Payback',font:{size:9}}}}, aspectRatio:1.7 }
-});
+  new Chart(document.getElementById('ch-seat-util'), {
+    type:'bar',
+    data:{ labels:MONTHS, datasets:[
+      { label:'Active Seats', data:active, backgroundColor:a(TEAL,.7), borderRadius:2, stack:'s', yAxisID:'y' },
+      { label:'Assigned (Unused)', data:unused, backgroundColor:a(ORANGE,.4), borderRadius:2, stack:'s', yAxisID:'y' },
+      { type:'line', label:'Utilization %', data:utilPct, borderColor:PURPLE, borderWidth:2.5, tension:.3, fill:false, pointRadius:3, yAxisID:'y1' }
+    ]},
+    options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false},
+      annotation:{annotations:{goal:{type:'line',yMin:85,yMax:85,borderColor:a(GREEN,.4),borderWidth:1.5,borderDash:[6,4],yScaleID:'y1',
+        label:{display:true,content:'85% target',position:'end',backgroundColor:'transparent',color:GREEN,font:{size:8}}}}}},
+      scales:{
+        x:{stacked:true, grid:{display:false}},
+        y:{stacked:true, ticks:{callback:function(v){return v+'K'}}, title:{display:true,text:'Seats (K)',font:{size:9}}},
+        y1:{position:'right', min:60, max:100, grid:{display:false}, ticks:{callback:function(v){return v+'%'},font:{size:9}}, title:{display:true,text:'Utilization %',font:{size:9}}}
+      }, aspectRatio:1.7 }
+  });
+})();
 
-// 3. Power User Ratio — % of MAU with 7-day streaks
-new Chart(document.getElementById('ch-power'), {
-  type:'line',
-  data:{ labels:MONTHS, datasets:[
-    { label:'7-day streak %', data:[4.2,4.8,5.3,5.9,6.4,7.0,7.5,8.1,8.6,9.2,9.8,10.5], borderColor:PURPLE, backgroundColor:a(PURPLE,.08), borderWidth:2.5, tension:.3, fill:true },
-    { label:'5+ day streak %', data:[11,12,13.5,14.5,15.5,16.5,17.5,18.5,19.5,20.5,21.5,23], borderColor:TEAL, borderWidth:1.5, tension:.3, fill:false, borderDash:[4,3] }
-  ]},
-  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false}},
-    scales:{x:{grid:{display:false}}, y:{ticks:{callback:function(v){return v+'%'}}, title:{display:true,text:'% of MAU',font:{size:9}}}}, aspectRatio:1.7 }
-});
-
-// 4. Net Revenue Retention (NRR)
-new Chart(document.getElementById('ch-nrr'), {
-  type:'line',
-  data:{ labels:MONTHS, datasets:[
-    { label:'NRR %', data:[108,109,110,112,113,115,116,118,119,120,121,122], borderColor:GREEN, backgroundColor:a(GREEN,.08), borderWidth:2.5, tension:.3, fill:true },
-    { label:'Gross Retention', data:[88,88,89,89,90,90,91,91,91,92,92,92], borderColor:BLUE, borderWidth:1.5, tension:.3, fill:false, borderDash:[4,3] }
-  ]},
-  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false},
-    annotation:{annotations:{target:{type:'line',yMin:120,yMax:120,borderColor:a(GREEN,.4),borderWidth:1,borderDash:[6,4],
-      label:{display:true,content:'120% target',position:'end',backgroundColor:'transparent',color:GREEN,font:{size:8}}}}}},
-    scales:{x:{grid:{display:false}}, y:{min:80,max:130,ticks:{callback:function(v){return v+'%'}}, title:{display:true,text:'NRR / GRR %',font:{size:9}}}}, aspectRatio:1.7 }
-});
-
-// 5. Acceptance Rate Over Time (completion suggestions accepted)
-new Chart(document.getElementById('ch-accept'), {
-  type:'line',
-  data:{ labels:MONTHS, datasets:[
-    { label:'Acceptance Rate', data:[27,28,29,29.5,30,30.5,31,31.5,32,32.5,33,33.5], borderColor:PURPLE, backgroundColor:a(PURPLE,.08), borderWidth:2.5, tension:.3, fill:true },
-    { label:'Persistence Rate', data:[42,43,44,44.5,45,45.5,46,46.5,47,47.5,48,48.5], borderColor:TEAL, borderWidth:1.5, tension:.3, fill:false }
-  ]},
-  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false}},
-    scales:{x:{grid:{display:false}}, y:{min:20,max:55,ticks:{callback:function(v){return v+'%'}}, title:{display:true,text:'Rate %',font:{size:9}}}}, aspectRatio:1.7 }
-});
-
-// 6. Latency P50 / P99 by Surface
-new Chart(document.getElementById('ch-latency'), {
-  type:'line',
-  data:{ labels:MONTHS, datasets:[
-    { label:'Completions P50', data:[180,175,170,165,160,155,150,145,140,135,130,125], borderColor:PURPLE, borderWidth:2, tension:.3, fill:false },
-    { label:'Chat P50', data:[420,400,385,370,355,340,330,320,310,300,290,280], borderColor:BLUE, borderWidth:2, tension:.3, fill:false },
-    { label:'Completions P99', data:[850,820,790,760,740,720,700,680,660,640,620,600], borderColor:PURPLE, borderWidth:1, tension:.3, fill:false, borderDash:[4,3] },
-    { label:'Chat P99', data:[2200,2100,2000,1900,1800,1750,1700,1650,1600,1550,1500,1450], borderColor:BLUE, borderWidth:1, tension:.3, fill:false, borderDash:[4,3] }
-  ]},
-  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false}},
-    scales:{x:{grid:{display:false}}, y:{title:{display:true,text:'Latency (ms)',font:{size:9}}}}, aspectRatio:1.7 }
-});
-
-// 7. Seat Utilization — active seats / assigned seats
-new Chart(document.getElementById('ch-seat-util'), {
-  type:'bar',
-  data:{ labels:MONTHS, datasets:[
-    { label:'Active Seats', data:[680,720,760,800,840,880,920,960,1000,1050,1100,1150], backgroundColor:a(TEAL,.7), borderRadius:2 },
-    { label:'Assigned (Unused)', data:[220,230,240,250,260,270,280,290,300,300,300,300], backgroundColor:a(ORANGE,.4), borderRadius:2 }
-  ]},
-  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}},
-    datalabels:{display:false}},
-    scales:{x:{stacked:true,grid:{display:false}}, y:{stacked:true,ticks:{callback:function(v){return v+'K'}}, title:{display:true,text:'Seats (K)',font:{size:9}}}}, aspectRatio:1.7 }
-});
-
-// 8. Expansion vs Contraction ARR (waterfall-style)
+// Expansion vs Contraction ARR
+// Expansion = upgrades (Pro→Pro+, Pro→Biz) + seat adds within existing orgs + overage growth
+// Contraction = downgrades (Pro+→Pro) + seat removals + overage decline
+// Excludes: new logo ARR and full churn (those are in the MAU growth chart)
 new Chart(document.getElementById('ch-expansion'), {
   type:'bar',
   data:{ labels:MONTHS, datasets:[
@@ -2639,54 +2573,6 @@ new Chart(document.getElementById('ch-expansion'), {
   options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false},
     annotation:{annotations:{zero:{type:'line',yMin:0,yMax:0,borderColor:'rgba(255,255,255,.2)',borderWidth:1}}}},
     scales:{x:{stacked:true,grid:{display:false}}, y:{stacked:true,ticks:{callback:function(v){return '$'+v+'M'}}, title:{display:true,text:'ARR Change ($M)',font:{size:9}}}}, aspectRatio:1.7 }
-});
-
-// 9. Day-1 Activation Depth — distribution of first-day completions
-new Chart(document.getElementById('ch-d1depth'), {
-  type:'line',
-  data:{ labels:MONTHS, datasets:[
-    { label:'0 accepts (bounce)', data:[32,30,28,26,24,22,21,20,19,18,17,16], borderColor:RED, borderWidth:2, tension:.3, fill:false },
-    { label:'1-4 accepts', data:[28,27,26,25,24,23,22,21,20,19,18,17], borderColor:ORANGE, borderWidth:2, tension:.3, fill:false },
-    { label:'5-19 accepts', data:[24,25,26,27,28,29,29,30,30,31,31,32], borderColor:BLUE, borderWidth:2, tension:.3, fill:false },
-    { label:'20+ accepts', data:[16,18,20,22,24,26,28,29,31,32,34,35], borderColor:GREEN, borderWidth:2.5, tension:.3, fill:false }
-  ]},
-  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false}},
-    scales:{x:{grid:{display:false}}, y:{max:40,ticks:{callback:function(v){return v+'%'}}, title:{display:true,text:'% of New Users',font:{size:9}}}}, aspectRatio:1.7 }
-});
-
-// 10. Churn Risk Score Distribution (100% stacked area)
-new Chart(document.getElementById('ch-churn-risk'), {
-  type:'line',
-  data:{ labels:MONTHS, datasets:[
-    { label:'Low Risk (0-25)', data:[35,36,37,38,39,40,41,42,43,44,45,46], backgroundColor:a(GREEN,.5), borderColor:GREEN, borderWidth:1, fill:true, tension:.3 },
-    { label:'Medium (25-50)', data:[30,30,29,29,28,28,27,27,26,26,25,25], backgroundColor:a(BLUE,.4), borderColor:BLUE, borderWidth:1, fill:true, tension:.3 },
-    { label:'High (50-75)', data:[22,21,21,20,20,19,19,18,18,17,17,16], backgroundColor:a(ORANGE,.4), borderColor:ORANGE, borderWidth:1, fill:true, tension:.3 },
-    { label:'Critical (75-100)', data:[13,13,13,13,13,13,13,13,13,13,13,13], backgroundColor:a(RED,.4), borderColor:RED, borderWidth:1, fill:true, tension:.3 }
-  ]},
-  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false}},
-    scales:{x:{grid:{display:false}}, y:{stacked:true,max:100,ticks:{callback:function(v){return v+'%'}}, title:{display:true,text:'% of Paid Seats',font:{size:9}}}}, aspectRatio:1.7 }
-});
-
-// 11. Lines of Code Influenced per Day
-new Chart(document.getElementById('ch-loc'), {
-  type:'bar',
-  data:{ labels:MONTHS, datasets:[
-    { label:'Accepted Code (M lines)', data:[12,14,16,18,20,23,26,29,33,37,42,47], backgroundColor:a(PURPLE,.6), borderRadius:2 },
-    { label:'Influenced Code (M lines)', data:[35,40,46,52,58,65,73,82,92,103,115,128], backgroundColor:a(BLUE,.3), borderRadius:2 }
-  ]},
-  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false}},
-    scales:{x:{grid:{display:false}}, y:{ticks:{callback:function(v){return v+'M'}}, title:{display:true,text:'Lines / Day (M)',font:{size:9}}}}, aspectRatio:1.7 }
-});
-
-// 12. Developer Time Saved (estimated hrs/wk per active user)
-new Chart(document.getElementById('ch-timesaved'), {
-  type:'line',
-  data:{ labels:MONTHS, datasets:[
-    { label:'Avg hrs saved/wk', data:[2.1,2.3,2.5,2.7,2.9,3.1,3.3,3.5,3.7,3.9,4.1,4.3], borderColor:GREEN, backgroundColor:a(GREEN,.1), borderWidth:2.5, tension:.3, fill:true },
-    { label:'Power users (P90)', data:[6.5,7.0,7.5,8.0,8.5,9.0,9.5,10.0,10.5,11.0,11.5,12.0], borderColor:PURPLE, borderWidth:1.5, tension:.3, fill:false, borderDash:[4,3] }
-  ]},
-  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false}},
-    scales:{x:{grid:{display:false}}, y:{title:{display:true,text:'Hours / Week',font:{size:9}}}}, aspectRatio:1.7 }
 });
 
 window.addEventListener('DOMContentLoaded', function(){ if(window.location.hash) history.replaceState(null,'',window.location.pathname); setTimeout(function(){ window.scrollTo(0,0); }, 0); });
