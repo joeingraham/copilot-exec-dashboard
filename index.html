@@ -76,6 +76,8 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 
 /* ── Card ── */
 .card { background: var(--card); border: 1px solid var(--card-border); border-radius: 12px; padding: 20px; position: relative; }
+.card-placeholder { background: var(--card); border: 1px dashed var(--card-border); border-radius: 12px; padding: 20px; position: relative; display: flex; align-items: center; justify-content: center; opacity: .4; }
+.card-placeholder .card-title { color: var(--text-muted); font-style: italic; }
 .card-title { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;
   letter-spacing: .5px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
 .card-title .illustrative { font-size: 10px; font-weight: 400; color: var(--text-muted);
@@ -256,12 +258,14 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <div class="card"><div class="card-title">Activations by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Shows which plan tier new users are landing on. Helps understand if growth is driven by free/trial or paid plans.</div><div class="info-takeaway">📌 Free tier drives ~40% of activations — the top-of-funnel. Business activations are steady at ~22K/mo indicating strong enterprise demand.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-act-sku"></canvas></div></div>
     <div class="card"><div class="card-title">Plan Upgrade / Downgrade Volume <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Tracks monthly volume of users upgrading between plan tiers (Individual plans and B2B plans) vs downgrades.</div><div class="info-takeaway">📌 Individual upgrades (Free→Pro, Pro→Pro+) are accelerating. B2B downgrades are minimal at &lt;1K/mo — strong enterprise stickiness.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-plan-migration"></canvas></div></div>
     <div class="card"><div class="card-title">Upgrade &amp; Downgrade Rates Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly conversion rates for upgrades and downgrades across plan tiers. Upward upgrade curves + declining downgrades = healthy plan expansion.</div><div class="info-takeaway">📌 Pro → Pro+ conversion is accelerating (4.5% → 7.5%). Downgrade rates are declining across the board — value proposition is strengthening.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-upgrade-rates"></canvas></div></div>
+    <div class="card-placeholder"><div class="card-title">Placeholder 1</div></div>
+    <div class="card-placeholder"><div class="card-title">Placeholder 2</div></div>
   </div>
-  <div class="card span-full" style="margin-top:8px"><div class="card-title">Conversion Funnel: Visit → Activation <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> End-to-end acquisition funnel showing conversion rates at each step from site visit through active usage.</div><div class="info-takeaway">📌 Biggest drop-off is Visit → Signup (4.2% conversion). Trial → Paid conversion at 38% is strong. Focus: improve top-of-funnel signup flow.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div id="funnel-toggles-wrap"></div></div>
-  <div class="grid grid-3" style="margin-top:8px;align-items:stretch">
-    <div class="card"><div class="card-title">Conversion Rates Over Time</div><div class="chart-wrap"><canvas id="ch-funnel-rates"></canvas></div></div>
+  <div class="grid grid-4" style="margin-top:8px;align-items:stretch">
+    <div class="card" style="display:flex;flex-direction:column"><div class="card-title">Conversion Funnel: Visit → Activation <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> End-to-end acquisition funnel showing conversion rates at each step from site visit through active usage.</div><div class="info-takeaway">📌 Biggest drop-off is Visit → Signup (4.2% conversion). Trial → Paid conversion at 38% is strong. Focus: improve top-of-funnel signup flow.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div id="funnel-toggles-wrap"></div><div class="chart-wrap"><canvas id="ch-funnel-rates"></canvas></div></div>
     <div class="card" style="display:flex;flex-direction:column"><div class="card-title">Funnel Visualization</div><div id="funnel-bars-wrap" style="flex:1"></div></div>
     <div class="card" style="display:flex;flex-direction:column"><div class="card-title">Funnel Insights</div><div id="funnel-text-wrap" style="flex:1"></div></div>
+    <div class="card-placeholder"><div class="card-title">Placeholder 3</div></div>
   </div>
 </section>
 
@@ -273,14 +277,14 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
       <div class="chart-wrap"><canvas id="ch-overage"></canvas></div></div>
     <div class="card"><div class="card-title">Revenue, COGS &amp; Gross Margin <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Revenue above x-axis, COGS below. GM% line on right axis shows margin trajectory.</div><div class="info-takeaway">📌 COGS growing faster than revenue — gross margins are deeply negative (~-41% to -69%) and worsening as usage scales.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-rev-cogs-gm"></canvas></div></div>
     <div class="card"><div class="card-title">Gross Profit by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Per-SKU profitability. Negative = SKU costs more to serve than it earns. Stacked bar shows which SKUs subsidize others.</div><div class="info-takeaway">📌 All SKUs have negative GP — COGS exceed revenue across every tier. Business has the largest absolute deficit.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-gp-sku"></canvas></div></div>
+    <div class="card-placeholder"><div class="card-title">Placeholder 4</div></div>
   </div>
   <div class="grid grid-4" style="margin-top:20px">
     <div class="card"><div class="card-title">ARPU by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Revenue per user by plan. Positive values.</div><div class="info-takeaway">📌 Enterprise highest at ~$47/mo. All paid SKUs trending up.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-arpu-cost"></canvas></div></div>
     <div class="card"><div class="card-title">COGS per User by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Cost to serve each user. Shown as negative values for visual comparison with ARPU.</div><div class="info-takeaway">📌 COGSPU rising across all SKUs as usage intensity grows. Pro+ highest at ~$33-45/user/mo. Free at ~$0.40-0.97.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cogspu"></canvas></div></div>
     <div class="card"><div class="card-title">Gross Profit per User by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> ARPU minus COGS per user. Positive = profitable, negative = subsidized. The unit economics truth.</div><div class="info-takeaway">📌 All SKUs show negative unit economics — COGSPU exceeds ARPU. Enterprise least negative; Pro+ most underwater.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-gppu"></canvas></div></div>
+    <div class="card-placeholder"><div class="card-title">Placeholder 5</div></div>
   </div>
-</section>
-
 </section>
 
 <!-- ── UTILIZATION ── -->
@@ -312,6 +316,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <div class="card"><div class="card-title">Return Rate &amp; User Base <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Shows cumulative activations, current MAU, returning users, and return rate on dual axes. Tracks user base health and re-engagement.</div><div class="info-takeaway">📌 Return rate at 42% — less than half of ever-activated users are currently active. But trending up slightly. 6.2M ever activated, 2.6M currently active.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-return-rate"></canvas></div></div>
     <div class="card"><div class="card-title">Retention J-Curves by Cohort <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly retention curves for each cohort. J-curve shape = initial churn then stabilization. Newer cohorts above older = improving product.</div><div class="info-takeaway">📌 Recent cohorts show higher floor retention — onboarding improvements are working.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-jcurves"></canvas></div></div>
     <div class="card"><div class="card-title">Retention Milestones Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Tracks M1, M3, M6, M12 retention rates over time. Are retention milestones improving?</div><div class="info-takeaway">📌 M1 retention improved from 72% to 81%. M12 retention steady at ~58% — long-term stickiness holding.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-ret-milestones"></canvas></div></div>
+    <div class="card-placeholder"><div class="card-title">Placeholder 6</div></div>
   </div>
   <div class="grid grid-4" style="margin-top:20px">
     <div class="card"><div class="card-title">Cohorted Revenue Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Total revenue trajectory by cohort month.</div><div class="info-takeaway">📌 Newer cohorts ramping faster — product-led growth improving.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-rev"></canvas></div></div>
@@ -346,9 +351,10 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <div class="card"><div class="card-title">Rolling 7-Day DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cli-dau"></canvas></div></div>
     <div class="card"><div class="card-title">Week 1 Retention <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cli-retention"></canvas></div></div>
     <div class="card"><div class="card-title">Cost per User <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cli-cost"></canvas></div></div>
+    <div class="card-placeholder"><div class="card-title">Placeholder 7</div></div>
   </div>
 
-  <h3 style="color:#E6EDF3;font-size:15px;font-weight:600;margin:24px 0 10px;padding-left:12px;border-left:3px solid #49CCF9">CCA (Copilot Chat / Agent)</h3>
+  <h3style="color:#E6EDF3;font-size:15px;font-weight:600;margin:24px 0 10px;padding-left:12px;border-left:3px solid #49CCF9">CCA (Copilot Chat / Agent)</h3>
   <div class="grid grid-4">
     <div class="card"><div class="card-title">Rolling 7-Day DAU <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cca-dau"></canvas></div></div>
     <div class="card"><div class="card-title">Week 1 Retention <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-cca-retention"></canvas></div></div>
@@ -363,6 +369,9 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <div class="card"><div class="card-title">Positive Feedback Rate <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ccr-feedback"></canvas></div></div>
     <div class="card"><div class="card-title">Cost per User <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ccr-cost"></canvas></div></div>
     <div class="card"><div class="card-title">Reviews by CB/CE <span class="illustrative">(Illustrative)</span></div><div class="chart-wrap"><canvas id="goal-ccr-reviews"></canvas></div></div>
+    <div class="card-placeholder"><div class="card-title">Placeholder 8</div></div>
+    <div class="card-placeholder"><div class="card-title">Placeholder 9</div></div>
+    <div class="card-placeholder"><div class="card-title">Placeholder 10</div></div>
   </div>
 </section>
 
