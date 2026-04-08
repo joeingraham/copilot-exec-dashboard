@@ -113,18 +113,19 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 .funnel-comment-cell { display: flex; align-items: center; padding: 4px 0 4px 10px;
   border-left: 2px solid rgba(123,104,238,.2); font-size: 12px; line-height: 1.4; color: var(--text); }
 .funnel-comment-cell b { color: var(--purple); }
-.funnel-row-label { font-size: 10px; color: var(--text-muted); width: 75px; text-align: right; flex-shrink: 0; font-weight: 500; line-height: 1.2; }
+.funnel-row-label { font-size: 11px; color: var(--text-muted); width: 80px; text-align: right; flex-shrink: 0; font-weight: 600; line-height: 1.3; }
 .funnel-row-label .fl-total { color: #E6EDF3; font-weight: 700; font-size: 12px; display: block; }
 .funnel-row-label .fl-pcts { font-size: 8px; opacity: .7; display: block; }
 .funnel-row-bar { flex: 1; display: flex; flex-direction: column; align-items: center; }
 .funnel-row-rate { font-size: 9px; color: var(--text-muted); margin: 0; line-height: 1.2; }
-.funnel-bar-single { border-radius: 5px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 12px; color: #fff; transition: all .25s; min-width: 40px; padding: 4px 0; }
-.funnel-bar-single .bar-pcts { font-size: 9px; font-weight: 500; opacity: .75; margin-top: 1px; }
+.funnel-bar-single { border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 15px; color: #fff; transition: all .25s; min-width: 40px; padding: 6px 0; line-height: 1.3; }
+.funnel-bar-single .bar-line { font-size: 11px; font-weight: 600; opacity: .8; }
 .funnel-bar-single:hover { filter: brightness(1.15); }
-#funnel-bars-wrap { display: flex; flex-direction: column; height: 100%; min-height: 320px; }
-#funnel-text-wrap { display: flex; flex-direction: column; height: 100%; min-height: 320px; }
-.funnel-insight-row { flex: 1; display: flex; align-items: center; padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,.05); }
+#funnel-bars-wrap { display: flex; flex-direction: column; height: 100%; min-height: 360px; }
+#funnel-text-wrap { display: flex; flex-direction: column; height: 100%; min-height: 360px; }
+.funnel-insight-row { flex: 1; display: flex; align-items: center; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,.05);
+  font-size: 13px; line-height: 1.5; }
 
 /* ── KPI Tiles ── */
 .kpi { text-align: center; }
@@ -258,7 +259,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
   <div class="grid grid-3" style="margin-top:8px;align-items:stretch">
     <div class="card"><div class="card-title">Conversion Rates Over Time</div><div class="chart-wrap"><canvas id="ch-funnel-rates"></canvas></div></div>
     <div class="card" style="display:flex;flex-direction:column"><div class="card-title">Funnel Visualization</div><div id="funnel-bars-wrap" style="flex:1"></div></div>
-    <div class="card" style="display:flex;flex-direction:column"><div class="card-title">Funnel Insights</div><div id="funnel-text-wrap" style="flex:1;font-size:12px;line-height:1.4"></div></div>
+    <div class="card" style="display:flex;flex-direction:column"><div class="card-title">Funnel Insights</div><div id="funnel-text-wrap" style="flex:1"></div></div>
   </div>
   <div class="grid grid-2" style="margin-top:8px">
     <div class="card"><div class="card-title">Plan Upgrade / Downgrade Volume <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Tracks monthly volume of users upgrading between plan tiers (Individual plans and B2B plans) vs downgrades.</div><div class="info-takeaway">📌 Individual upgrades (Free→Pro, Pro→Pro+) are accelerating. B2B downgrades are minimal at &lt;1K/mo — strong enterprise stickiness.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-plan-migration"></canvas></div></div>
@@ -1677,8 +1678,11 @@ var funnelRatesTrend = {
         bhtml += '<div class="funnel-row-label">'+step+'</div>';
         bhtml += '<div class="funnel-row-bar">';
         bhtml += '<div class="funnel-bar-single" style="width:'+barPct+'%;background:'+ch.color+'">';
-        bhtml += '<span>'+fmt(val)+(notToScale?' <span style="font-size:7px;opacity:.5">(not to scale)</span>':'')+'</span>';
-        if (i > 0) bhtml += '<span class="bar-pcts">'+prevConv+'% of prior · '+pctOfTop+'% of total</span>';
+        bhtml += '<span>'+fmt(val)+(notToScale?' <span style="font-size:8px;opacity:.5">(not to scale)</span>':'')+'</span>';
+        if (i > 0) {
+          bhtml += '<span class="bar-line">'+prevConv+'% of prior</span>';
+          bhtml += '<span class="bar-line">'+pctOfTop+'% of total</span>';
+        }
         bhtml += '</div>';
         bhtml += '</div></div>';
       });
