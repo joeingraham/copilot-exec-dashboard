@@ -187,15 +187,6 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <button class="toggle-btn active" data-sku="Business" onclick="toggleSku(this)"><span class="dot" style="background:#79D9B9"></span>Biz</button>
     <button class="toggle-btn active" data-sku="Enterprise" onclick="toggleSku(this)"><span class="dot" style="background:#FFB08E"></span>Ent</button>
   </div>
-  <div class="toggle-wrap" id="surface-filters">
-    <button class="toggle-btn active" data-surface="all" onclick="toggleSurface(this)" style="background:rgba(255,255,255,.1)">All Surfaces</button>
-    <button class="toggle-btn active" data-surface="Completions" onclick="toggleSurface(this)"><span class="dot" style="background:#7B68EE"></span>Completions</button>
-    <button class="toggle-btn active" data-surface="Chat" onclick="toggleSurface(this)"><span class="dot" style="background:#49CCF9"></span>Chat</button>
-    <button class="toggle-btn active" data-surface="VS Code" onclick="toggleSurface(this)"><span class="dot" style="background:#2EA043"></span>VS Code</button>
-    <button class="toggle-btn active" data-surface="CLI" onclick="toggleSurface(this)"><span class="dot" style="background:#79D9B9"></span>CLI</button>
-    <button class="toggle-btn active" data-surface="PR Summaries" onclick="toggleSurface(this)"><span class="dot" style="background:#FD71AF"></span>PR Sum</button>
-    <button class="toggle-btn active" data-surface="Agent" onclick="toggleSurface(this)"><span class="dot" style="background:#FFB08E"></span>Agent</button>
-  </div>
   <div class="toggle-wrap" id="granularity-toggle">
     <button class="toggle-btn active" data-gran="monthly" onclick="setGranularity(this)">Monthly</button>
     <button class="toggle-btn" data-gran="weekly" onclick="setGranularity(this)">Weekly</button>
@@ -233,10 +224,6 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
   <a class="nav-item" href="#retention" data-section="retention">
     <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M7.655 14.916v-.001h-.002l-.006-.003-.018-.01a22 22 0 0 1-.306-.17 27.4 27.4 0 0 1-3.504-2.498C2.012 10.747 0 8.42 0 5.5 0 2.836 2.086 1 4.25 1 5.797 1 7.153 1.802 8 3.02 8.847 1.802 10.203 1 11.75 1 13.914 1 16 2.836 16 5.5c0 2.92-2.012 5.247-3.819 6.734a27.4 27.4 0 0 1-3.81 2.668l-.018.01-.006.003h-.002z"/></svg></span>
     <span class="nav-label">Retention & Health</span>
-  </a>
-  <a class="nav-item" href="#pipeline" data-section="pipeline">
-    <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M1 2.75A.75.75 0 0 1 1.75 2h12.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 2.75zm2 3A.75.75 0 0 1 3.75 5h8.5a.75.75 0 0 1 0 1.5h-8.5A.75.75 0 0 1 3 5.75zm2 3A.75.75 0 0 1 5.75 8h4.5a.75.75 0 0 1 0 1.5h-4.5A.75.75 0 0 1 5 8.75zm2 3a.75.75 0 0 1 .75-.75h.5a.75.75 0 0 1 0 1.5h-.5a.75.75 0 0 1-.75-.75z"/></svg></span>
-    <span class="nav-label">Sales Pipeline</span>
   </a>
   <a class="nav-item" href="#goals" data-section="goals">
     <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zm3.28 5.22a.75.75 0 0 0-1.06 0L7 8.44 5.78 7.22a.75.75 0 0 0-1.06 1.06l1.75 1.75a.75.75 0 0 0 1.06 0l3.75-3.75a.75.75 0 0 0 0-1.06z"/></svg></span>
@@ -338,15 +325,6 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
   </div>
   <div class="grid grid-2" style="margin-top:20px">
     <div class="card"><div class="card-title">Return Rate &amp; User Base <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Shows cumulative activations, current MAU, returning users, and return rate on dual axes. Tracks user base health and re-engagement.</div><div class="info-takeaway">📌 Return rate at 42% — less than half of ever-activated users are currently active. But trending up slightly. 6.2M ever activated, 2.6M currently active.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-return-rate"></canvas></div></div>
-  </div>
-</section>
-
-<!-- ── PIPELINE ── -->
-<section class="section" id="pipeline">
-  <div class="section-header"><h2>Sales Pipeline</h2><p>Pipeline stages and quota attainment</p></div>
-  <div class="grid grid-2">
-    <div class="card"><div class="card-title">Pipeline by Stage <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Total pipeline value segmented by sales stage. Tracks deal progression and pipeline health.</div><div class="info-takeaway">📌 $120M closed/won from $800M pipeline = 15% win rate. Pipeline coverage of 6.7× is healthy.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-pipeline"></canvas></div></div>
-    <div class="card"><div class="card-title">Quota Attainment <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Sales team performance against target. 100% = on plan.</div><div class="info-takeaway">📌 At 87% attainment — slightly below plan but improving. Enterprise segment over-performing at 102%.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-quota"></canvas></div></div>
   </div>
 </section>
 
