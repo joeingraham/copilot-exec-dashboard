@@ -382,7 +382,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
   <div class="section-header"><h2>🧪 Growth Ideas (Experimental)</h2><p>Additional views under consideration — feedback welcome</p></div>
   <div class="grid grid-4">
     <div class="card"><div class="card-title">Seat Utilization (Active / Assigned) <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Active vs assigned seats with utilization % on dual axis. Low utilization = enterprise shelfware risk → churn signal.</div><div class="info-takeaway">📌 Utilization at 79% — 21% of assigned seats are unused. Target >85% to reduce churn risk.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-seat-util"></canvas></div></div>
-    <div class="card"><div class="card-title">Expansion vs Contraction ARR <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly ARR changes from upgrades/seat expansion (positive) vs downgrades/seat contraction (negative). Net line shows the revenue motion health. Excludes new logo and full churn.</div><div class="info-takeaway">📌 Net expansion accelerating to $19.5M/mo — upgrades outpacing downgrades 4.5:1.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-expansion"></canvas></div></div>
+    <div class="card"><div class="card-title">ARR Bridge (New + Expansion − Contraction − Churn) <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Full ARR waterfall — new logo ARR and expansion on the positive side, contraction and full churn on the negative side. Net line shows total ARR motion.</div><div class="info-takeaway">📌 Net ARR growth accelerating to $30M/mo. New logo ARR is the biggest driver, but expansion is catching up.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-expansion"></canvas></div></div>
     <div class="card-placeholder"><div class="card-title">Placeholder 1</div></div>
     <div class="card-placeholder"><div class="card-title">Placeholder 2</div></div>
   </div>
@@ -2566,9 +2566,11 @@ allCharts.returnRate = new Chart(document.getElementById('ch-return-rate'), {
 new Chart(document.getElementById('ch-expansion'), {
   type:'bar',
   data:{ labels:MONTHS, datasets:[
+    { label:'New Logo ARR', data:[12,13,14,15,16,17,18,20,22,24,26,28], backgroundColor:a(BLUE,.6), borderRadius:2, stack:'s' },
     { label:'Expansion ARR', data:[8,9,10,11,12,14,15,17,19,21,23,25], backgroundColor:a(GREEN,.6), borderRadius:2, stack:'s' },
-    { label:'Contraction ARR', data:[-3,-3,-3.5,-3.5,-4,-4,-4.5,-4.5,-5,-5,-5.5,-5.5], backgroundColor:a(RED,.5), borderRadius:2, stack:'s' },
-    { type:'line', label:'Net Expansion', data:[5,6,6.5,7.5,8,10,10.5,12.5,14,16,17.5,19.5], borderColor:PURPLE, borderWidth:2.5, tension:.3, fill:false, pointRadius:3 }
+    { label:'Contraction ARR', data:[-3,-3,-3.5,-3.5,-4,-4,-4.5,-4.5,-5,-5,-5.5,-5.5], backgroundColor:a(ORANGE,.5), borderRadius:2, stack:'s' },
+    { label:'Churned ARR', data:[-5,-5.5,-6,-6,-6.5,-7,-7,-7.5,-8,-8.5,-9,-9.5], backgroundColor:a(RED,.5), borderRadius:2, stack:'s' },
+    { type:'line', label:'Net ARR Change', data:[12,13.5,14.5,16.5,17.5,20,21.5,25,28,31.5,34.5,38], borderColor:PURPLE, borderWidth:2.5, tension:.3, fill:false, pointRadius:3 }
   ]},
   options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false},
     annotation:{annotations:{zero:{type:'line',yMin:0,yMax:0,borderColor:'rgba(255,255,255,.2)',borderWidth:1}}}},
