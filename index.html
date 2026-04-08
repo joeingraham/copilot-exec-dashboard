@@ -1537,82 +1537,82 @@ allCharts.upgradeRates = new Chart(document.getElementById('ch-upgrade-rates'), 
 
 // ── Conversion Funnel — toggleable by channel ──
 var funnelRatesTrend = {
-  'Signup %': [18,18.5,19,19.2,19.5,19.8,20,20.2,20.5,20.8,21,21.5],
-  'Account %': [3.5,3.6,3.7,3.8,3.9,4.0,4.1,4.2,4.2,4.3,4.4,4.5],
-  'Activated %': [0.8,0.85,0.9,0.92,0.95,0.98,1.0,1.02,1.05,1.08,1.1,1.15],
-  'D7 Retained %': [0.55,0.58,0.62,0.65,0.68,0.7,0.72,0.74,0.76,0.78,0.8,0.82],
-  'D30 Retained %': [0.42,0.45,0.48,0.5,0.52,0.55,0.57,0.59,0.61,0.63,0.65,0.68],
-  'Paid %': [0.28,0.3,0.32,0.33,0.35,0.36,0.38,0.39,0.4,0.42,0.43,0.45]
+  'Signup %': [26,26.5,27,27.5,28,28.5,29,29.2,29.5,29.8,30,30.5],
+  'Account %': [14,14.5,15,15.3,15.6,16,16.3,16.6,17,17.3,17.6,18],
+  'Activated %': [7.5,7.8,8.0,8.3,8.5,8.8,9.0,9.2,9.5,9.7,9.8,10],
+  'D7 Retained %': [5.8,6.0,6.2,6.4,6.6,6.8,7.0,7.2,7.4,7.6,7.8,8.0],
+  'D30 Retained %': [4.5,4.7,4.9,5.1,5.3,5.5,5.7,5.8,6.0,6.1,6.2,6.4],
+  'Paid %': [3.2,3.4,3.6,3.8,4.0,4.1,4.3,4.4,4.6,4.7,4.8,5.0]
 };
 
 (function() {
   var steps = ['Page Visits','Signup Initiated','Account Created','Activated (MAU)','D7 Retained','D30 Retained','Paid Conversion'];
   var channels = [
     { id:'total', name:'Total', color:PURPLE,
-      data:[12000000,2400000,504000,122000,89000,72000,46000],
+      data:[12000000,3600000,2160000,1200000,960000,768000,600000],
       commentary:[
         '<b>12M visits/mo</b> — Organic (42%) and GitHub.com (28%) drive 70%. Paid is only 7% \u2014 growth is self-sustaining.',
-        '<b>20% initiate signup</b> — Above industry avg (12-15%). "Try Copilot" CTA above the fold is the key driver.',
-        '<b>21% create accounts</b> — OAuth converts 2\u00d7 vs email signup. Mobile completion 40% lower than desktop.',
-        '<b>122K activate = MAU intake</b> — 76% create accounts but never install. Key lever: IDE extension install prompts.',
-        '<b>73% retained at D7</b> — Users with \u22655 Day-1 acceptances retain at 88% vs 52%. First-session quality is #1 driver.',
-        '<b>81% D7\u2192D30</b> — Multi-surface users retain 91% vs 68% single-surface. Habit is formed by D7.',
-        '<b>64% convert to paid</b> — Visit-to-paid: 0.38%. Median 18 days. Pro 62%, Business 28% of entries.',
+        '<b>30% initiate signup</b> — Above industry avg (12-15%). "Try Copilot" CTA above the fold is the key driver.',
+        '<b>60% create accounts</b> — OAuth converts 2\u00d7 vs email signup. Mobile completion 40% lower than desktop.',
+        '<b>56% activate = MAU intake</b> — Strongest activation step. IDE extension auto-install prompt is the key lever.',
+        '<b>80% retained at D7</b> — Users with \u22655 Day-1 acceptances retain at 88% vs 52%. First-session quality is #1 driver.',
+        '<b>80% D7\u2192D30</b> — Multi-surface users retain 91% vs 68% single-surface. Habit is formed by D7.',
+        '<b>78% convert to paid</b> — Visit-to-paid: 5.0%. Median 18 days. Pro 62%, Business 28% of entries.',
       ]},
     { id:'organic', name:'Organic Search', color:'#79D9B9',
-      data:[5040000,1100000,240000,62000,47000,39000,26000],
+      data:[5040000,1650000,1020000,580000,470000,385000,305000],
       commentary:[
         '<b>5.0M visits</b> — 42% of all traffic. Growing 10% MoM driven by SEO investment and developer blog content.',
-        '<b>21.8% signup rate</b> — Highest of any channel. Users arriving via search have strong intent to try Copilot.',
-        '<b>21.8% create accounts</b> — Similar to average. Opportunity: pre-fill GitHub OAuth for returning users.',
-        '<b>25.8% activate</b> — Best activation rate of any channel. Search users are self-directed and more likely to install.',
-        '<b>75.8% D7 retention</b> — Above average. Organic users are higher-intent and engage more deeply on Day 1.',
-        '<b>83% D7\u2192D30</b> — Strongest retention. These users found Copilot through research \u2014 they know what they want.',
-        '<b>66.7% paid conversion</b> — Highest conversion rate. Visit-to-paid: 0.52%. The most valuable acquisition channel.',
+        '<b>32.7% signup rate</b> — Highest of any channel. Users arriving via search have strong intent to try Copilot.',
+        '<b>61.8% create accounts</b> — Similar to average. Opportunity: pre-fill GitHub OAuth for returning users.',
+        '<b>56.9% activate</b> — Best activation rate of any channel. Search users are self-directed and more likely to install.',
+        '<b>81.0% D7 retention</b> — Above average. Organic users are higher-intent and engage more deeply on Day 1.',
+        '<b>81.9% D7\u2192D30</b> — Strongest retention. These users found Copilot through research \u2014 they know what they want.',
+        '<b>79.2% paid conversion</b> — Highest conversion rate. Visit-to-paid: 6.1%. The most valuable acquisition channel.',
       ]},
     { id:'github', name:'GitHub.com', color:'#49CCF9',
-      data:[3360000,780000,170000,38000,28000,22000,13000],
+      data:[3360000,1080000,660000,355000,282000,222000,170000],
       commentary:[
         '<b>3.4M visits</b> — 28% of traffic. Cross-promotion from GitHub.com features, repo pages, and dashboard.',
-        '<b>23.2% signup rate</b> — Strong \u2014 users are already logged into GitHub, reducing signup friction.',
-        '<b>21.8% create accounts</b> — GitHub OAuth makes this seamless. Near-zero drop-off for existing GitHub users.',
-        '<b>22.4% activate</b> — Slightly below organic. Many are curious but not yet ready to install IDE extension.',
-        '<b>73.7% D7 retention</b> — On par with average. GitHub.com users are familiar with the ecosystem.',
-        '<b>78.6% D7\u2192D30</b> — Solid retention. These users are already in the GitHub workflow daily.',
-        '<b>59.1% paid conversion</b> — Slightly below average. Many are already on free GitHub plans \u2014 price sensitivity.',
+        '<b>32.1% signup rate</b> — Strong \u2014 users are already logged into GitHub, reducing signup friction.',
+        '<b>61.1% create accounts</b> — GitHub OAuth makes this seamless. Near-zero drop-off for existing GitHub users.',
+        '<b>53.8% activate</b> — Slightly below organic. Many are curious but not yet ready to install IDE extension.',
+        '<b>79.4% D7 retention</b> — On par with average. GitHub.com users are familiar with the ecosystem.',
+        '<b>78.7% D7\u2192D30</b> — Solid retention. These users are already in the GitHub workflow daily.',
+        '<b>76.6% paid conversion</b> — Slightly below organic. Many are already on free GitHub plans \u2014 price sensitivity.',
       ]},
     { id:'direct', name:'Direct', color:'#7B68EE',
-      data:[2160000,370000,68000,15000,10000,8000,5000],
+      data:[2160000,560000,310000,168000,128000,100000,76000],
       commentary:[
         '<b>2.2M visits</b> — 18% of traffic. Bookmarks, type-ins, and word-of-mouth referrals.',
-        '<b>17.1% signup rate</b> — Below average. Many are repeat visitors checking pricing or docs, not ready to sign up.',
-        '<b>18.4% create accounts</b> — Lower conversion \u2014 direct visitors are more likely to be evaluating, not committing.',
-        '<b>22.1% activate</b> — Comparable to other channels once they commit to account creation.',
-        '<b>66.7% D7 retention</b> — Below average. Some direct visitors are tire-kickers or comparison shoppers.',
-        '<b>80% D7\u2192D30</b> — Those who survive D7 stick well. The filter happens early.',
-        '<b>62.5% paid conversion</b> — Moderate. Visit-to-paid: 0.23%. Many are evaluating alternatives first.',
+        '<b>25.9% signup rate</b> — Below average. Many are repeat visitors checking pricing or docs, not ready to sign up.',
+        '<b>55.4% create accounts</b> — Lower conversion \u2014 direct visitors are more likely to be evaluating, not committing.',
+        '<b>54.2% activate</b> — Comparable to other channels once they commit to account creation.',
+        '<b>76.2% D7 retention</b> — Below average. Some direct visitors are tire-kickers or comparison shoppers.',
+        '<b>78.1% D7\u2192D30</b> — Those who survive D7 stick well. The filter happens early.',
+        '<b>76.0% paid conversion</b> — Moderate. Visit-to-paid: 3.5%. Many are evaluating alternatives first.',
       ]},
     { id:'paid', name:'Paid / Marketing', color:'#FD71AF',
-      data:[840000,100000,18000,5000,3000,2200,1400],
+      data:[840000,185000,96000,52000,37000,28000,21000],
       commentary:[
         '<b>840K visits</b> — 7% of traffic. Google Ads, LinkedIn campaigns, sponsored content.',
-        '<b>11.9% signup rate</b> — Lowest channel. Paid users are less intent-driven \u2014 many are just browsing.',
-        '<b>18.0% create accounts</b> — Below average. Ad-driven users have higher bounce rates and shorter sessions.',
-        '<b>27.8% activate</b> — Surprisingly high for paid. Once they sign up, the product speaks for itself.',
-        '<b>60% D7 retention</b> — Weakest retention. Paid users are least committed \u2014 many don\'t return after Day 1.',
-        '<b>73.3% D7\u2192D30</b> — Survivors retain OK, but the D7 filter is harsh. Questionable CAC efficiency.',
-        '<b>63.6% paid conversion</b> — Visit-to-paid: 0.17%. Most expensive channel per converted user by far.',
+        '<b>22.0% signup rate</b> — Lowest channel. Paid users are less intent-driven \u2014 many are just browsing.',
+        '<b>51.9% create accounts</b> — Below average. Ad-driven users have higher bounce rates and shorter sessions.',
+        '<b>54.2% activate</b> — Decent for paid. Once they sign up, the product speaks for itself.',
+        '<b>71.2% D7 retention</b> — Weakest retention. Paid users are least committed \u2014 some don\'t return after Day 1.',
+        '<b>75.7% D7\u2192D30</b> — Survivors retain OK, but the D7 filter is harsh. Questionable CAC efficiency.',
+        '<b>75.0% paid conversion</b> — Visit-to-paid: 2.5%. Most expensive channel per converted user by far.',
       ]},
     { id:'social', name:'Social & Referral', color:'#FFB08E',
-      data:[600000,50000,8000,2000,1000,800,600],
+      data:[600000,125000,74000,45000,33000,26000,20000],
       commentary:[
         '<b>600K visits</b> — 5% of traffic. Twitter/X, Reddit, LinkedIn shares, developer blogs.',
-        '<b>8.3% signup rate</b> — Lowest. Social traffic is high-curiosity but low-intent. Many just read and leave.',
-        '<b>16.0% create accounts</b> — Low conversion. Social visitors are often on mobile with higher friction.',
-        '<b>25.0% activate</b> — Decent \u2014 those who create accounts from social are often motivated by peer recommendation.',
-        '<b>50% D7 retention</b> — Weakest. Hype-driven signups churn fast. FOMO doesn\'t sustain daily usage.',
-        '<b>80% D7\u2192D30</b> — Survivors are strong \u2014 peer recommendations create genuine interest.',
-        '<b>75% paid conversion</b> — Small base but highest conversion! Referral-driven users trust the product. Visit-to-paid: 0.10%.',
+        '<b>20.8% signup rate</b> — Below average. Social traffic is high-curiosity but lower-intent.',
+        '<b>59.2% create accounts</b> — Decent \u2014 social visitors who sign up tend to follow through.',
+        '<b>60.8% activate</b> — Strong \u2014 those who create accounts from social are motivated by peer recommendation.',
+        '<b>73.3% D7 retention</b> — Below average. Some hype-driven signups churn fast.',
+        '<b>78.8% D7\u2192D30</b> — Survivors are strong \u2014 peer recommendations create genuine interest.',
+        '<b>76.9% paid conversion</b> — Small base but solid conversion. Referral-driven users trust the product. Visit-to-paid: 3.3%.',
       ]},
   ];
 
@@ -1682,6 +1682,9 @@ var funnelRatesTrend = {
         if (i > 0) {
           bhtml += '<span class="bar-line">'+prevConv+'% of prior</span>';
           bhtml += '<span class="bar-line">'+pctOfTop+'% of total</span>';
+        } else {
+          bhtml += '<span class="bar-line">100% of total</span>';
+          bhtml += '<span class="bar-line">&nbsp;</span>';
         }
         bhtml += '</div>';
         bhtml += '</div></div>';
