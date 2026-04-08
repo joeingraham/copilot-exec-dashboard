@@ -254,14 +254,8 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <div class="card"><div class="card-title">Activations by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Shows which plan tier new users are landing on. Helps understand if growth is driven by free/trial or paid plans.</div><div class="info-takeaway">📌 Free tier drives ~40% of activations — the top-of-funnel. Business activations are steady at ~22K/mo indicating strong enterprise demand.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-act-sku"></canvas></div></div>
     <div class="card"><div class="card-title">Plan Upgrade / Downgrade Volume <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Tracks monthly volume of users upgrading between plan tiers (Individual plans and B2B plans) vs downgrades.</div><div class="info-takeaway">📌 Individual upgrades (Free→Pro, Pro→Pro+) are accelerating. B2B downgrades are minimal at &lt;1K/mo — strong enterprise stickiness.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-plan-migration"></canvas></div></div>
     <div class="card"><div class="card-title">Upgrade &amp; Downgrade Rates Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly conversion rates for upgrades and downgrades across plan tiers. Upward upgrade curves + declining downgrades = healthy plan expansion.</div><div class="info-takeaway">📌 Pro → Pro+ conversion is accelerating (4.5% → 7.5%). Downgrade rates are declining across the board — value proposition is strengthening.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-upgrade-rates"></canvas></div></div>
-    <div class="card-placeholder"><div class="card-title">Placeholder 1</div></div>
-    <div class="card-placeholder"><div class="card-title">Placeholder 2</div></div>
-  </div>
-  <div class="grid grid-4" style="margin-top:8px;align-items:stretch">
     <div class="card" style="display:flex;flex-direction:column"><div class="card-title">Conversion Funnel: Visit → Activation <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> End-to-end acquisition funnel showing conversion rates at each step from site visit through active usage.</div><div class="info-takeaway">📌 Biggest drop-off is Visit → Signup (4.2% conversion). Trial → Paid conversion at 38% is strong. Focus: improve top-of-funnel signup flow.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div id="funnel-toggles-wrap"></div><div class="chart-wrap"><canvas id="ch-funnel-rates"></canvas></div></div>
     <div class="card" style="display:flex;flex-direction:column"><div class="card-title">Funnel Visualization</div><div id="funnel-bars-wrap" style="flex:1"></div></div>
-    <div class="card" style="display:flex;flex-direction:column"><div class="card-title">Funnel Insights</div><div id="funnel-text-wrap" style="flex:1"></div></div>
-    <div class="card-placeholder"><div class="card-title">Placeholder 3</div></div>
   </div>
 </section>
 
@@ -2138,7 +2132,8 @@ allCharts.gpPercentile = new Chart(document.getElementById('ch-gp-percentile'), 
     { label:'P99-100 (Power)', data:[-12,-14,-16,-18,-21,-24,-27,-31,-35,-40,-45,-51], backgroundColor:'#CF222E', borderRadius:2 }
   ]},
   options:{ plugins:{legend:{position:'bottom', labels:{boxWidth:10,font:{size:9}}},
-    datalabels:{display:false},
+    datalabels: stackedDatalabels(function(v){ return '$'+Math.round(v)+'M'; }, 0.03),
+    stackedTotal:{display:true, formatter:function(v){ return '$'+Math.round(v)+'M'; }},
     annotation:{annotations:{zero:{type:'line',yMin:0,yMax:0,borderColor:'rgba(255,255,255,.3)',borderWidth:1}}}},
     scales:{x:{stacked:true, grid:{display:false}},
       y:{stacked:true, ticks:{callback:function(v){return '$'+v+'M'}}, title:{display:true,text:'Gross Profit ($M)',font:{size:9}}}},
