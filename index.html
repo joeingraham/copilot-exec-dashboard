@@ -276,8 +276,6 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
         <button class="funnel-toggle" data-overage-sku="Enterprise" onclick="switchOverageSku('Enterprise')"><span class="ft-dot" style="background:#FFB08E"></span>Ent</button>
       </div>
       <div class="chart-wrap"><canvas id="ch-overage"></canvas></div></div>
-    <div class="card"><div class="card-title">Total Seats by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Assigned seats by plan tier over time.</div><div class="info-takeaway">📌 Approaching 2.7M total seats. Business and Enterprise driving growth.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-seats-sku"></canvas></div></div>
-    <div class="card"><div class="card-title">Net Seat Adds by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly net new seats by plan tier.</div><div class="info-takeaway">📌 Enterprise net adds accelerating. Free tier adds steady.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-netadds-sku"></canvas></div></div>
   </div>
   <div class="grid grid-3" style="margin-top:20px">
     <div class="card"><div class="card-title">ARPU by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Revenue per user by plan. Positive values.</div><div class="info-takeaway">📌 Enterprise highest at ~$47/mo. All paid SKUs trending up.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-arpu-cost"></canvas></div></div>
@@ -1175,31 +1173,6 @@ function rebuildAll() {
       }
     });
     allCharts.cogspu.update('none');
-  }
-
-  // -- Total Seats by SKU
-  if (allCharts.seatsSku) {
-    allCharts.seatsSku.data.labels = labels;
-    allCharts.seatsSku.data.datasets.forEach(function(ds) {
-      var sku = ds.label;
-      if (seatsData[sku]) {
-        ds.data = sliceTime(seatsData[sku]);
-      }
-    });
-    allCharts.seatsSku.update('none');
-  }
-
-  // -- Net Seat Adds by SKU
-  if (allCharts.netaddsSku) {
-    allCharts.netaddsSku.data.labels = labels;
-    allCharts.netaddsSku.data.datasets.forEach(function(ds) {
-      var sku = ds.label;
-      if (seatsData[sku]) {
-        var raw = sliceTime(seatsData[sku]);
-        ds.data = raw.map(function(v, i) { return i === 0 ? Math.round(v * 0.06) : v - sliceTime(seatsData[sku])[i - 1]; });
-      }
-    });
-    allCharts.netaddsSku.update('none');
   }
 
 
@@ -2190,57 +2163,6 @@ allCharts.cogspu = new Chart(document.getElementById('ch-cogspu'), {
     scales:{x:{grid:{display:false}}, y:{ticks:{callback:function(v){return '-$'+Math.abs(v).toFixed(2)}}, title:{display:true,text:'COGS/User ($/user/mo)'}}},
     aspectRatio:1.7 }
 });
-
-
-
-// Chart 5: Total Seats by SKU — stacked bar
-var seatsData = {
-  Free: [500,530,560,580,600,620,640,660,680,700,720,740],
-  Edu: [45,47,49,51,53,55,57,59,61,63,65,67],
-  Pro: [320,330,340,350,360,370,380,390,400,410,420,430],
-  'Pro+': [65,73,81,89,97,105,115,125,135,147,160,175],
-  Business: [440,470,500,530,560,590,620,660,700,740,780,820],
-  Enterprise: [130,145,160,180,200,220,250,280,310,350,390,430]
-};
-allCharts.seatsSku = new Chart(document.getElementById('ch-seats-sku'), {
-  type:'bar',
-  data:{ labels:MONTHS, datasets:[
-    { label:'Free',       data:seatsData.Free.slice(), backgroundColor:skuColors.Free, borderRadius:2 },
-    { label:'Edu',        data:seatsData.Edu.slice(), backgroundColor:skuColors.Edu, borderRadius:2 },
-    { label:'Pro',        data:seatsData.Pro.slice(), backgroundColor:skuColors.Pro, borderRadius:2 },
-    { label:'Pro+',       data:seatsData['Pro+'].slice(), backgroundColor:skuColors['Pro+'], borderRadius:2 },
-    { label:'Business',   data:seatsData.Business.slice(), backgroundColor:skuColors.Business, borderRadius:2 },
-    { label:'Enterprise', data:seatsData.Enterprise.slice(), backgroundColor:skuColors.Enterprise, borderRadius:2 }
-  ]},
-  options:{ plugins:{legend:{position:'bottom'},
-    datalabels: stackedDatalabels(function(v){ return v >= 1000 ? (v/1000).toFixed(1)+'M' : v+'K'; }, 0.05),
-    stackedTotal:{display:true, formatter:function(v){ return (v/1000).toFixed(1)+'M'; }}},
-    scales:{x:{stacked:true, grid:{display:false}},
-      y:{stacked:true, ticks:{callback:function(v){ return v >= 1000 ? (v/1000).toFixed(1)+'M' : v+'K'; }},
-        title:{display:true,text:'Seats (thousands)'}}},
-    aspectRatio:1.7 }
-});
-
-// Chart 6: Net Seat Adds by SKU — stacked bar
-(function() {
-  var skuList = ['Free','Edu','Pro','Pro+','Business','Enterprise'];
-  var netAddsDatasets = skuList.map(function(sku) {
-    var raw = seatsData[sku];
-    var adds = raw.map(function(v, i) { return i === 0 ? Math.round(v * 0.06) : v - raw[i - 1]; });
-    return { label:sku, data:adds, backgroundColor:skuColors[sku], borderRadius:2 };
-  });
-  allCharts.netaddsSku = new Chart(document.getElementById('ch-netadds-sku'), {
-    type:'bar',
-    data:{ labels:MONTHS, datasets:netAddsDatasets },
-    options:{ plugins:{legend:{position:'bottom'},
-      datalabels: stackedDatalabels(function(v){ return Math.round(v)+'K'; }, 0.08),
-      stackedTotal:{display:true, formatter:function(v){ return Math.round(v)+'K'; }}},
-      scales:{x:{stacked:true, grid:{display:false}},
-        y:{stacked:true, ticks:{callback:function(v){ return v+'K'; }},
-          title:{display:true,text:'Net Adds (thousands)'}}},
-      aspectRatio:1.7 }
-  });
-})();
 
 
 
