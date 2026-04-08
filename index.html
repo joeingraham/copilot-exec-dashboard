@@ -343,11 +343,13 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     </div>
   </div>
   <div class="grid grid-2" style="margin-top:20px">
-    <div class="card"><div class="card-title">Cohorted Revenue Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Revenue trajectory by cohort. Shows if cohorts expand revenue over time (land-and-expand).</div><div class="info-takeaway">📌 Older cohorts show steady revenue — minimal contraction. Newer cohorts ramping faster.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-rev"></canvas></div></div>
-    <div class="card"><div class="card-title">Cohorted Gross Profit Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Gross profit by cohort. Shows when cohorts become profitable (or if they stay underwater).</div><div class="info-takeaway">📌 No cohort has reached positive GP yet. Older cohorts closest to breakeven at -15% margin.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-gp"></canvas></div></div>
+    <div class="card"><div class="card-title">Cohorted Revenue Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Total revenue trajectory by cohort month.</div><div class="info-takeaway">📌 Newer cohorts ramping faster — product-led growth improving.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-rev"></canvas></div></div>
+    <div class="card"><div class="card-title">Cohorted Revenue per User <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Revenue per user by cohort month. Shows if per-user monetization is improving.</div><div class="info-takeaway">📌 Newer cohorts generating higher ARPU — pricing and overage adoption improving.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-rev-user"></canvas></div></div>
+    <div class="card"><div class="card-title">Cohorted Gross Profit Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Total gross profit by cohort. Shows when cohorts approach breakeven.</div><div class="info-takeaway">📌 All cohorts still negative GP. Older cohorts trending toward breakeven.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-gp"></canvas></div></div>
+    <div class="card"><div class="card-title">Cohorted Gross Profit per User <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> GP per user by cohort. Shows unit economics trajectory — are newer users less unprofitable?</div><div class="info-takeaway">📌 GP/user improving for newer cohorts — COGS per user declining faster than ARPU.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-gp-user"></canvas></div></div>
   </div>
-  <div class="grid grid-1" style="margin-top:20px">
-    <div class="card"><div class="card-title">Return Rate &amp; User Base <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Shows cumulative activations, current MAU, returning users, and return rate on dual axes. Tracks user base health and re-engagement.</div><div class="info-takeaway">📌 Return rate at 42% — less than half of ever-activated users are currently active. But trending up slightly. 6.2M ever activated, 2.6M currently active.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-return-rate" style="max-height:250px"></canvas></div></div>
+  <div class="grid grid-2" style="margin-top:20px">
+    <div class="card"><div class="card-title">Return Rate &amp; User Base <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Shows cumulative activations, current MAU, returning users, and return rate on dual axes. Tracks user base health and re-engagement.</div><div class="info-takeaway">📌 Return rate at 42% — less than half of ever-activated users are currently active. But trending up slightly. 6.2M ever activated, 2.6M currently active.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-return-rate"></canvas></div></div>
   </div>
 </section>
 
@@ -946,18 +948,36 @@ function rebuildAll() {
     allCharts.cohortGp.update('none');
   }
 
-  // 10f. Return Rate & User Base (time-range aware)
+  // 10e-2. Cohorted per-user charts (time-range aware)
+  ['cohortRevUser','cohortGpUser'].forEach(function(key) {
+    if (allCharts[key]) {
+      var count = allCharts[key].data.datasets.length;
+      var show = Math.min(timeRange, count);
+      allCharts[key].data.datasets.forEach(function(ds, idx) {
+        allCharts[key].getDatasetMeta(idx).hidden = idx < (count - show);
+      });
+      allCharts[key].update('none');
+    }
+  });
+
+  // 10f. Return Rate & User Base (time-range + SKU aware)
   if (allCharts.returnRate) {
-    allCharts.returnRate.data.labels = labels;
-    allCharts.returnRate.data.datasets[0].data = sliceTime(totalEverActivated);
-    allCharts.returnRate.data.datasets[1].data = sliceTime(currentMauData);
-    var slicedInPeriod = sliceTime(inPeriodActivations);
-    var slicedMauRR = sliceTime(currentMauData);
-    var slicedTotalEver = sliceTime(totalEverActivated);
-    var slicedReturning = slicedMauRR.map(function(v,i) { return v - slicedInPeriod[i]; });
-    var slicedReturnRate = slicedReturning.map(function(v,i) { return Math.round(v / slicedTotalEver[i] * 1000) / 10; });
-    allCharts.returnRate.data.datasets[2].data = slicedReturning;
-    allCharts.returnRate.data.datasets[3].data = slicedReturnRate;
+    var activeSkusRR = SKU_LIST.filter(function(s) { return skuState[s]; });
+    var scale = 1;
+    if (activeSkusRR.length < SKU_LIST.length) {
+      scale = activeSkusRR.reduce(function(s, sku) { return s + (returnRateSkuScale[sku] || 0); }, 0);
+    }
+    var scaledEver = totalEverActivated.map(function(v) { return Math.round(v * scale); });
+    var scaledMau = currentMauData.map(function(v) { return Math.round(v * scale); });
+    var scaledInPeriod = inPeriodActivations.map(function(v) { return Math.round(v * scale); });
+    var scaledReturning = scaledMau.map(function(v, i) { return v - scaledInPeriod[i]; });
+    var scaledRate = scaledReturning.map(function(v, i) { return scaledEver[i] > 0 ? Math.round(v / scaledEver[i] * 1000) / 10 : 0; });
+
+    allCharts.returnRate.data.datasets[0].data = sliceTime(scaledEver);
+    allCharts.returnRate.data.datasets[1].data = sliceTime(scaledMau);
+    allCharts.returnRate.data.datasets[2].data = sliceTime(scaledReturning);
+    allCharts.returnRate.data.datasets[3].data = sliceTime(scaledRate);
+    allCharts.returnRate.data.labels = getCurrentLabels();
     allCharts.returnRate.update('none');
   }
 
@@ -2529,7 +2549,71 @@ allCharts.cohortGp = new Chart(document.getElementById('ch-cohort-gp'), {
     aspectRatio: 1.4 }
 });
 
+// Cohorted Revenue per User ($/user/mo)
+var cohortRevPerUserData = {
+  'May 2025': [8.50,10.20,11.80,13.00,13.80,14.50,15.00,15.30,15.60,15.80,16.00,16.20],
+  'Jun 2025': [8.80,10.50,12.10,13.30,14.10,14.80,15.20,15.60,15.90,16.10,16.30,null],
+  'Jul 2025': [9.00,10.80,12.40,13.60,14.40,15.00,15.50,15.80,16.10,16.30,null,null],
+  'Aug 2025': [9.20,11.00,12.70,13.90,14.70,15.20,15.70,16.00,16.30,null,null,null],
+  'Sep 2025': [9.50,11.30,13.00,14.10,14.90,15.50,15.90,16.20,null,null,null,null],
+  'Oct 2025': [9.80,11.60,13.20,14.40,15.10,15.70,16.10,null,null,null,null,null],
+  'Nov 2025': [10.00,12.00,13.50,14.60,15.40,15.90,null,null,null,null,null,null],
+  'Dec 2025': [10.30,12.30,13.80,14.80,15.60,null,null,null,null,null,null,null],
+  'Jan 2026': [10.50,12.60,14.00,15.00,null,null,null,null,null,null,null,null],
+  'Feb 2026': [10.80,12.90,14.30,null,null,null,null,null,null,null,null,null],
+  'Mar 2026': [11.00,13.20,null,null,null,null,null,null,null,null,null,null],
+  'Apr 2026': [11.30,null,null,null,null,null,null,null,null,null,null,null]
+};
+
+allCharts.cohortRevUser = new Chart(document.getElementById('ch-cohort-rev-user'), {
+  type: 'line',
+  data: { labels: ['M0','M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11'], datasets:
+    cohortRevNames.map(function(name, idx) {
+      return { label: name, data: cohortRevPerUserData[name], borderColor: cohortRevColors[idx],
+        borderWidth: 2, tension: .3, fill: false, spanGaps: false };
+    })
+  },
+  options: { interaction: { mode: 'index', intersect: false },
+    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 8 } } }, datalabels: { display: false } },
+    scales: { x: { grid: { display: false } }, y: { ticks: { callback: function(v) { return '$'+v.toFixed(0); } },
+      title: { display: true, text: 'Revenue / User ($/mo)' } } },
+    aspectRatio: 1.4 }
+});
+
+// Cohorted Gross Profit per User (all negative, improving for newer cohorts)
+var cohortGpPerUserData = {
+  'May 2025': [-6.50,-5.80,-5.20,-4.80,-4.50,-4.20,-4.00,-3.80,-3.60,-3.50,-3.30,-3.20],
+  'Jun 2025': [-6.30,-5.60,-5.00,-4.60,-4.30,-4.00,-3.80,-3.60,-3.40,-3.30,-3.10,null],
+  'Jul 2025': [-6.10,-5.40,-4.80,-4.40,-4.10,-3.80,-3.60,-3.40,-3.20,-3.10,null,null],
+  'Aug 2025': [-5.90,-5.20,-4.60,-4.20,-3.90,-3.60,-3.40,-3.20,-3.00,null,null,null],
+  'Sep 2025': [-5.70,-5.00,-4.40,-4.00,-3.70,-3.40,-3.20,-3.00,null,null,null,null],
+  'Oct 2025': [-5.50,-4.80,-4.20,-3.80,-3.50,-3.20,-3.00,null,null,null,null,null],
+  'Nov 2025': [-5.30,-4.60,-4.00,-3.60,-3.30,-3.00,null,null,null,null,null,null],
+  'Dec 2025': [-5.10,-4.40,-3.80,-3.40,-3.10,null,null,null,null,null,null,null],
+  'Jan 2026': [-4.90,-4.20,-3.60,-3.20,null,null,null,null,null,null,null,null],
+  'Feb 2026': [-4.70,-4.00,-3.40,null,null,null,null,null,null,null,null,null],
+  'Mar 2026': [-4.50,-3.80,null,null,null,null,null,null,null,null,null,null],
+  'Apr 2026': [-4.30,null,null,null,null,null,null,null,null,null,null,null]
+};
+
+allCharts.cohortGpUser = new Chart(document.getElementById('ch-cohort-gp-user'), {
+  type: 'line',
+  data: { labels: ['M0','M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11'], datasets:
+    cohortRevNames.map(function(name, idx) {
+      return { label: name, data: cohortGpPerUserData[name], borderColor: cohortRevColors[idx],
+        borderWidth: 2, tension: .3, fill: false, spanGaps: false };
+    })
+  },
+  options: { interaction: { mode: 'index', intersect: false },
+    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 8 } } }, datalabels: { display: false },
+      annotation: { annotations: { zero: { type: 'line', yMin: 0, yMax: 0, borderColor: 'rgba(255,255,255,.2)', borderWidth: 1 } } } },
+    scales: { x: { grid: { display: false } }, y: { ticks: { callback: function(v) { return '$'+v.toFixed(0); } },
+      title: { display: true, text: 'GP / User ($/mo)' } } },
+    aspectRatio: 1.4 }
+});
+
 // Return Rate & User Base (combined dual-axis chart)
+var returnRateSkuScale = { Free: 0.30, Edu: 0.02, Pro: 0.18, 'Pro+': 0.08, Business: 0.28, Enterprise: 0.14 };
 var totalEverActivated = [3200,3400,3600,3800,4000,4200,4500,4800,5100,5400,5800,6200];
 var currentMauData = [1420,1515,1610,1706,1800,1895,2002,2114,2226,2350,2495,2662];
 var inPeriodActivations = [85,90,95,92,98,100,105,110,108,115,118,122];
@@ -2551,7 +2635,7 @@ allCharts.returnRate = new Chart(document.getElementById('ch-return-rate'), {
       y: { position: 'left', ticks: { callback: function(v) { return v + 'K'; } }, title: { display: true, text: 'Users (K)' } },
       y1: { position: 'right', grid: { display: false }, ticks: { callback: function(v) { return v + '%'; } }, title: { display: true, text: 'Return Rate' } }
     },
-    aspectRatio: 2.5 }
+    aspectRatio: 1.7 }
 });
 
 // ══════════════════════════════
