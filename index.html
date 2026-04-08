@@ -786,7 +786,7 @@ function rebuildAll() {
     var slicedCogs = adjustFlow(sliceTime(totalCogs));
     var kpiMap = [
       slicedMau.map(function(v){ return Math.round(v/100)/10; }),
-      slicedMau.map(function(v,i){ return v>0 ? Math.round(slicedRev[i]/v*100000)/100 : 0; }),
+      slicedMau.map(function(v){ return Math.round(v * 0.42); }),
       slicedRev.map(function(v){ return v*12; }),
       slicedRev.map(function(v,i){ return v>0 ? Math.round((v-slicedCogs[i])/v*1000)/10 : 0; })
     ];
@@ -798,9 +798,10 @@ function rebuildAll() {
     var kpiTiles = document.querySelectorAll('.kpi .value');
     var lastIdx = slicedMau.length - 1;
     var lastMau = slicedMau[lastIdx]; var lastRev = slicedRev[lastIdx]; var lastCogs = slicedCogs[lastIdx];
+    var lastDau = Math.round(lastMau * 0.42);
     var fmts = [
       (lastMau >= 1000 ? (lastMau/1000).toFixed(1)+'M' : Math.round(lastMau)+'K'),
-      '$'+(lastMau>0?(lastRev/lastMau*1000).toFixed(2):'0'),
+      (lastDau >= 1000 ? (lastDau/1000).toFixed(1)+'M' : Math.round(lastDau)+'K'),
       '$'+(lastRev*12 >= 1000 ? (lastRev*12/1000).toFixed(0)+'M' : (lastRev*12).toFixed(0)+'M'),
       (lastRev>0?((lastRev-lastCogs)/lastRev*100).toFixed(1):'0')+'%'
     ];
@@ -1211,10 +1212,10 @@ const kpis = [
     data:[1.8,1.9,2.0,2.1,2.2,2.3,2.3,2.4,2.5,2.6,2.7,2.8], color:PURPLE,
     timeframe:'May 2025 – Apr 2026',
     tooltip:'Monthly Active Users<br>Unique users with ≥1 Copilot interaction in trailing 28 days<br><b>Current: 2.8M</b> (as of Apr 2026)<br>+6.2% vs prior month (2.64M → 2.8M)' },
-  { label:'ARPU', value:'$16.40', change:'+$0.80 MoM', up:true,
-    data:[13.2,13.5,13.9,14.2,14.5,14.8,15.1,15.3,15.6,15.8,16.1,16.4], color:BLUE,
+  { label:'DAU', value:'1.2M', change:'+5.8% MoM', up:true,
+    data:[700,750,800,850,880,920,950,1000,1050,1100,1150,1200], color:BLUE,
     timeframe:'May 2025 – Apr 2026',
-    tooltip:'Average Revenue Per User<br>Total subscription revenue ÷ paying users<br><b>Current: $16.40/mo</b> (blended across all SKUs)<br>+$0.80 vs prior month ($15.60 → $16.40)' },
+    tooltip:'Daily Active Users<br>Unique users with ≥1 Copilot interaction per day<br><b>Current: 1.2M</b> (as of Apr 2026)<br>+5.8% vs prior month (1.13M → 1.2M)' },
   { label:'ARR', value:'$450M', change:'+12.5% YoY', up:true,
     data:[200,220,240,260,285,310,330,350,375,400,425,450], color:TEAL,
     timeframe:'May 2025 – Apr 2026',
@@ -1253,7 +1254,7 @@ kpis.forEach((k, i) => {
           label: function(ctx) {
             var v = ctx.parsed.y;
             if (k.label==='MAU') return v.toFixed(1)+'M users';
-            if (k.label==='ARPU') return '$'+v.toFixed(2)+'/user/mo';
+            if (k.label==='DAU') return (v>=1000?(v/1000).toFixed(1)+'M':v+'K')+' daily users';
             if (k.label==='ARR') return '$'+v+'M ARR';
             if (k.label==='Gross Margin') return v+'% margin';
             return String(v);
@@ -1644,7 +1645,7 @@ var funnelRatesTrend = {
     html += '<span style="margin-left:auto;font-size:10px;color:#8B949E;align-self:center">'+trLabel+'</span>';
     html += '</div>';
     // 3-column grid equal thirds: [line chart | funnel bars | commentary]
-    html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 16px;align-items:center;max-height:280px">';
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 16px;align-items:center">';
     steps.forEach(function(step, i) {
       var val = scaledData[i];
       var scaleBase = scaledData[1];
@@ -1661,7 +1662,7 @@ var funnelRatesTrend = {
       // Col 1: chart (only on first row, spans all rows)
       if (i === 0) {
         html += '<div style="grid-row:1/'+String(steps.length+1)+'">';
-        html += '<canvas id="ch-funnel-rates" style="max-height:250px"></canvas></div>';
+        html += '<canvas id="ch-funnel-rates" style=""></canvas></div>';
       }
       // Col 2: funnel bar
       html += '<div class="funnel-step-cell">';
@@ -1723,7 +1724,7 @@ var funnelRatesTrend = {
           y: { ticks: { callback: function(v) { return v + '%'; }, font: { size: 9 } },
             title: { display: true, text: '% of Visits', font: { size: 9 } } }
         },
-        aspectRatio: 2.2
+        aspectRatio: 1.4
       }
     });
   }
