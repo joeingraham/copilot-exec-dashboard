@@ -153,12 +153,6 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 .lift-pos { color: var(--teal); font-weight: 600; }
 .lift-neg { color: var(--red); font-weight: 600; }
 
-/* ── Heatmap ── */
-.heatmap { width: 100%; border-collapse: collapse; font-size: 12px; }
-.heatmap th, .heatmap td { padding: 6px 10px; text-align: center; }
-.heatmap th { color: var(--text-muted); font-weight: 500; font-size: 11px; }
-.heatmap td { border-radius: 4px; font-weight: 600; }
-
 /* ── Responsive ── */
 @media (max-width: 1200px) { .grid-4, .grid-5 { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 900px) {
@@ -336,17 +330,11 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <div class="card"><div class="card-title">Retention J-Curves by Cohort <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly retention curves for each cohort. J-curve shape = initial churn then stabilization. Newer cohorts above older = improving product.</div><div class="info-takeaway">📌 Recent cohorts show higher floor retention — onboarding improvements are working.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-jcurves"></canvas></div></div>
     <div class="card"><div class="card-title">Retention Milestones Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Tracks M1, M3, M6, M12 retention rates over time. Are retention milestones improving?</div><div class="info-takeaway">📌 M1 retention improved from 72% to 81%. M12 retention steady at ~58% — long-term stickiness holding.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-ret-milestones"></canvas></div></div>
   </div>
-  <div class="grid grid-1" style="margin-top:20px">
-    <div class="card">
-      <div class="card-title">Retention Cohort Heatmap <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Gold-standard retention view. Shows if newer cohorts retain better (improving product-market fit).</div><div class="info-takeaway">📌 Newer cohorts show higher M1-M3 retention — product improvements are compounding.</div></div></span><span class="illustrative">(Illustrative Data)</span></div>
-      <div style="overflow-x:auto" id="heatmap-wrap"></div>
-    </div>
-  </div>
   <div class="grid grid-2" style="margin-top:20px">
-    <div class="card"><div class="card-title">Cohorted Revenue Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Total revenue trajectory by cohort month.</div><div class="info-takeaway">📌 Newer cohorts ramping faster — product-led growth improving.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-rev"></canvas></div></div>
-    <div class="card"><div class="card-title">Cohorted Gross Profit Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Total gross profit by cohort. Shows when cohorts approach breakeven.</div><div class="info-takeaway">📌 All cohorts still negative GP. Older cohorts trending toward breakeven.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-gp"></canvas></div></div>
     <div class="card"><div class="card-title">Cohorted Revenue per User <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Revenue per user by cohort month. Shows if per-user monetization is improving.</div><div class="info-takeaway">📌 Newer cohorts generating higher ARPU — pricing and overage adoption improving.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-rev-user"></canvas></div></div>
     <div class="card"><div class="card-title">Cohorted Gross Profit per User <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> GP per user by cohort. Shows unit economics trajectory — are newer users less unprofitable?</div><div class="info-takeaway">📌 GP/user improving for newer cohorts — COGS per user declining faster than ARPU.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-gp-user"></canvas></div></div>
+    <div class="card"><div class="card-title">Cohorted Revenue Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Total revenue trajectory by cohort month.</div><div class="info-takeaway">📌 Newer cohorts ramping faster — product-led growth improving.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-rev"></canvas></div></div>
+    <div class="card"><div class="card-title">Cohorted Gross Profit Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Total gross profit by cohort. Shows when cohorts approach breakeven.</div><div class="info-takeaway">📌 All cohorts still negative GP. Older cohorts trending toward breakeven.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-gp"></canvas></div></div>
   </div>
   <div class="grid grid-2" style="margin-top:20px">
     <div class="card"><div class="card-title">Return Rate &amp; User Base <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Shows cumulative activations, current MAU, returning users, and return rate on dual axes. Tracks user base health and re-engagement.</div><div class="info-takeaway">📌 Return rate at 42% — less than half of ever-activated users are currently active. But trending up slightly. 6.2M ever activated, 2.6M currently active.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-return-rate"></canvas></div></div>
@@ -911,10 +899,7 @@ function rebuildAll() {
     allCharts.jcurves.update('none');
   }
 
-  // 10c. Heatmap (time-range aware)
-  if (typeof window.buildHeatmap === 'function') {
-    window.buildHeatmap();
-  }
+  // 10c. (heatmap removed)
 
   // 10d. Cohorted Revenue (time-range + SKU aware)
   if (allCharts.cohortRev) {
@@ -2458,48 +2443,6 @@ allCharts.retMilestones = new Chart(document.getElementById('ch-ret-milestones')
       title: { display: true, text: '% Retained' } } },
     aspectRatio: 1.7 }
 });
-
-// Heatmap (named function so rebuildAll can call it)
-window.buildHeatmap = function() {
-  var allCohorts = ['May 2025','Jun 2025','Jul 2025','Aug 2025','Sep 2025','Oct 2025',
-                    'Nov 2025','Dec 2025','Jan 2026','Feb 2026','Mar 2026','Apr 2026'];
-
-  var activeSkus = SKU_LIST.filter(function(s) { return skuState[s]; });
-  var skuKey = 'blended';
-  if (activeSkus.length === 1) skuKey = activeSkus[0];
-  var curveData = jCurvesBySku[skuKey] || jCurvesBySku.blended;
-
-  var showCount = Math.min(timeRange, allCohorts.length);
-  var cohorts = allCohorts.slice(-showCount);
-
-  var mths = ['M0','M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11'];
-
-  function heatColor(v) {
-    if (v === null) return 'transparent';
-    if (v >= 90) return 'rgba(121,217,185,.55)';
-    if (v >= 80) return 'rgba(121,217,185,.4)';
-    if (v >= 70) return 'rgba(73,204,249,.35)';
-    if (v >= 60) return 'rgba(123,104,238,.3)';
-    return 'rgba(253,113,175,.25)';
-  }
-
-  var html = '<table class="heatmap"><thead><tr><th>Cohort</th>';
-  mths.forEach(function(m) { html += '<th>'+m+'</th>'; });
-  html += '</tr></thead><tbody>';
-  cohorts.forEach(function(c) {
-    var data = curveData[c] || [];
-    html += '<tr><td style="text-align:left;color:#E6EDF3;font-weight:500;font-size:11px">'+c+'</td>';
-    for (var j = 0; j < 12; j++) {
-      var v = data[j] !== undefined ? data[j] : null;
-      html += '<td style="background:'+heatColor(v)+';color:'+(v===null?'transparent':'#E6EDF3')+'">'+
-        (v !== null ? v+'%' : '')+'</td>';
-    }
-    html += '</tr>';
-  });
-  html += '</tbody></table>';
-  document.getElementById('heatmap-wrap').innerHTML = html;
-};
-window.buildHeatmap();
 
 // Cohorted Revenue & GP data (12 cohorts, SKU-toggleable)
 var cohortRevNames = ['May 2025','Jun 2025','Jul 2025','Aug 2025','Sep 2025','Oct 2025',
