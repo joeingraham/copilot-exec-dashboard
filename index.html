@@ -2537,30 +2537,6 @@ allCharts.returnRate = new Chart(document.getElementById('ch-return-rate'), {
     aspectRatio: 1.7 }
 });
 
-// ══════════════════════════════
-//  8. PIPELINE
-// ══════════════════════════════
-new Chart(document.getElementById('ch-pipeline'), {
-  type:'bar',
-  data:{ labels:['Prospect','Qualified','Proposal','Closed/Won'], datasets:[{
-    data:[800,400,200,120], backgroundColor:[a(PURPLE,.5),a(BLUE,.5),a(TEAL,.5),a(GREEN,.6)], borderRadius:6, barPercentage:.5
-  }]},
-  options:{ indexAxis:'y', plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>'$'+c.parsed.x+'M'}}},
-    scales:{x:{ticks:{callback:v=>'$'+v+'M'}, title:{display:true,text:'Pipeline ($M)'}}, y:{grid:{display:false}}}, aspectRatio:1.7 }
-});
-
-// Quota Attainment - bullet-style
-new Chart(document.getElementById('ch-quota'), {
-  type:'bar',
-  data:{ labels:['Q2 FY26'], datasets:[
-    { label:'Target', data:[100], backgroundColor:a('#fff',.08), borderRadius:6, barPercentage:.8 },
-    { label:'Attainment', data:[87], backgroundColor:a(PURPLE,.7), borderRadius:6, barPercentage:.5 }
-  ]},
-  options:{ indexAxis:'y', plugins:{legend:{position:'bottom'},
-    annotation:{annotations:{goal:{type:'line',xMin:100,xMax:100,borderColor:GREEN,borderWidth:2,borderDash:[6,4],
-      label:{display:true,content:'Goal: 100%',position:'start',backgroundColor:'transparent',color:GREEN,font:{size:10}}}}}},
-    scales:{x:{max:120,ticks:{callback:v=>v+'%'}}, y:{display:false}}, aspectRatio:2 }
-});
 // ── SKU filter charts registered via allCharts above ──
 
 // ══════════════════════════════
