@@ -345,11 +345,10 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
   <div class="grid grid-3" style="margin-top:20px">
     <div class="card"><div class="card-title">Cohorted Revenue Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Revenue trajectory by cohort. Shows if cohorts expand revenue over time (land-and-expand).</div><div class="info-takeaway">📌 Older cohorts show steady revenue — minimal contraction. Newer cohorts ramping faster.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-rev"></canvas></div></div>
     <div class="card"><div class="card-title">Cohorted Gross Profit Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Gross profit by cohort. Shows when cohorts become profitable (or if they stay underwater).</div><div class="info-takeaway">📌 No cohort has reached positive GP yet. Older cohorts closest to breakeven at -15% margin.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-gp"></canvas></div></div>
-    <div class="card"><div class="card-title">5-Year LTV / NPV Projection <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Projects lifetime value and net present value per user over 5 years based on current retention and ARPU trends.</div><div class="info-takeaway">📌 5-year NPV is negative at current margins. Breakeven requires either 40% COGS reduction or 60% ARPU increase.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-ltv-npv"></canvas></div></div>
+    <div class="card"><div class="card-title">5-Year LTV per User <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Models lifetime value per user over 5 years. LTV = cumulative (ARPU − COGSPU) × retention. Starts negative and climbs toward breakeven as COGS efficiency improves.</div><div class="info-takeaway">📌 LTV starts deeply negative due to high initial COGS, bottoms out around month 18-24, then climbs back toward zero as efficiency gains compound.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-ltv-npv"></canvas></div></div>
   </div>
-  <div class="grid grid-2" style="margin-top:20px">
-    <div class="card"><div class="card-title">Return Rate (MAU / Total Ever Activated) <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> What % of all users ever activated are currently active? Low and declining = leaky bucket. Rising = strong pull-back.</div><div class="info-takeaway">📌 Return rate at 42% — less than half of ever-activated users are currently active. But trending up slightly.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-return-rate"></canvas></div></div>
-    <div class="card"><div class="card-title">Cumulative Activations vs Current MAU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Shows total ever activated growing vs current MAU. The gap = churned users. Narrowing gap = improving retention.</div><div class="info-takeaway">📌 6.2M ever activated, 2.6M currently active. 3.6M churned — large resurrection opportunity.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cum-vs-mau"></canvas></div></div>
+  <div class="grid grid-1" style="margin-top:20px">
+    <div class="card"><div class="card-title">Return Rate &amp; User Base <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Shows cumulative activations, current MAU, returning users, and return rate on dual axes. Tracks user base health and re-engagement.</div><div class="info-takeaway">📌 Return rate at 42% — less than half of ever-activated users are currently active. But trending up slightly. 6.2M ever activated, 2.6M currently active.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-return-rate"></canvas></div></div>
   </div>
 </section>
 
@@ -894,19 +893,54 @@ function rebuildAll() {
     allCharts.retMilestones.update('none');
   }
 
-  // 10b. Return Rate (time-range aware)
-  if (allCharts.returnRate) {
-    allCharts.returnRate.data.labels = labels;
-    allCharts.returnRate.data.datasets[0].data = sliceTime(returnRate);
-    allCharts.returnRate.update('none');
+  // 10b. J-Curves (time-range aware — show last N cohorts)
+  if (allCharts.jcurves) {
+    var showCount = Math.min(timeRange, cohortNames.length);
+    allCharts.jcurves.data.datasets.forEach(function(ds, idx) {
+      var meta = allCharts.jcurves.getDatasetMeta(idx);
+      meta.hidden = idx < (cohortNames.length - showCount);
+    });
+    allCharts.jcurves.update('none');
   }
 
-  // 10c. Cumulative Activations vs Current MAU (time-range aware)
-  if (allCharts.cumVsMau) {
-    allCharts.cumVsMau.data.labels = labels;
-    allCharts.cumVsMau.data.datasets[0].data = sliceTime(totalEverActivated);
-    allCharts.cumVsMau.data.datasets[1].data = sliceTime(returnMau);
-    allCharts.cumVsMau.update('none');
+  // 10c. Heatmap (time-range aware)
+  if (typeof window.buildHeatmap === 'function') {
+    window.buildHeatmap();
+  }
+
+  // 10d. Cohorted Revenue (time-range aware)
+  if (allCharts.cohortRev) {
+    var cohortCount = allCharts.cohortRev.data.datasets.length;
+    var showCohorts = timeRange === 3 ? 1 : timeRange === 6 ? 2 : cohortCount;
+    allCharts.cohortRev.data.datasets.forEach(function(ds, idx) {
+      allCharts.cohortRev.getDatasetMeta(idx).hidden = idx < (cohortCount - showCohorts);
+    });
+    allCharts.cohortRev.update('none');
+  }
+
+  // 10e. Cohorted Gross Profit (time-range aware)
+  if (allCharts.cohortGp) {
+    var cohortCountGp = allCharts.cohortGp.data.datasets.length;
+    var showCohortsGp = timeRange === 3 ? 1 : timeRange === 6 ? 2 : cohortCountGp;
+    allCharts.cohortGp.data.datasets.forEach(function(ds, idx) {
+      allCharts.cohortGp.getDatasetMeta(idx).hidden = idx < (cohortCountGp - showCohortsGp);
+    });
+    allCharts.cohortGp.update('none');
+  }
+
+  // 10f. Return Rate & User Base (time-range aware)
+  if (allCharts.returnRate) {
+    allCharts.returnRate.data.labels = labels;
+    allCharts.returnRate.data.datasets[0].data = sliceTime(totalEverActivated);
+    allCharts.returnRate.data.datasets[1].data = sliceTime(currentMauData);
+    var slicedInPeriod = sliceTime(inPeriodActivations);
+    var slicedMauRR = sliceTime(currentMauData);
+    var slicedTotalEver = sliceTime(totalEverActivated);
+    var slicedReturning = slicedMauRR.map(function(v,i) { return v - slicedInPeriod[i]; });
+    var slicedReturnRate = slicedReturning.map(function(v,i) { return Math.round(v / slicedTotalEver[i] * 1000) / 10; });
+    allCharts.returnRate.data.datasets[2].data = slicedReturning;
+    allCharts.returnRate.data.datasets[3].data = slicedReturnRate;
+    allCharts.returnRate.update('none');
   }
 
   // 11. WAU/MAU Stickiness
@@ -2279,11 +2313,10 @@ allCharts.retMilestones = new Chart(document.getElementById('ch-ret-milestones')
     aspectRatio: 1.7 }
 });
 
-// Heatmap
-(function() {
-  var cohorts = ['Oct 2025','Nov 2025','Dec 2025','Jan 2026','Feb 2026','Mar 2026'];
-  var mths = ['M0','M1','M2','M3','M4','M5','M6'];
-  var base = [
+// Heatmap (named function so rebuildAll can call it)
+window.buildHeatmap = function() {
+  var allCohorts = ['Oct 2025','Nov 2025','Dec 2025','Jan 2026','Feb 2026','Mar 2026'];
+  var allData = [
     [100,76,68,63,60,58,57],
     [100,78,70,65,62,60,null],
     [100,79,72,67,64,null,null],
@@ -2291,6 +2324,10 @@ allCharts.retMilestones = new Chart(document.getElementById('ch-ret-milestones')
     [100,82,75,null,null,null,null],
     [100,84,null,null,null,null,null]
   ];
+  var showCount = Math.min(timeRange, allCohorts.length);
+  var cohorts = allCohorts.slice(-showCount);
+  var base = allData.slice(-showCount);
+  var mths = ['M0','M1','M2','M3','M4','M5','M6'];
   function heatColor(v) {
     if (v === null) return 'transparent';
     if (v >= 90) return 'rgba(121,217,185,.55)';
@@ -2312,7 +2349,8 @@ allCharts.retMilestones = new Chart(document.getElementById('ch-ret-milestones')
   });
   html += '</tbody></table>';
   document.getElementById('heatmap-wrap').innerHTML = html;
-})();
+};
+window.buildHeatmap();
 
 // Cohorted Revenue Over Time
 allCharts.cohortRev = new Chart(document.getElementById('ch-cohort-rev'), {
@@ -2345,81 +2383,60 @@ allCharts.cohortGp = new Chart(document.getElementById('ch-cohort-gp'), {
     aspectRatio: 1.4 }
 });
 
-// 5-Year LTV / NPV Projection
+// 5-Year LTV per User (single line)
 (function() {
-  var months60 = [];
-  for (var m = 0; m <= 60; m++) months60.push('M'+m);
   var retention = [100];
   for (var m = 1; m <= 60; m++) retention.push(Math.round(100 * Math.pow(0.88, Math.sqrt(m)) * 10) / 10);
-  var arpu = 16.40, cogspu = 28.00;
-  var cumRev = [0], cumGP = [0];
+  var arpuBase = 16.40, cogspuBase = 28.00;
+  var ltv = [0];
   for (var m = 1; m <= 60; m++) {
-    cumRev.push(Math.round((cumRev[m-1] + arpu * retention[m] / 100) * 100) / 100);
-    cumGP.push(Math.round((cumGP[m-1] + (arpu - cogspu) * retention[m] / 100) * 100) / 100);
+    var arpuM = arpuBase * Math.pow(1.005, m);
+    var cogspuM = cogspuBase * Math.pow(0.985, m);
+    var retM = retention[m] / 100;
+    ltv.push(Math.round((ltv[m-1] + (arpuM - cogspuM) * retM) * 100) / 100);
   }
-  var discountRate = 0.10 / 12;
-  var cumNPV = [0];
-  for (var m = 1; m <= 60; m++) {
-    var discountFactor = Math.pow(1 + discountRate, -m);
-    cumNPV.push(Math.round((cumNPV[m-1] + (arpu - cogspu) * retention[m] / 100 * discountFactor) * 100) / 100);
+  var ltvLabels = [], ltvData = [];
+  for (var m = 0; m <= 60; m += 6) {
+    ltvLabels.push('M'+m);
+    ltvData.push(ltv[m]);
   }
-
-  new Chart(document.getElementById('ch-ltv-npv'), {
+  allCharts.ltvNpv = new Chart(document.getElementById('ch-ltv-npv'), {
     type: 'line',
-    data: { labels: months60.filter(function(_,i){return i%6===0||i===60;}), datasets: [
-      { label: 'Cumulative Revenue/User', data: cumRev.filter(function(_,i){return i%6===0||i===60;}),
-        borderColor: BLUE, borderWidth: 2, tension: .3, fill: false },
-      { label: 'Cumulative GP/User', data: cumGP.filter(function(_,i){return i%6===0||i===60;}),
-        borderColor: RED, borderWidth: 2, tension: .3, fill: false },
-      { label: 'NPV (10% discount)', data: cumNPV.filter(function(_,i){return i%6===0||i===60;}),
-        borderColor: ORANGE, borderWidth: 2, tension: .3, fill: false, borderDash: [4,3] }
+    data: { labels: ltvLabels, datasets: [
+      { label: 'LTV per User', data: ltvData, borderColor: PURPLE, borderWidth: 2.5, tension: .3, fill: false, pointRadius: 3 }
     ]},
     options: { interaction: { mode: 'index', intersect: false },
       plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } }, datalabels: { display: false },
-        annotation: { annotations: { zero: { type: 'line', yMin: 0, yMax: 0, borderColor: 'rgba(255,255,255,.2)', borderWidth: 1 } } } },
+        annotation: { annotations: { zero: { type: 'line', yMin: 0, yMax: 0, borderColor: 'rgba(255,255,255,.3)', borderWidth: 1, borderDash: [4,3] } } },
+        title: { display: true, text: '5-Year LTV per User', font: { size: 13, weight: '600' }, color: '#E6EDF3', padding: { bottom: 8 } } },
       scales: { x: { grid: { display: false }, ticks: { font: { size: 8 } } },
-        y: { ticks: { callback: function(v) { return '$'+v; } }, title: { display: true, text: 'Cumulative $/User' } } },
+        y: { ticks: { callback: function(v) { return '$'+v; } }, title: { display: true, text: '$' } } },
       aspectRatio: 1.4 }
   });
 })();
 
-// Return Rate: MAU / Total Ever Activated
+// Return Rate & User Base (combined dual-axis chart)
 var totalEverActivated = [3200,3400,3600,3800,4000,4200,4500,4800,5100,5400,5800,6200];
-var returnMau = [1420,1515,1610,1706,1800,1895,2002,2114,2226,2350,2495,2662];
-var returnRate = returnMau.map(function(v,i) { return Math.round(v / totalEverActivated[i] * 1000) / 10; });
+var currentMauData = [1420,1515,1610,1706,1800,1895,2002,2114,2226,2350,2495,2662];
+var inPeriodActivations = [85,90,95,92,98,100,105,110,108,115,118,122];
+var returningUsers = currentMauData.map(function(v,i) { return v - inPeriodActivations[i]; });
+var returnRateData = returningUsers.map(function(v,i) { return Math.round(v / totalEverActivated[i] * 1000) / 10; });
 
 allCharts.returnRate = new Chart(document.getElementById('ch-return-rate'), {
   type: 'line',
   data: { labels: MONTHS, datasets: [
-    { label: 'Return Rate %', data: returnRate, borderColor: PURPLE, borderWidth: 2.5, tension: .3,
-      fill: true, backgroundColor: 'rgba(123,104,238,.08)' }
+    { label: 'Cumulative Activations', data: totalEverActivated, borderColor: BLUE, borderWidth: 2, tension: .3, fill: false, yAxisID: 'y' },
+    { label: 'Current MAU', data: currentMauData, borderColor: TEAL, borderWidth: 2, tension: .3, fill: false, yAxisID: 'y' },
+    { label: 'Returning Users', data: returningUsers, borderColor: PURPLE, borderWidth: 2.5, tension: .3, fill: false, yAxisID: 'y' },
+    { label: 'Return Rate %', data: returnRateData, borderColor: ORANGE, borderWidth: 2, borderDash: [6,4], tension: .3, fill: false, yAxisID: 'y1' }
   ]},
   options: { interaction: { mode: 'index', intersect: false },
-    plugins: { legend: { display: false }, datalabels: { display: false },
-      tooltip: { callbacks: { label: function(ctx) {
-        return 'Return Rate: ' + ctx.parsed.y + '% (' + returnMau[ctx.dataIndex] + 'K MAU / ' + totalEverActivated[ctx.dataIndex] + 'K ever activated)';
-      }}}},
-    scales: { x: { grid: { display: false } }, y: { ticks: { callback: function(v) { return v + '%'; } },
-      title: { display: true, text: 'Return Rate (%)' } } },
-    aspectRatio: 1.7 }
-});
-
-// Cumulative Activations vs Current MAU
-allCharts.cumVsMau = new Chart(document.getElementById('ch-cum-vs-mau'), {
-  type: 'line',
-  data: { labels: MONTHS, datasets: [
-    { label: 'Total Ever Activated', data: totalEverActivated, borderColor: BLUE, borderWidth: 2.5, tension: .3,
-      fill: true, backgroundColor: 'rgba(73,204,249,.08)' },
-    { label: 'Current MAU', data: returnMau, borderColor: TEAL, borderWidth: 2.5, tension: .3,
-      fill: true, backgroundColor: 'rgba(121,217,185,.08)' }
-  ]},
-  options: { interaction: { mode: 'index', intersect: false },
-    plugins: { legend: { position: 'bottom' }, datalabels: { display: false },
-      tooltip: { callbacks: { label: function(ctx) { return ctx.dataset.label + ': ' + ctx.parsed.y + 'K'; },
-        footer: function(items) { if (items.length >= 2) { var gap = items[0].parsed.y - items[1].parsed.y; return 'Churned: ' + gap + 'K'; } return ''; }
-      }}},
-    scales: { x: { grid: { display: false } }, y: { ticks: { callback: function(v) { return v + 'K'; } },
-      title: { display: true, text: 'Users (thousands)' } } },
+    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } }, datalabels: { display: false } },
+    scales: {
+      x: { grid: { display: false } },
+      y: { position: 'left', ticks: { callback: function(v) { return v + 'K'; } }, title: { display: true, text: 'Users (K)' } },
+      y1: { position: 'right', grid: { display: false }, ticks: { callback: function(v) { return v + '%'; } }, title: { display: true, text: 'Return Rate' } }
+    },
     aspectRatio: 1.7 }
 });
 
