@@ -344,8 +344,8 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
   </div>
   <div class="grid grid-2" style="margin-top:20px">
     <div class="card"><div class="card-title">Cohorted Revenue Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Total revenue trajectory by cohort month.</div><div class="info-takeaway">📌 Newer cohorts ramping faster — product-led growth improving.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-rev"></canvas></div></div>
-    <div class="card"><div class="card-title">Cohorted Revenue per User <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Revenue per user by cohort month. Shows if per-user monetization is improving.</div><div class="info-takeaway">📌 Newer cohorts generating higher ARPU — pricing and overage adoption improving.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-rev-user"></canvas></div></div>
     <div class="card"><div class="card-title">Cohorted Gross Profit Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Total gross profit by cohort. Shows when cohorts approach breakeven.</div><div class="info-takeaway">📌 All cohorts still negative GP. Older cohorts trending toward breakeven.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-gp"></canvas></div></div>
+    <div class="card"><div class="card-title">Cohorted Revenue per User <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Revenue per user by cohort month. Shows if per-user monetization is improving.</div><div class="info-takeaway">📌 Newer cohorts generating higher ARPU — pricing and overage adoption improving.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-rev-user"></canvas></div></div>
     <div class="card"><div class="card-title">Cohorted Gross Profit per User <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> GP per user by cohort. Shows unit economics trajectory — are newer users less unprofitable?</div><div class="info-takeaway">📌 GP/user improving for newer cohorts — COGS per user declining faster than ARPU.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cohort-gp-user"></canvas></div></div>
   </div>
   <div class="grid grid-2" style="margin-top:20px">
@@ -948,17 +948,41 @@ function rebuildAll() {
     allCharts.cohortGp.update('none');
   }
 
-  // 10e-2. Cohorted per-user charts (time-range aware)
-  ['cohortRevUser','cohortGpUser'].forEach(function(key) {
-    if (allCharts[key]) {
-      var count = allCharts[key].data.datasets.length;
-      var show = Math.min(timeRange, count);
-      allCharts[key].data.datasets.forEach(function(ds, idx) {
-        allCharts[key].getDatasetMeta(idx).hidden = idx < (count - show);
+  // 10e-2. Cohorted Revenue per User (time-range + SKU aware)
+  if (allCharts.cohortRevUser) {
+    var count = allCharts.cohortRevUser.data.datasets.length;
+    var show = Math.min(timeRange, count);
+    var activeSkusCRU = SKU_LIST.filter(function(s) { return skuState[s]; });
+    var multCRU = 1;
+    if (activeSkusCRU.length === 1) multCRU = revSkuMultiplier[activeSkusCRU[0]] || 1;
+
+    allCharts.cohortRevUser.data.datasets.forEach(function(ds, idx) {
+      var name = cohortRevNames[idx];
+      ds.data = cohortRevPerUserData[name].map(function(v) {
+        return v === null ? null : Math.round(v * multCRU * 10) / 10;
       });
-      allCharts[key].update('none');
-    }
-  });
+      allCharts.cohortRevUser.getDatasetMeta(idx).hidden = idx < (count - show);
+    });
+    allCharts.cohortRevUser.update('none');
+  }
+
+  // 10e-3. Cohorted Gross Profit per User (time-range + SKU aware)
+  if (allCharts.cohortGpUser) {
+    var count = allCharts.cohortGpUser.data.datasets.length;
+    var show = Math.min(timeRange, count);
+    var activeSkusCGU = SKU_LIST.filter(function(s) { return skuState[s]; });
+    var multCGU = 1;
+    if (activeSkusCGU.length === 1) multCGU = gpSkuMultiplier[activeSkusCGU[0]] || 1;
+
+    allCharts.cohortGpUser.data.datasets.forEach(function(ds, idx) {
+      var name = cohortRevNames[idx];
+      ds.data = cohortGpPerUserData[name].map(function(v) {
+        return v === null ? null : Math.round(v * multCGU * 10) / 10;
+      });
+      allCharts.cohortGpUser.getDatasetMeta(idx).hidden = idx < (count - show);
+    });
+    allCharts.cohortGpUser.update('none');
+  }
 
   // 10f. Return Rate & User Base (time-range + SKU aware)
   if (allCharts.returnRate) {
@@ -2439,24 +2463,17 @@ allCharts.retMilestones = new Chart(document.getElementById('ch-ret-milestones')
 window.buildHeatmap = function() {
   var allCohorts = ['May 2025','Jun 2025','Jul 2025','Aug 2025','Sep 2025','Oct 2025',
                     'Nov 2025','Dec 2025','Jan 2026','Feb 2026','Mar 2026','Apr 2026'];
-  var allData = [
-    [100,70,62,57,54,52,50,49,48,47,46,46],
-    [100,71,63,58,55,53,51,50,49,48,47,null],
-    [100,72,64,59,56,54,52,51,50,49,null,null],
-    [100,73,65,60,57,55,53,52,51,null,null,null],
-    [100,74,66,61,58,56,54,53,null,null,null,null],
-    [100,76,68,63,60,58,57,null,null,null,null,null],
-    [100,78,70,65,62,60,null,null,null,null,null,null],
-    [100,79,72,67,64,null,null,null,null,null,null,null],
-    [100,80,73,69,null,null,null,null,null,null,null,null],
-    [100,82,75,null,null,null,null,null,null,null,null,null],
-    [100,84,null,null,null,null,null,null,null,null,null,null],
-    [100,null,null,null,null,null,null,null,null,null,null,null]
-  ];
+
+  var activeSkus = SKU_LIST.filter(function(s) { return skuState[s]; });
+  var skuKey = 'blended';
+  if (activeSkus.length === 1) skuKey = activeSkus[0];
+  var curveData = jCurvesBySku[skuKey] || jCurvesBySku.blended;
+
   var showCount = Math.min(timeRange, allCohorts.length);
   var cohorts = allCohorts.slice(-showCount);
-  var base = allData.slice(-showCount);
+
   var mths = ['M0','M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11'];
+
   function heatColor(v) {
     if (v === null) return 'transparent';
     if (v >= 90) return 'rgba(121,217,185,.55)';
@@ -2465,15 +2482,18 @@ window.buildHeatmap = function() {
     if (v >= 60) return 'rgba(123,104,238,.3)';
     return 'rgba(253,113,175,.25)';
   }
+
   var html = '<table class="heatmap"><thead><tr><th>Cohort</th>';
   mths.forEach(function(m) { html += '<th>'+m+'</th>'; });
   html += '</tr></thead><tbody>';
-  cohorts.forEach(function(c, i) {
-    html += '<tr><td style="text-align:left;color:#E6EDF3;font-weight:500">'+c+'</td>';
-    base[i].forEach(function(v) {
+  cohorts.forEach(function(c) {
+    var data = curveData[c] || [];
+    html += '<tr><td style="text-align:left;color:#E6EDF3;font-weight:500;font-size:11px">'+c+'</td>';
+    for (var j = 0; j < 12; j++) {
+      var v = data[j] !== undefined ? data[j] : null;
       html += '<td style="background:'+heatColor(v)+';color:'+(v===null?'transparent':'#E6EDF3')+'">'+
-        (v!==null?v+'%':'')+'</td>';
-    });
+        (v !== null ? v+'%' : '')+'</td>';
+    }
     html += '</tr>';
   });
   html += '</tbody></table>';
