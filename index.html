@@ -294,7 +294,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <div class="card"><div class="card-title">MAU by Product Surface <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Which product features have traction? Compares MAU across Completions, Chat, CLI, PR Summaries, Agent.</div><div class="info-takeaway">📌 Completions still dominates at 2.1M but Chat (1.4M) is closing fast — the shift to conversational AI is real.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-mau-surface"></canvas></div></div>
     <div class="card"><div class="card-title">Multi-Surface Users <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Multi-surface users are stickier and harder to churn. 3+ surface adoption = platform lock-in.</div><div class="info-takeaway">📌 3+ surface users grew from 8% to 28% — strong platform stickiness trend.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-multi-surface"></canvas></div></div>
     <div class="card"><div class="card-title">Usage Share by Product Surface <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Tracks the shift from inline completions to conversational AI. Is Chat cannibalizing or complementing?</div><div class="info-takeaway">📌 Chat grew from 25% to 40% of usage mix. Evidence suggests complementary — total usage is growing alongside the mix shift.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-chat-comp"></canvas></div></div>
-    <div class="card"><div class="card-title">M12 Retention by Surface <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> 12-month retention rate by product surface. Shows which features drive long-term stickiness.</div><div class="info-takeaway">📌 Multi-surface users retain at 72% vs 48% for single-surface. Chat users retain better than completions-only.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-ret-surface"></canvas></div></div>
+    <div class="card"><div class="card-title">M12 Retention by # of Surfaces <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> 12-month retention by number of product surfaces used. More surfaces = stickier users.</div><div class="info-takeaway">📌 4+ surface users retain at 79% vs 47% for single-surface. Each additional surface adds ~10pp retention.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-ret-surface"></canvas></div></div>
   </div>
 </section>
 
@@ -1998,18 +1998,15 @@ var ideNameList = ['VS Code','JetBrains','Visual Studio','Neovim','Other'];
 allCharts.retSurface = new Chart(document.getElementById('ch-ret-surface'), {
   type:'line',
   data:{ labels:MONTHS, datasets: [
-    { label: 'Completions', data: [52,53,54,55,55,56,57,57,58,58,59,60], borderColor: PURPLE, borderWidth: 2, tension: .3, fill: false, pointRadius: 2 },
-    { label: 'Chat', data: [48,50,52,53,55,56,58,59,60,61,62,63], borderColor: BLUE, borderWidth: 2, tension: .3, fill: false, pointRadius: 2 },
-    { label: 'CLI', data: [40,41,42,43,44,45,46,47,48,49,50,51], borderColor: TEAL, borderWidth: 2, tension: .3, fill: false, pointRadius: 2 },
-    { label: 'PR Summaries', data: [44,45,46,47,48,49,50,51,52,53,54,55], borderColor: ORANGE, borderWidth: 2, tension: .3, fill: false, pointRadius: 2 },
-    { label: 'Agent', data: [35,38,41,43,45,47,49,51,53,55,57,59], borderColor: PINK, borderWidth: 2, tension: .3, fill: false, pointRadius: 2 },
-    { label: 'VS Code', data: [55,56,57,58,58,59,60,60,61,62,62,63], borderColor: GREEN, borderWidth: 2, tension: .3, fill: false, pointRadius: 2, borderDash: [4,3] },
-    { label: 'Multi-Surface (3+)', data: [62,64,65,66,67,68,69,70,70,71,72,72], borderColor: '#F0C674', borderWidth: 2.5, tension: .3, fill: false, pointRadius: 2 }
+    { label: '1 Surface', data: [38,39,40,41,42,43,44,44,45,46,46,47], borderColor: '#FD71AF', borderWidth: 2.5, tension: .3, fill: false, pointRadius: 2 },
+    { label: '2 Surfaces', data: [52,53,54,55,56,57,58,58,59,60,60,61], borderColor: '#FFB08E', borderWidth: 2.5, tension: .3, fill: false, pointRadius: 2 },
+    { label: '3 Surfaces', data: [62,63,64,65,66,67,68,68,69,70,70,71], borderColor: '#49CCF9', borderWidth: 2.5, tension: .3, fill: false, pointRadius: 2 },
+    { label: '4+ Surfaces', data: [70,71,72,73,74,75,76,76,77,78,78,79], borderColor: '#79D9B9', borderWidth: 2.5, tension: .3, fill: false, pointRadius: 2 }
   ]},
   options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false}},
     interaction: { mode: 'index', intersect: false },
     scales:{x:{grid:{display:false}},
-      y:{min:30, max:80, ticks:{callback:function(v){return v+'%'}},
+      y:{min:30, max:85, ticks:{callback:function(v){return v+'%'}},
         title:{display:true, text:'M12 Retention %', font:{size:9}}}},
     aspectRatio:1.7 }
 });
