@@ -2473,7 +2473,7 @@ new Chart(document.getElementById('ch-quota'), {
     scales:{x:{max:120,ticks:{callback:v=>v+'%'}}, y:{display:false}}, aspectRatio:2 }
 });
 // ── SKU filter charts registered via allCharts above ──
-window.addEventListener('DOMContentLoaded', function(){ setTimeout(function(){ window.scrollTo(0,0); }, 0); });
+window.addEventListener('DOMContentLoaded', function(){ if(window.location.hash) history.replaceState(null,'',window.location.pathname); setTimeout(function(){ window.scrollTo(0,0); }, 0); });
 window.addEventListener('load', function(){ window.scrollTo(0,0); });
 
 </script>
