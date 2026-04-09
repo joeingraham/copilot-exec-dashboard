@@ -1098,10 +1098,15 @@ function rebuildAll() {
 
   // -- Plan Migration
   if (allCharts.planMigration) {
+    var activeSkusPM = SKU_LIST.filter(function(s) { return skuState[s]; });
+    var pmScale = 1;
+    if (activeSkusPM.length < SKU_LIST.length) {
+      pmScale = activeSkusPM.reduce(function(s, sku) { return s + (planMigSkuScale[sku] || 0); }, 0);
+    }
     allCharts.planMigration.data.labels = labels;
     allCharts.planMigration.data.datasets.forEach(function(ds) {
       if (basePlanMigrationData[ds.label]) {
-        ds.data = sliceTime(basePlanMigrationData[ds.label]);
+        ds.data = sliceTime(basePlanMigrationData[ds.label]).map(function(v) { return Math.round(v * pmScale * 10) / 10; });
       }
     });
     allCharts.planMigration.update('none');
@@ -1109,10 +1114,15 @@ function rebuildAll() {
 
   // -- Upgrade/Downgrade Rates
   if (allCharts.upgradeRates) {
+    var activeSkusUR = SKU_LIST.filter(function(s) { return skuState[s]; });
+    var urScale = 1;
+    if (activeSkusUR.length < SKU_LIST.length) {
+      urScale = activeSkusUR.reduce(function(s, sku) { return s + (upgradeRateSkuScale[sku] || 0); }, 0);
+    }
     allCharts.upgradeRates.data.labels = labels;
     allCharts.upgradeRates.data.datasets.forEach(function(ds) {
       if (baseUpgradeRatesData[ds.label]) {
-        ds.data = sliceTime(baseUpgradeRatesData[ds.label]);
+        ds.data = sliceTime(baseUpgradeRatesData[ds.label]).map(function(v) { return Math.round(v * urScale * 100) / 100; });
       }
     });
     allCharts.upgradeRates.update('none');
@@ -1217,6 +1227,59 @@ function rebuildAll() {
     allCharts.gppu.update('none');
   }
 
+  // -- Seat Utilization
+  if (allCharts.seatUtil) {
+    var activeSkusSU = SKU_LIST.filter(function(s) { return skuState[s]; });
+    var suScale = 1;
+    if (activeSkusSU.length < SKU_LIST.length) {
+      suScale = activeSkusSU.reduce(function(s, sku) { return s + (seatUtilSkuScale[sku] || 0); }, 0);
+    }
+    var scaledActive = baseSeatActive.map(function(v) { return Math.round(v * suScale); });
+    var scaledUnused = baseSeatUnused.map(function(v) { return Math.round(v * suScale); });
+    var scaledUtil = scaledActive.map(function(a, i) { return Math.round(a / (a + scaledUnused[i]) * 1000) / 10; });
+    allCharts.seatUtil.data.labels = labels;
+    allCharts.seatUtil.data.datasets[0].data = sliceTime(scaledActive);
+    allCharts.seatUtil.data.datasets[1].data = sliceTime(scaledUnused);
+    allCharts.seatUtil.data.datasets[2].data = sliceTime(scaledUtil);
+    allCharts.seatUtil.update('none');
+  }
+
+  // -- Monthly Revenue Bridge
+  if (allCharts.expansion) {
+    var activeSkusEX = SKU_LIST.filter(function(s) { return skuState[s]; });
+    var exScale = 1;
+    if (activeSkusEX.length < SKU_LIST.length) {
+      exScale = activeSkusEX.reduce(function(s, sku) { return s + (expansionSkuScale[sku] || 0); }, 0);
+    }
+    allCharts.expansion.data.labels = labels;
+    allCharts.expansion.data.datasets.forEach(function(ds) {
+      if (baseExpansionData[ds.label]) {
+        ds.data = sliceTime(baseExpansionData[ds.label]).map(function(v) { return Math.round(v * exScale * 10) / 10; });
+      }
+    });
+    allCharts.expansion.update('none');
+  }
+
+  // -- M12 Retention by # of Surfaces
+  if (allCharts.retSurface) {
+    allCharts.retSurface.data.labels = labels;
+    allCharts.retSurface.data.datasets.forEach(function(ds) {
+      if (baseRetSurfaceData[ds.label]) {
+        ds.data = sliceTime(baseRetSurfaceData[ds.label]);
+      }
+    });
+    allCharts.retSurface.update('none');
+  }
+
+  // -- Revenue Retention J-Curves
+  if (allCharts.revJcurves) {
+    var showCountRev = Math.min(timeRange, cohortNames.length);
+    allCharts.revJcurves.data.datasets.forEach(function(ds, idx) {
+      allCharts.revJcurves.getDatasetMeta(idx).hidden = idx < (cohortNames.length - showCountRev);
+    });
+    allCharts.revJcurves.update('none');
+  }
+
   // 18. Overage — uses master SKU toggle
   if (typeof buildOverageChart === 'function') {
     buildOverageChart();
@@ -1281,7 +1344,7 @@ kpis.forEach((k, i) => {
       fill:true, backgroundColor:a(k.color,.12), tension:.4, pointRadius:0, pointHoverRadius:5,
       pointHoverBackgroundColor:k.color, pointHoverBorderColor:'#fff', pointHoverBorderWidth:2 }] },
     options:{ interaction:{mode:'index', intersect:false},
-      plugins:{legend:{display:false}, datalabels:{display:false},
+      plugins:{legend:{display:false}, datalabels:{ display: function(ctx) { return ctx.dataIndex === ctx.dataset.data.length - 1; }, anchor: 'end', align: 'top', font: { size: 10, weight: 'bold' }, color: '#E6EDF3' },
       tooltip:{enabled:true, displayColors:false, backgroundColor:'#1c2128',
         borderColor:k.color, borderWidth:1, padding:8,
         titleFont:{size:10,weight:'500'}, bodyFont:{size:13,weight:'bold'}, bodyColor:k.color,
@@ -1348,7 +1411,8 @@ function buildGoalChart(canvasId, actualData, goalData, opts) {
     data: { labels: GOAL_WEEKS, datasets: datasets },
     options: {
       interaction: { mode: 'index', intersect: false },
-      plugins: { legend: { position: 'bottom', labels: { font: { size: 9 }, boxWidth: 10 } }, datalabels: { display: false },
+      plugins: { legend: { position: 'bottom', labels: { font: { size: 9 }, boxWidth: 10 } },
+        datalabels: { display: function(ctx) { return ctx.datasetIndex === 1 && ctx.dataIndex === ctx.dataset.data.length - 1; }, anchor: 'end', align: 'right', font: { size: 9, weight: 'bold' }, color: goalColor, formatter: function(v) { return fmt(v); } },
         tooltip: { callbacks: {
           label: function(ctx) { return ctx.dataset.label + ': ' + fmt(ctx.parsed.y); }
         }}
@@ -1499,6 +1563,7 @@ var planMigNetData = basePlanMigrationData['Individual Upgrades'].map(function(v
   return Math.round((v + basePlanMigrationData['Biz & Ent Upgrades'][i] + basePlanMigrationData['Individual Downgrades'][i] + basePlanMigrationData['Biz & Ent Downgrades'][i]) * 10) / 10;
 });
 basePlanMigrationData['Net'] = planMigNetData;
+var planMigSkuScale = { Free: 0.15, Edu: 0.02, Pro: 0.25, 'Pro+': 0.10, Business: 0.30, Enterprise: 0.18 };
 allCharts.planMigration = new Chart(document.getElementById('ch-plan-migration'), {
   type:'bar',
   data:{ labels:MONTHS, datasets:[
@@ -1536,6 +1601,7 @@ var upgradeRateNetData = baseUpgradeRatesData['Free → Pro ↑'].map(function(v
   return Math.round((v + baseUpgradeRatesData['Pro → Pro+ ↑'][i] + baseUpgradeRatesData['Pro → Biz ↑'][i] + baseUpgradeRatesData['Biz → Ent ↑'][i] + baseUpgradeRatesData['Pro+ → Pro ↓'][i] + baseUpgradeRatesData['Pro → Free ↓'][i] + baseUpgradeRatesData['Ent → Biz ↓'][i]) * 10) / 10;
 });
 baseUpgradeRatesData['Net Rate'] = upgradeRateNetData;
+var upgradeRateSkuScale = { Free: 0.15, Edu: 0.02, Pro: 0.25, 'Pro+': 0.10, Business: 0.30, Enterprise: 0.18 };
 allCharts.upgradeRates = new Chart(document.getElementById('ch-upgrade-rates'), {
   type:'line',
   data:{ labels:MONTHS, datasets:[
@@ -1931,7 +1997,8 @@ allCharts.freqDist = new Chart(document.getElementById('ch-freq-dist'), {
   })},
   options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false}},
     scales:{x:{grid:{display:false}},
-      y:{stacked:true, max:100, ticks:{callback:function(v){return v+'%'}}, title:{display:true,text:'% of MAU'}}},
+      y:{stacked:true, max:100, ticks:{callback:function(v){return v+'%'}}, title:{display:true,text:'% of MAU'}},
+      y1:{position:'right', max:100, grid:{display:false}, ticks:{callback:function(v){return v+'%'}}}},
     aspectRatio:1.7 }
 });
 
@@ -2002,7 +2069,8 @@ allCharts.multiSurface = new Chart(document.getElementById('ch-multi-surface'), 
   ]},
   options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}, datalabels:{display:false}},
     scales:{x:{grid:{display:false}},
-      y:{stacked:true, max:100, ticks:{callback:function(v){return v+'%'}}}},
+      y:{stacked:true, max:100, ticks:{callback:function(v){return v+'%'}}},
+      y1:{position:'right', max:100, grid:{display:false}, ticks:{callback:function(v){return v+'%'}}}},
     aspectRatio:1.7 }
 });
 
@@ -2032,7 +2100,8 @@ allCharts.chatComp = new Chart(document.getElementById('ch-chat-comp'), {
   options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}, datalabels:{display:false}},
     scales:{x:{grid:{display:false}},
       y:{stacked:true, max:100, ticks:{callback:function(v){return v+'%'}},
-        title:{display:true,text:'% of Total Interactions'}}},
+        title:{display:true,text:'% of Total Interactions'}},
+      y1:{position:'right', max:100, grid:{display:false}, ticks:{callback:function(v){return v+'%'}}}},
     aspectRatio:1.7 }
 });
 
@@ -2047,6 +2116,12 @@ var ideTimeData = {
 };
 var ideNameList = ['VS Code','JetBrains','Visual Studio','Neovim','Other'];
 // M12 Retention by Product Surface (replaces IDE Distribution)
+var baseRetSurfaceData = {
+  '1 Surface': [38,39,40,41,42,43,44,44,45,46,46,47],
+  '2 Surfaces': [52,53,54,55,56,57,58,58,59,60,60,61],
+  '3 Surfaces': [62,63,64,65,66,67,68,68,69,70,70,71],
+  '4+ Surfaces': [70,71,72,73,74,75,76,76,77,78,78,79]
+};
 allCharts.retSurface = new Chart(document.getElementById('ch-ret-surface'), {
   type:'line',
   data:{ labels:MONTHS, datasets: [
@@ -2555,21 +2630,23 @@ allCharts.returnRate = new Chart(document.getElementById('ch-return-rate'), {
 // ══════════════════════════════
 
 // Seat Utilization — stacked bar with utilization % on dual axis
+var baseSeatActive = [680,720,760,800,840,880,920,960,1000,1050,1100,1150];
+var baseSeatUnused = [220,230,240,250,260,270,280,290,300,300,300,300];
+var seatUtilSkuScale = { Free: 0.28, Edu: 0.02, Pro: 0.16, 'Pro+': 0.07, Business: 0.31, Enterprise: 0.16 };
 (function() {
-  var active =   [680,720,760,800,840,880,920,960,1000,1050,1100,1150];
-  var unused =   [220,230,240,250,260,270,280,290,300,300,300,300];
-  var utilPct = active.map(function(a,i){ return Math.round(a/(a+unused[i])*1000)/10; });
+  var utilPct = baseSeatActive.map(function(a,i){ return Math.round(a/(a+baseSeatUnused[i])*1000)/10; });
 
-  new Chart(document.getElementById('ch-seat-util'), {
+  allCharts.seatUtil = new Chart(document.getElementById('ch-seat-util'), {
     type:'bar',
     data:{ labels:MONTHS, datasets:[
-      { label:'Active Seats', data:active, backgroundColor:a(TEAL,.7), borderRadius:2, stack:'s', yAxisID:'y' },
-      { label:'Assigned (Unused)', data:unused, backgroundColor:a(ORANGE,.4), borderRadius:2, stack:'s', yAxisID:'y' },
-      { type:'line', label:'Utilization %', data:utilPct, borderColor:PURPLE, borderWidth:2.5, tension:.3, fill:false, pointRadius:3, yAxisID:'y1' }
+      { label:'Active Seats', data:baseSeatActive.slice(), backgroundColor:a(TEAL,.7), borderRadius:2, stack:'s', yAxisID:'y' },
+      { label:'Assigned (Unused)', data:baseSeatUnused.slice(), backgroundColor:a(ORANGE,.4), borderRadius:2, stack:'s', yAxisID:'y' },
+      { type:'line', label:'Utilization %', data:utilPct, borderColor:PURPLE, borderWidth:2.5, tension:.3, fill:false, pointRadius:3, yAxisID:'y1',
+        datalabels:{ display: function(ctx) { return ctx.dataIndex === ctx.dataset.data.length - 1; },
+          anchor: 'end', align: 'top', font: { size: 10, weight: 'bold' }, color: '#E6EDF3',
+          formatter: function(v) { return v + '%'; } } }
     ]},
-    options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false},
-      annotation:{annotations:{goal:{type:'line',yMin:85,yMax:85,borderColor:a(GREEN,.4),borderWidth:1.5,borderDash:[6,4],yScaleID:'y1',
-        label:{display:true,content:'85% target',position:'end',backgroundColor:'transparent',color:GREEN,font:{size:8}}}}}},
+    options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false}},
       scales:{
         x:{stacked:true, grid:{display:false}},
         y:{stacked:true, ticks:{callback:function(v){return v+'K'}}, title:{display:true,text:'Seats (K)',font:{size:9}}},
@@ -2584,28 +2661,30 @@ allCharts.returnRate = new Chart(document.getElementById('ch-return-rate'), {
 // Excludes: new logo ARR and full churn (those are in the MAU growth chart)
 // Monthly Revenue Bridge — components sum to actual monthly rev delta
 // Net New = new user rev; Expansion = upgrades/overage; Contraction = downgrades; Churn = lost users
-(function() {
-  var netNew =       [0, 7, 7, 6, 8, 8, 7, 6, 8, 8, 9, 10];
-  var expansion =    [0, 5, 5, 6, 7, 8, 9, 9,11,12,14,16];
-  var contraction =  [0,-0.5,-0.5,-0.5,-0.5,-1,-1,-1,-1,-1.5,-1.5,-2];
-  var churn =        [0,-0.5,-0.5,-0.5,-0.5,-1,-1,-1,-1,-1.5,-1.5,-2];
-  var net = netNew.map(function(v,i){ return Math.round((v + expansion[i] + contraction[i] + churn[i])*10)/10; });
-  // net should be [0,11,11,11,14,14,14,13,17,17,20,22]
+var baseExpansionData = {
+  'Net New Users': [0, 7, 7, 6, 8, 8, 7, 6, 8, 8, 9, 10],
+  'Expansion': [0, 5, 5, 6, 7, 8, 9, 9, 11, 12, 14, 16],
+  'Contraction': [0, -0.5, -0.5, -0.5, -0.5, -1, -1, -1, -1, -1.5, -1.5, -2],
+  'Churn': [0, -0.5, -0.5, -0.5, -0.5, -1, -1, -1, -1, -1.5, -1.5, -2]
+};
+baseExpansionData['Net Change'] = baseExpansionData['Net New Users'].map(function(v, i) {
+  return Math.round((v + baseExpansionData['Expansion'][i] + baseExpansionData['Contraction'][i] + baseExpansionData['Churn'][i]) * 10) / 10;
+});
+var expansionSkuScale = { Free: 0.01, Edu: 0.01, Pro: 0.14, 'Pro+': 0.10, Business: 0.43, Enterprise: 0.31 };
 
-  new Chart(document.getElementById('ch-expansion'), {
-    type:'bar',
-    data:{ labels:MONTHS, datasets:[
-      { label:'Net New Users', data:netNew, backgroundColor:a(BLUE,.6), borderRadius:2, stack:'s' },
-      { label:'Expansion', data:expansion, backgroundColor:a(GREEN,.6), borderRadius:2, stack:'s' },
-      { label:'Contraction', data:contraction, backgroundColor:a(ORANGE,.5), borderRadius:2, stack:'s' },
-      { label:'Churn', data:churn, backgroundColor:a(RED,.5), borderRadius:2, stack:'s' },
-      { type:'line', label:'Net Change', data:net, borderColor:PURPLE, borderWidth:2.5, tension:.3, fill:false, pointRadius:3 }
-    ]},
-    options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false},
-      annotation:{annotations:{zero:{type:'line',yMin:0,yMax:0,borderColor:'rgba(255,255,255,.2)',borderWidth:1}}}},
-      scales:{x:{stacked:true,grid:{display:false}}, y:{stacked:true,ticks:{callback:function(v){return '$'+v+'M'}}, title:{display:true,text:'Monthly Rev Change ($M)',font:{size:9}}}}, aspectRatio:1.7 }
-  });
-})();
+allCharts.expansion = new Chart(document.getElementById('ch-expansion'), {
+  type:'bar',
+  data:{ labels:MONTHS, datasets:[
+    { label:'Net New Users', data:baseExpansionData['Net New Users'].slice(), backgroundColor:a(BLUE,.6), borderRadius:2, stack:'s' },
+    { label:'Expansion', data:baseExpansionData['Expansion'].slice(), backgroundColor:a(GREEN,.6), borderRadius:2, stack:'s' },
+    { label:'Contraction', data:baseExpansionData['Contraction'].slice(), backgroundColor:a(ORANGE,.5), borderRadius:2, stack:'s' },
+    { label:'Churn', data:baseExpansionData['Churn'].slice(), backgroundColor:a(RED,.5), borderRadius:2, stack:'s' },
+    { type:'line', label:'Net Change', data:baseExpansionData['Net Change'].slice(), borderColor:PURPLE, borderWidth:2.5, tension:.3, fill:false, pointRadius:3 }
+  ]},
+  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false},
+    annotation:{annotations:{zero:{type:'line',yMin:0,yMax:0,borderColor:'rgba(255,255,255,.2)',borderWidth:1}}}},
+    scales:{x:{stacked:true,grid:{display:false}}, y:{stacked:true,ticks:{callback:function(v){return '$'+v+'M'}}, title:{display:true,text:'Monthly Rev Change ($M)',font:{size:9}}}}, aspectRatio:1.7 }
+});
 
 window.addEventListener('DOMContentLoaded', function(){ if(window.location.hash) history.replaceState(null,'',window.location.pathname); setTimeout(function(){ window.scrollTo(0,0); }, 0); });
 window.addEventListener('load', function(){ window.scrollTo(0,0); });
