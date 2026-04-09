@@ -1753,7 +1753,15 @@ var funnelRatesTrend = {
   function renderFunnel() {
     var ch = channels.find(function(c){ return c.id === activeChannel; });
     var timeMult = timeRange === 3 ? 0.25 : timeRange === 6 ? 0.5 : 1;
-    var scaledData = ch.data.map(function(v){ return Math.round(v * timeMult); });
+    // SKU scale: proportion of selected SKUs' activations vs total
+    var skuMult = 1;
+    var activeSkusF = SKU_LIST.filter(function(s){ return skuState[s]; });
+    if (activeSkusF.length < SKU_LIST.length) {
+      var allAct = SKU_LIST.reduce(function(s,sk){ return s + skuData.activations[sk].reduce(function(a,b){return a+b;},0); },0);
+      var selAct = activeSkusF.reduce(function(s,sk){ return s + skuData.activations[sk].reduce(function(a,b){return a+b;},0); },0);
+      skuMult = allAct > 0 ? selAct / allAct : 0;
+    }
+    var scaledData = ch.data.map(function(v){ return Math.round(v * timeMult * skuMult); });
     var trLabel = timeRange === 3 ? 'Last 3 Months' : timeRange === 6 ? 'Last 6 Months' : 'Last 12 Months';
 
     // Toggles — render into the header card
