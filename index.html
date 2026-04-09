@@ -2639,14 +2639,14 @@ var seatUtilSkuScale = { Free: 0.28, Edu: 0.02, Pro: 0.16, 'Pro+': 0.07, Busines
   allCharts.seatUtil = new Chart(document.getElementById('ch-seat-util'), {
     type:'bar',
     data:{ labels:MONTHS, datasets:[
-      { label:'Active Seats', data:baseSeatActive.slice(), backgroundColor:a(TEAL,.7), borderRadius:2, stack:'s', yAxisID:'y' },
-      { label:'Assigned (Unused)', data:baseSeatUnused.slice(), backgroundColor:a(ORANGE,.4), borderRadius:2, stack:'s', yAxisID:'y' },
+      { label:'Active Seats', data:baseSeatActive.slice(), backgroundColor:a(TEAL,.7), borderRadius:2, stack:'s', yAxisID:'y', datalabels:{display:true, color:'#fff', font:{size:9,weight:'bold'}, formatter:function(v){return v+'K';}, anchor:'center', align:'center'} },
+      { label:'Assigned (Unused)', data:baseSeatUnused.slice(), backgroundColor:a(ORANGE,.4), borderRadius:2, stack:'s', yAxisID:'y', datalabels:{display:true, color:'#fff', font:{size:8,weight:'bold'}, formatter:function(v){return v+'K';}, anchor:'center', align:'center'} },
       { type:'line', label:'Utilization %', data:utilPct, borderColor:PURPLE, borderWidth:2.5, tension:.3, fill:false, pointRadius:3, yAxisID:'y1',
         datalabels:{ display: function(ctx) { return ctx.dataIndex === ctx.dataset.data.length - 1; },
           anchor: 'end', align: 'top', font: { size: 10, weight: 'bold' }, color: '#E6EDF3',
           formatter: function(v) { return v + '%'; } } }
     ]},
-    options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false}},
+    options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}},
       scales:{
         x:{stacked:true, grid:{display:false}},
         y:{stacked:true, ticks:{callback:function(v){return v+'K'}}, title:{display:true,text:'Seats (K)',font:{size:9}}},
@@ -2675,13 +2675,13 @@ var expansionSkuScale = { Free: 0.01, Edu: 0.01, Pro: 0.14, 'Pro+': 0.10, Busine
 allCharts.expansion = new Chart(document.getElementById('ch-expansion'), {
   type:'bar',
   data:{ labels:MONTHS, datasets:[
-    { label:'Net New Users', data:baseExpansionData['Net New Users'].slice(), backgroundColor:a(BLUE,.6), borderRadius:2, stack:'s' },
-    { label:'Expansion', data:baseExpansionData['Expansion'].slice(), backgroundColor:a(GREEN,.6), borderRadius:2, stack:'s' },
-    { label:'Contraction', data:baseExpansionData['Contraction'].slice(), backgroundColor:a(ORANGE,.5), borderRadius:2, stack:'s' },
-    { label:'Churn', data:baseExpansionData['Churn'].slice(), backgroundColor:a(RED,.5), borderRadius:2, stack:'s' },
-    { type:'line', label:'Net Change', data:baseExpansionData['Net Change'].slice(), borderColor:PURPLE, borderWidth:2.5, tension:.3, fill:false, pointRadius:3 }
+    { label:'Net New Users', data:baseExpansionData['Net New Users'].slice(), backgroundColor:a(BLUE,.6), borderRadius:2, stack:'s', datalabels:{display:function(ctx){return Math.abs(ctx.dataset.data[ctx.dataIndex])>=3;}, color:'#fff', font:{size:8,weight:'bold'}, formatter:function(v){return '$'+Math.round(v)+'M';}, anchor:'center', align:'center'} },
+    { label:'Expansion', data:baseExpansionData['Expansion'].slice(), backgroundColor:a(GREEN,.6), borderRadius:2, stack:'s', datalabels:{display:function(ctx){return Math.abs(ctx.dataset.data[ctx.dataIndex])>=3;}, color:'#fff', font:{size:8,weight:'bold'}, formatter:function(v){return '$'+Math.round(v)+'M';}, anchor:'center', align:'center'} },
+    { label:'Contraction', data:baseExpansionData['Contraction'].slice(), backgroundColor:a(ORANGE,.5), borderRadius:2, stack:'s', datalabels:{display:false} },
+    { label:'Churn', data:baseExpansionData['Churn'].slice(), backgroundColor:a(RED,.5), borderRadius:2, stack:'s', datalabels:{display:false} },
+    { type:'line', label:'Net Change', data:baseExpansionData['Net Change'].slice(), borderColor:PURPLE, borderWidth:2.5, tension:.3, fill:false, pointRadius:3, datalabels:{display:function(ctx){return ctx.dataIndex===ctx.dataset.data.length-1;}, color:PURPLE, font:{size:10,weight:'bold'}, formatter:function(v){return '$'+Math.round(v)+'M';}, anchor:'end', align:'top'} }
   ]},
-  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false},
+  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}},
     annotation:{annotations:{zero:{type:'line',yMin:0,yMax:0,borderColor:'rgba(255,255,255,.2)',borderWidth:1}}}},
     scales:{x:{stacked:true,grid:{display:false}}, y:{stacked:true,ticks:{callback:function(v){return '$'+v+'M'}}, title:{display:true,text:'Monthly Rev Change ($M)',font:{size:9}}}}, aspectRatio:1.7 }
 });
