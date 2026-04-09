@@ -1264,9 +1264,16 @@ function rebuildAll() {
       exScale = activeSkusEX.reduce(function(s, sku) { return s + (expansionSkuScale[sku] || 0); }, 0);
     }
     allCharts.expansion.data.labels = labels;
+    var scaledExpData = {};
+    ['Net New Users','Expansion','Contraction','Churn'].forEach(function(key) {
+      scaledExpData[key] = baseExpansionData[key].map(function(v) { return Math.round(v * exScale * 10) / 10; });
+    });
+    scaledExpData['Net Change'] = scaledExpData['Net New Users'].map(function(v,i) {
+      return Math.round((v + scaledExpData['Expansion'][i] + scaledExpData['Contraction'][i] + scaledExpData['Churn'][i]) * 10) / 10;
+    });
     allCharts.expansion.data.datasets.forEach(function(ds) {
-      if (baseExpansionData[ds.label]) {
-        ds.data = sliceTime(baseExpansionData[ds.label]).map(function(v) { return Math.round(v * exScale * 10) / 10; });
+      if (scaledExpData[ds.label]) {
+        ds.data = sliceTime(scaledExpData[ds.label]);
       }
     });
     allCharts.expansion.update('none');
@@ -2700,8 +2707,8 @@ var expansionSkuScale = { Free: 0.01, Edu: 0.01, Pro: 0.14, 'Pro+': 0.10, Busine
 allCharts.expansion = new Chart(document.getElementById('ch-expansion'), {
   type:'bar',
   data:{ labels:MONTHS, datasets:[
-    { label:'Net New Users', data:baseExpansionData['Net New Users'].slice(), backgroundColor:a(BLUE,.6), borderRadius:2, stack:'s', datalabels:{display:function(ctx){return Math.abs(ctx.dataset.data[ctx.dataIndex])>=3;}, color:'#fff', font:{size:8,weight:'bold'}, formatter:function(v){return '$'+Math.round(v)+'M';}, anchor:'center', align:'center'} },
-    { label:'Expansion', data:baseExpansionData['Expansion'].slice(), backgroundColor:a(GREEN,.6), borderRadius:2, stack:'s', datalabels:{display:function(ctx){return Math.abs(ctx.dataset.data[ctx.dataIndex])>=3;}, color:'#fff', font:{size:8,weight:'bold'}, formatter:function(v){return '$'+Math.round(v)+'M';}, anchor:'center', align:'center'} },
+    { label:'Net New Users', data:baseExpansionData['Net New Users'].slice(), backgroundColor:a(BLUE,.6), borderRadius:2, stack:'s', datalabels:{display:function(ctx){return Math.abs(ctx.dataset.data[ctx.dataIndex])>=1;}, color:'#fff', font:{size:8,weight:'bold'}, formatter:function(v){return '$'+Math.round(v)+'M';}, anchor:'center', align:'center'} },
+    { label:'Expansion', data:baseExpansionData['Expansion'].slice(), backgroundColor:a(GREEN,.6), borderRadius:2, stack:'s', datalabels:{display:function(ctx){return Math.abs(ctx.dataset.data[ctx.dataIndex])>=1;}, color:'#fff', font:{size:8,weight:'bold'}, formatter:function(v){return '$'+Math.round(v)+'M';}, anchor:'center', align:'center'} },
     { label:'Contraction', data:baseExpansionData['Contraction'].slice(), backgroundColor:a(ORANGE,.5), borderRadius:2, stack:'s', datalabels:{display:false} },
     { label:'Churn', data:baseExpansionData['Churn'].slice(), backgroundColor:a(RED,.5), borderRadius:2, stack:'s', datalabels:{display:false} },
     { type:'line', label:'Net Change', data:baseExpansionData['Net Change'].slice(), borderColor:PURPLE, borderWidth:2.5, tension:.3, fill:false, pointRadius:3, datalabels:{display:function(ctx){return ctx.dataIndex===ctx.dataset.data.length-1;}, color:PURPLE, font:{size:10,weight:'bold'}, formatter:function(v){return '$'+Math.round(v)+'M';}, anchor:'end', align:'top'} }
