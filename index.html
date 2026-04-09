@@ -1087,19 +1087,22 @@ function rebuildAll() {
   }
 
 
-  // -- Activations by Channel (scaled by selected SKUs)
+  // -- Activations by Channel (scaled per-month to match selected SKU totals)
   if (allCharts.actChannel) {
     allCharts.actChannel.data.labels = labels;
-    var actSkuScale = 1;
     var activeSkusAC = SKU_LIST.filter(function(s) { return skuState[s]; });
+    // Compute per-month scale: selected SKU activations / total activations
+    var monthScales = new Array(12).fill(1);
     if (activeSkusAC.length < SKU_LIST.length) {
-      var totalActAll = skuData.activations.Free.map(function(v,i){ return SKU_LIST.reduce(function(s,sk){ return s + skuData.activations[sk][i]; }, 0); });
-      var totalActSel = skuData.activations.Free.map(function(v,i){ return activeSkusAC.reduce(function(s,sk){ return s + skuData.activations[sk][i]; }, 0); });
-      actSkuScale = totalActSel.reduce(function(s,v){return s+v;},0) / totalActAll.reduce(function(s,v){return s+v;},0);
+      for (var mi = 0; mi < 12; mi++) {
+        var allAct = SKU_LIST.reduce(function(s,sk){ return s + skuData.activations[sk][mi]; }, 0);
+        var selAct = activeSkusAC.reduce(function(s,sk){ return s + skuData.activations[sk][mi]; }, 0);
+        monthScales[mi] = allAct > 0 ? selAct / allAct : 0;
+      }
     }
     allCharts.actChannel.data.datasets.forEach(function(ds) {
       if (baseActChannelData[ds.label]) {
-        ds.data = sliceTime(baseActChannelData[ds.label]).map(function(v){ return Math.round(v * actSkuScale * 10)/10; });
+        ds.data = sliceTime(baseActChannelData[ds.label].map(function(v,i){ return Math.round(v * monthScales[i] * 10)/10; }));
       }
     });
     allCharts.actChannel.update('none');
