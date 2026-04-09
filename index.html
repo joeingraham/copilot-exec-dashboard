@@ -433,12 +433,12 @@ const stackedTotalPlugin = {
       let total = 0;
       let topY = Infinity;
       datasets.forEach((ds, di) => {
-        const val = ds.data[i] || 0;
-        if (val > 0) total += val;
         const meta = chart.getDatasetMeta(di);
         if (meta.hidden || meta.type === 'line') return;
+        const val = ds.data[i] || 0;
+        if (val > 0) total += val;
         const bar = meta.data[i];
-        if (bar && bar.y < topY && ds.data[i] > 0) topY = bar.y;
+        if (bar && bar.y < topY && val > 0) topY = bar.y;
       });
       if (total > 0 && topY < Infinity) {
         ctx.save();
@@ -464,7 +464,9 @@ function stackedDatalabels(fmtFn, minPct) {
   return {
     display: function(ctx) {
       if (ctx.dataset.type === 'line') return false;
-      var ds = ctx.chart.data.datasets.filter(function(d){ return d.type !== 'line'; });
+      var meta = ctx.chart.getDatasetMeta(ctx.datasetIndex);
+      if (meta.hidden) return false;
+      var ds = ctx.chart.data.datasets.filter(function(d, di){ return d.type !== 'line' && !ctx.chart.getDatasetMeta(di).hidden; });
       var total = ds.reduce(function(s, d){ return s + (Math.abs(d.data[ctx.dataIndex]) || 0); }, 0);
       var val = Math.abs(ctx.dataset.data[ctx.dataIndex] || 0);
       return total > 0 && (val / total) >= (minPct || 0.05);
@@ -1085,12 +1087,19 @@ function rebuildAll() {
   }
 
 
-  // -- Activations by Channel
+  // -- Activations by Channel (scaled by selected SKUs)
   if (allCharts.actChannel) {
     allCharts.actChannel.data.labels = labels;
+    var actSkuScale = 1;
+    var activeSkusAC = SKU_LIST.filter(function(s) { return skuState[s]; });
+    if (activeSkusAC.length < SKU_LIST.length) {
+      var totalActAll = skuData.activations.Free.map(function(v,i){ return SKU_LIST.reduce(function(s,sk){ return s + skuData.activations[sk][i]; }, 0); });
+      var totalActSel = skuData.activations.Free.map(function(v,i){ return activeSkusAC.reduce(function(s,sk){ return s + skuData.activations[sk][i]; }, 0); });
+      actSkuScale = totalActSel.reduce(function(s,v){return s+v;},0) / totalActAll.reduce(function(s,v){return s+v;},0);
+    }
     allCharts.actChannel.data.datasets.forEach(function(ds) {
       if (baseActChannelData[ds.label]) {
-        ds.data = sliceTime(baseActChannelData[ds.label]);
+        ds.data = sliceTime(baseActChannelData[ds.label]).map(function(v){ return Math.round(v * actSkuScale * 10)/10; });
       }
     });
     allCharts.actChannel.update('none');
