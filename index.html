@@ -1001,9 +1001,16 @@ function rebuildAll() {
     allCharts.dauWau.update('none');
   }
 
-  // 13. MAU by Product Surface (line chart over time)
+  // 13. MAU by Product Surface (line chart over time) — scale by SKU MAU share
   if (allCharts.mauSurface) {
     allCharts.mauSurface.data.labels = labels;
+    var mauSkuScale = 1;
+    var activeSkusMS = SKU_LIST.filter(function(s){ return skuState[s]; });
+    if (activeSkusMS.length < SKU_LIST.length) {
+      var allMauSum = SKU_LIST.reduce(function(s,sk){ return s + skuData.mau[sk].reduce(function(a,b){return a+b;},0); },0);
+      var selMauSum = activeSkusMS.reduce(function(s,sk){ return s + skuData.mau[sk].reduce(function(a,b){return a+b;},0); },0);
+      mauSkuScale = allMauSum > 0 ? selMauSum / allMauSum : 0;
+    }
     var surfaceMauFull = {
       Completions:[850,880,910,940,970,1000,1030,1060,1100,1140,1180,1220],
       Chat:[400,440,480,530,580,630,690,750,820,890,960,1040],
@@ -1014,24 +1021,54 @@ function rebuildAll() {
     };
     allCharts.mauSurface.data.datasets.forEach(function(ds) {
       if (surfaceMauFull[ds.label]) {
-        ds.data = sliceTime(surfaceMauFull[ds.label]);
+        ds.data = sliceTime(surfaceMauFull[ds.label]).map(function(v){ return Math.round(v * mauSkuScale); });
       }
     });
     allCharts.mauSurface.update('none');
   }
 
-  // 14. Multi-Surface Users (stacked area)
+  // 14. Multi-Surface Users (stacked area) — shift distribution by SKU
+  // Enterprise/Biz users tend toward more surfaces, Free toward fewer
+  var multiSurfSkuShift = { Free:[-15,-10,20,5], Edu:[-10,-5,12,3], Pro:[0,0,0,0], 'Pro+': [5,3,-5,-3], Business:[10,5,-10,-5], Enterprise:[15,8,-15,-8] };
   if (allCharts.multiSurface) {
     allCharts.multiSurface.data.labels = labels;
-    allCharts.multiSurface.data.datasets.forEach(function(ds) {
-      if (baseMultiSurfaceData[ds.label]) {
-        ds.data = sliceTime(baseMultiSurfaceData[ds.label]);
+    var activeSkusMSU = SKU_LIST.filter(function(s){ return skuState[s]; });
+    var msShift = [0,0,0,0]; // [3+, 2, 1] shift — 4th element not used but for weighting
+    if (activeSkusMSU.length < SKU_LIST.length) {
+      var twMS = 0;
+      activeSkusMSU.forEach(function(sk) {
+        var w = skuData.mau[sk].reduce(function(a,b){return a+b;},0);
+        twMS += w;
+        multiSurfSkuShift[sk].forEach(function(s,i){ msShift[i] += s * w; });
+      });
+      var allW = SKU_LIST.reduce(function(s,sk){ return s + skuData.mau[sk].reduce(function(a,b){return a+b;},0); },0);
+      msShift = msShift.map(function(v){ return v / twMS - SKU_LIST.reduce(function(s,sk){ return s + multiSurfSkuShift[sk].reduce(function(a,b,i2){return i2===msShift.indexOf(v)?a+b:a;},0) * skuData.mau[sk].reduce(function(a,b){return a+b;},0); },0) / allW; });
+    }
+    // Simpler approach: just use base data with per-month SKU-weighted adjustments
+    var msLabels = ['3+ Surfaces','2 Surfaces','1 Surface'];
+    var msBase = { '3+ Surfaces':[8,9,10,12,14,15,17,19,21,23,25,28], '2 Surfaces':[22,23,24,25,26,27,27,28,28,29,29,30], '1 Surface':[70,68,66,63,60,58,56,53,51,48,46,42] };
+    var msSkuAdj = { Free:[0,0,0], Edu:[0,0,0], Pro:[0,0,0], 'Pro+':[3,-1,-2], Business:[6,-2,-4], Enterprise:[10,-3,-7] };
+    var blendAdj = [0,0,0];
+    if (activeSkusMSU.length < SKU_LIST.length) {
+      var twA = 0;
+      activeSkusMSU.forEach(function(sk) { var w = skuData.mau[sk].reduce(function(a,b){return a+b;},0); twA += w; msSkuAdj[sk].forEach(function(v,i){blendAdj[i]+=v*w;}); });
+      SKU_LIST.forEach(function(sk) { var w = skuData.mau[sk].reduce(function(a,b){return a+b;},0); msSkuAdj[sk].forEach(function(v,i){blendAdj[i]-=v*w;}); });
+      var allWA = SKU_LIST.reduce(function(s,sk){ return s + skuData.mau[sk].reduce(function(a,b){return a+b;},0); },0);
+      blendAdj = blendAdj.map(function(v){ return v / twA + (allWA > 0 ? -v/allWA : 0); });
+      // Simplified: just compute weighted avg adjustment
+      blendAdj = [0,0,0]; twA = 0;
+      activeSkusMSU.forEach(function(sk) { var w = skuData.mau[sk].reduce(function(a,b){return a+b;},0); twA += w; msSkuAdj[sk].forEach(function(v,i){blendAdj[i]+=v*w;}); });
+      if (twA > 0) blendAdj = blendAdj.map(function(v){ return v / twA; });
+    }
+    allCharts.multiSurface.data.datasets.forEach(function(ds, idx) {
+      if (msBase[ds.label]) {
+        ds.data = sliceTime(msBase[ds.label]).map(function(v){ return Math.max(0, Math.min(100, Math.round(v + blendAdj[idx]))); });
       }
     });
     allCharts.multiSurface.update('none');
   }
 
-  // 15. Usage Share by Product Surface (100% stacked area)
+  // 15. Usage Share by Product Surface (100% stacked area) — no change by SKU (already %)
   if (allCharts.chatComp) {
     allCharts.chatComp.data.labels = labels;
     var usageShareFull = {
@@ -1042,9 +1079,24 @@ function rebuildAll() {
       'PR Summaries':[4,5,5,5,5,5,6,6,6,6,6,6],
       Agent:[3,3,3,3,3,4,4,4,4,5,5,6]
     };
+    // SKU adjustment: Enterprise uses more Chat/Agent, Free uses more Completions
+    var usageSkuAdj = { Free:{Completions:8,Chat:-5,Agent:-3}, Edu:{Completions:4,Chat:-3,Agent:-1}, Pro:{}, 'Pro+':{Chat:3,Agent:2,Completions:-5}, Business:{Chat:5,Agent:4,Completions:-9}, Enterprise:{Chat:7,Agent:6,Completions:-13} };
+    var usageAdj = {};
+    var activeSkusUS = SKU_LIST.filter(function(s){ return skuState[s]; });
+    if (activeSkusUS.length < SKU_LIST.length) {
+      var twU = 0;
+      SURFACE_LIST.concat(['Agent']).forEach(function(sf){ usageAdj[sf] = 0; });
+      activeSkusUS.forEach(function(sk) {
+        var w = skuData.mau[sk].reduce(function(a,b){return a+b;},0);
+        twU += w;
+        Object.keys(usageSkuAdj[sk] || {}).forEach(function(sf){ usageAdj[sf] = (usageAdj[sf]||0) + (usageSkuAdj[sk][sf]||0) * w; });
+      });
+      Object.keys(usageAdj).forEach(function(sf){ usageAdj[sf] = twU > 0 ? usageAdj[sf] / twU : 0; });
+    }
     allCharts.chatComp.data.datasets.forEach(function(ds) {
       if (usageShareFull[ds.label]) {
-        ds.data = sliceTime(usageShareFull[ds.label]);
+        var adj = usageAdj[ds.label] || 0;
+        ds.data = sliceTime(usageShareFull[ds.label]).map(function(v){ return Math.max(0, Math.round(v + adj)); });
       }
     });
     allCharts.chatComp.update('none');
@@ -1068,9 +1120,19 @@ function rebuildAll() {
     allCharts.ide.update('none');
   }
 
-  // 17. Interactions per User per Day (stacked bar)
+  // 17. Interactions per User per Day (stacked bar) — scale by SKU intensity
   if (allCharts.interactions) {
     allCharts.interactions.data.labels = labels;
+    var intSkuMult = { Free:0.4, Edu:0.5, Pro:1.0, 'Pro+':1.4, Business:1.2, Enterprise:1.5 };
+    var activeSkusINT = SKU_LIST.filter(function(s){ return skuState[s]; });
+    var intScale = 1;
+    if (activeSkusINT.length < SKU_LIST.length) {
+      var twI = 0; var wsI = 0;
+      activeSkusINT.forEach(function(sk) {
+        var w = skuData.mau[sk].reduce(function(a,b){return a+b;},0); twI += w; wsI += w * intSkuMult[sk];
+      });
+      intScale = twI > 0 ? wsI / twI : 1;
+    }
     var intFull = {
       'Code Completions':[6,6.2,6.5,6.8,7,7.2,7.5,7.8,8,8.3,8.5,8.8],
       'Chat Messages':[3,3.2,3.5,3.8,4.1,4.4,4.8,5.2,5.6,6,6.5,7],
@@ -1080,7 +1142,7 @@ function rebuildAll() {
     };
     allCharts.interactions.data.datasets.forEach(function(ds) {
       if (intFull[ds.label]) {
-        ds.data = sliceTime(intFull[ds.label]);
+        ds.data = sliceTime(intFull[ds.label]).map(function(v){ return Math.round(v * intScale * 10)/10; });
       }
     });
     allCharts.interactions.update('none');
@@ -1140,12 +1202,24 @@ function rebuildAll() {
     allCharts.upgradeRates.update('none');
   }
 
-  // -- Usage Frequency Distribution
+  // -- Usage Frequency Distribution — shift by SKU (Enterprise skews heavier)
   if (allCharts.freqDist) {
     allCharts.freqDist.data.labels = labels;
+    var freqSkuAdj = { Free:{'5-7 days':-3,'3-4 days':-2,'1-2 days':2,'0 days':3}, Edu:{}, Pro:{}, 'Pro+':{  '5-7 days':4,'3-4 days':2,'0 days':-4,'1-2 days':-2}, Business:{'5-7 days':6,'3-4 days':3,'0 days':-6,'1-2 days':-3}, Enterprise:{'5-7 days':8,'3-4 days':4,'0 days':-8,'1-2 days':-4} };
+    var activeSkusFD = SKU_LIST.filter(function(s){ return skuState[s]; });
+    var freqAdj = {};
+    if (activeSkusFD.length < SKU_LIST.length) {
+      var twFD = 0;
+      activeSkusFD.forEach(function(sk) {
+        var w = skuData.mau[sk].reduce(function(a,b){return a+b;},0); twFD += w;
+        Object.keys(freqSkuAdj[sk]||{}).forEach(function(k){ freqAdj[k] = (freqAdj[k]||0) + (freqSkuAdj[sk][k]||0)*w; });
+      });
+      Object.keys(freqAdj).forEach(function(k){ freqAdj[k] = twFD > 0 ? freqAdj[k]/twFD : 0; });
+    }
     allCharts.freqDist.data.datasets.forEach(function(ds) {
       if (freqData[ds.label]) {
-        ds.data = sliceTime(freqData[ds.label]);
+        var adj = freqAdj[ds.label] || 0;
+        ds.data = sliceTime(freqData[ds.label]).map(function(v){ return Math.max(0, Math.round((v+adj)*10)/10); });
       }
     });
     allCharts.freqDist.update('none');
@@ -1279,12 +1353,22 @@ function rebuildAll() {
     allCharts.expansion.update('none');
   }
 
-  // -- M12 Retention by # of Surfaces
+  // -- M12 Retention by # of Surfaces — shift by SKU (Enterprise retains better)
   if (allCharts.retSurface) {
     allCharts.retSurface.data.labels = labels;
+    var retSurfSkuAdj = { Free:-8, Edu:-5, Pro:0, 'Pro+':3, Business:5, Enterprise:8 };
+    var activeSkusRS = SKU_LIST.filter(function(s){ return skuState[s]; });
+    var retAdj = 0;
+    if (activeSkusRS.length < SKU_LIST.length) {
+      var twR = 0;
+      activeSkusRS.forEach(function(sk) {
+        var w = skuData.mau[sk].reduce(function(a,b){return a+b;},0); twR += w; retAdj += (retSurfSkuAdj[sk]||0)*w;
+      });
+      retAdj = twR > 0 ? retAdj / twR : 0;
+    }
     allCharts.retSurface.data.datasets.forEach(function(ds) {
       if (baseRetSurfaceData[ds.label]) {
-        ds.data = sliceTime(baseRetSurfaceData[ds.label]);
+        ds.data = sliceTime(baseRetSurfaceData[ds.label]).map(function(v){ return Math.max(0, Math.min(100, Math.round(v + retAdj))); });
       }
     });
     allCharts.retSurface.update('none');
