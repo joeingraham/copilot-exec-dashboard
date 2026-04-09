@@ -882,70 +882,90 @@ function rebuildAll() {
 
   // 10c. (heatmap removed)
 
-  // 10d. Cohorted Revenue (time-range + SKU aware)
+  // Cohorted charts — derived from consistent per-SKU data
+  var activeSkusCH = SKU_LIST.filter(function(s) { return skuState[s]; });
+  
+  // Per-SKU parameters
+  var skuCohortParams = {
+    Free: { m0Rev: 0, m0Cogs: 0.5, revGrowth: 0, cogsDecay: 0.98, retCurve: [100,58,48,42,38,35,33,32,31,30,29,29] },
+    Edu: { m0Rev: 2, m0Cogs: 3.5, revGrowth: 1.02, cogsDecay: 0.98, retCurve: [100,62,52,46,42,39,37,36,35,34,33,33] },
+    Pro: { m0Rev: 10, m0Cogs: 14, revGrowth: 1.06, cogsDecay: 0.985, retCurve: [100,72,64,59,56,54,52,51,50,49,48,47] },
+    'Pro+': { m0Rev: 19, m0Cogs: 22, revGrowth: 1.07, cogsDecay: 0.985, retCurve: [100,78,71,66,63,61,59,58,57,56,55,55] },
+    Business: { m0Rev: 16, m0Cogs: 18, revGrowth: 1.05, cogsDecay: 0.99, retCurve: [100,80,73,68,65,63,61,60,59,58,57,56] },
+    Enterprise: { m0Rev: 35, m0Cogs: 28, revGrowth: 1.04, cogsDecay: 0.99, retCurve: [100,85,78,74,71,69,67,66,65,64,63,63] }
+  };
+  
+  // Blend parameters weighted by activation volume
+  var bp = { m0Rev:0, m0Cogs:0, revGrowth:0, cogsDecay:0, retCurve:new Array(12).fill(0) };
+  var twCH = 0;
+  activeSkusCH.forEach(function(sk) {
+    var w = skuData.activations[sk].reduce(function(a,b){return a+b;},0);
+    twCH += w;
+    var p = skuCohortParams[sk];
+    bp.m0Rev += p.m0Rev * w; bp.m0Cogs += p.m0Cogs * w; bp.revGrowth += p.revGrowth * w; bp.cogsDecay += p.cogsDecay * w;
+    p.retCurve.forEach(function(v,i){ bp.retCurve[i] += v * w; });
+  });
+  if (twCH > 0) {
+    bp.m0Rev /= twCH; bp.m0Cogs /= twCH; bp.revGrowth /= twCH; bp.cogsDecay /= twCH;
+    bp.retCurve = bp.retCurve.map(function(v){ return v / twCH; });
+  }
+  
+  // Generate per-cohort data from blended params
+  // Newer cohorts get slightly better params (improving M0 rev, lower COGS)
+  function genCohortData(ci) {
+    var monthsAvail = 12 - ci;
+    var improveFactor = 1 + ci * 0.02; // newer cohorts 2% better per month
+    var m0r = bp.m0Rev * improveFactor;
+    var m0c = bp.m0Cogs / improveFactor;
+    var cohortSize = 50 + ci * 5; // newer cohorts bigger (in thousands)
+    
+    var revPerUser = [], cogsPerUser = [], revTotal = [], cogsTotal = [];
+    for (var m = 0; m < 12; m++) {
+      if (m >= monthsAvail) { revPerUser.push(null); cogsPerUser.push(null); revTotal.push(null); cogsTotal.push(null); continue; }
+      var usersRetained = bp.retCurve[m] / 100;
+      var rpu = m0r * Math.pow(bp.revGrowth, m);
+      var cpu = m0c * Math.pow(bp.cogsDecay, m);
+      revPerUser.push(Math.round(rpu * 100) / 100);
+      cogsPerUser.push(Math.round(cpu * 100) / 100);
+      revTotal.push(Math.round(cohortSize * usersRetained * rpu / 1000 * 100) / 100); // in $M
+      cogsTotal.push(Math.round(cohortSize * usersRetained * cpu / 1000 * 100) / 100);
+    }
+    return { revTotal: revTotal, cogsTotal: cogsTotal, revPerUser: revPerUser, cogsPerUser: cogsPerUser };
+  }
+  
+  // Update all 4 cohort charts
+  var crCount = cohortRevNames.length;
+  var crShow = Math.min(timeRange, crCount);
+  
   if (allCharts.cohortRev) {
-    var activeSkusCR = SKU_LIST.filter(function(s) { return skuState[s]; });
-    var revMult = 1;
-    if (activeSkusCR.length === 1) revMult = revSkuMultiplier[activeSkusCR[0]] || 1;
-
-    var crCount = allCharts.cohortRev.data.datasets.length;
-    var crShow = Math.min(timeRange, crCount);
     allCharts.cohortRev.data.datasets.forEach(function(ds, idx) {
-      var name = cohortRevNames[idx];
-      ds.data = cohortRevData[name].map(function(v) { return v === null ? null : Math.round(v * revMult * 10) / 10; });
+      var cd = genCohortData(idx);
+      ds.data = cd.revTotal;
       allCharts.cohortRev.getDatasetMeta(idx).hidden = idx < (crCount - crShow);
     });
     allCharts.cohortRev.update('none');
   }
-
-  // 10e. Cohorted Gross Profit (time-range + SKU aware)
   if (allCharts.cohortGp) {
-    var activeSkusCG = SKU_LIST.filter(function(s) { return skuState[s]; });
-    var gpMult = 1;
-    if (activeSkusCG.length === 1) gpMult = gpSkuMultiplier[activeSkusCG[0]] || 1;
-
-    var cgCount = allCharts.cohortGp.data.datasets.length;
-    var cgShow = Math.min(timeRange, cgCount);
     allCharts.cohortGp.data.datasets.forEach(function(ds, idx) {
-      var name = cohortRevNames[idx];
-      ds.data = cohortGpData[name].map(function(v) { return v === null ? null : Math.round(v * gpMult * 10) / 10; });
-      allCharts.cohortGp.getDatasetMeta(idx).hidden = idx < (cgCount - cgShow);
+      var cd = genCohortData(idx);
+      ds.data = cd.cogsTotal;
+      allCharts.cohortGp.getDatasetMeta(idx).hidden = idx < (crCount - crShow);
     });
     allCharts.cohortGp.update('none');
   }
-
-  // 10e-2. Cohorted Revenue per User (time-range + SKU aware)
   if (allCharts.cohortRevUser) {
-    var count = allCharts.cohortRevUser.data.datasets.length;
-    var show = Math.min(timeRange, count);
-    var activeSkusCRU = SKU_LIST.filter(function(s) { return skuState[s]; });
-    var multCRU = 1;
-    if (activeSkusCRU.length === 1) multCRU = revSkuMultiplier[activeSkusCRU[0]] || 1;
-
     allCharts.cohortRevUser.data.datasets.forEach(function(ds, idx) {
-      var name = cohortRevNames[idx];
-      ds.data = cohortRevPerUserData[name].map(function(v) {
-        return v === null ? null : Math.round(v * multCRU * 10) / 10;
-      });
-      allCharts.cohortRevUser.getDatasetMeta(idx).hidden = idx < (count - show);
+      var cd = genCohortData(idx);
+      ds.data = cd.revPerUser;
+      allCharts.cohortRevUser.getDatasetMeta(idx).hidden = idx < (crCount - crShow);
     });
     allCharts.cohortRevUser.update('none');
   }
-
-  // 10e-3. Cohorted Gross Profit per User (time-range + SKU aware)
   if (allCharts.cohortGpUser) {
-    var count = allCharts.cohortGpUser.data.datasets.length;
-    var show = Math.min(timeRange, count);
-    var activeSkusCGU = SKU_LIST.filter(function(s) { return skuState[s]; });
-    var multCGU = 1;
-    if (activeSkusCGU.length === 1) multCGU = gpSkuMultiplier[activeSkusCGU[0]] || 1;
-
     allCharts.cohortGpUser.data.datasets.forEach(function(ds, idx) {
-      var name = cohortRevNames[idx];
-      ds.data = cohortGpPerUserData[name].map(function(v) {
-        return v === null ? null : Math.round(v * multCGU * 10) / 10;
-      });
-      allCharts.cohortGpUser.getDatasetMeta(idx).hidden = idx < (count - show);
+      var cd = genCohortData(idx);
+      ds.data = cd.cogsPerUser;
+      allCharts.cohortGpUser.getDatasetMeta(idx).hidden = idx < (crCount - crShow);
     });
     allCharts.cohortGpUser.update('none');
   }
@@ -1047,7 +1067,7 @@ function rebuildAll() {
     // Simpler approach: just use base data with per-month SKU-weighted adjustments
     var msLabels = ['3+ Surfaces','2 Surfaces','1 Surface'];
     var msBase = { '3+ Surfaces':[8,9,10,12,14,15,17,19,21,23,25,28], '2 Surfaces':[22,23,24,25,26,27,27,28,28,29,29,30], '1 Surface':[70,68,66,63,60,58,56,53,51,48,46,42] };
-    var msSkuAdj = { Free:[0,0,0], Edu:[0,0,0], Pro:[0,0,0], 'Pro+':[3,-1,-2], Business:[6,-2,-4], Enterprise:[10,-3,-7] };
+    var msSkuAdj = { Free:[-10,-5,15], Edu:[-6,-3,9], Pro:[0,0,0], 'Pro+':[8,0,-8], Business:[14,2,-16], Enterprise:[20,3,-23] };
     var blendAdj = [0,0,0];
     if (activeSkusMSU.length < SKU_LIST.length) {
       var twA = 0;
@@ -1080,7 +1100,7 @@ function rebuildAll() {
       Agent:[3,3,3,3,3,4,4,4,4,5,5,6]
     };
     // SKU adjustment: Enterprise uses more Chat/Agent, Free uses more Completions
-    var usageSkuAdj = { Free:{Completions:8,Chat:-5,Agent:-3}, Edu:{Completions:4,Chat:-3,Agent:-1}, Pro:{}, 'Pro+':{Chat:3,Agent:2,Completions:-5}, Business:{Chat:5,Agent:4,Completions:-9}, Enterprise:{Chat:7,Agent:6,Completions:-13} };
+    var usageSkuAdj = { Free:{Completions:15,Chat:-8,Agent:-5,'PR Summaries':-2}, Edu:{Completions:8,Chat:-5,Agent:-2,'PR Summaries':-1}, Pro:{}, 'Pro+':{Chat:6,Agent:4,Completions:-8,'PR Summaries':-2}, Business:{Chat:8,Agent:7,Completions:-12,'PR Summaries':-3}, Enterprise:{Chat:10,Agent:10,Completions:-15,'PR Summaries':-3,'VS Code':-2} };
     var usageAdj = {};
     var activeSkusUS = SKU_LIST.filter(function(s){ return skuState[s]; });
     if (activeSkusUS.length < SKU_LIST.length) {
@@ -1099,6 +1119,12 @@ function rebuildAll() {
         ds.data = sliceTime(usageShareFull[ds.label]).map(function(v){ return Math.max(0, Math.round(v + adj)); });
       }
     });
+    // Normalize usage share to 100% after adjustments
+    var usDatasets = allCharts.chatComp.data.datasets;
+    for (var m = 0; m < usDatasets[0].data.length; m++) {
+      var sum = usDatasets.reduce(function(s,d){ return s + d.data[m]; }, 0);
+      if (sum > 0) usDatasets.forEach(function(d){ d.data[m] = Math.round(d.data[m] / sum * 1000) / 10; });
+    }
     allCharts.chatComp.update('none');
   }
 
@@ -1222,6 +1248,12 @@ function rebuildAll() {
         ds.data = sliceTime(freqData[ds.label]).map(function(v){ return Math.max(0, Math.round((v+adj)*10)/10); });
       }
     });
+    // After setting all datasets, normalize each month to 100%
+    var fdDatasets = allCharts.freqDist.data.datasets;
+    for (var m = 0; m < fdDatasets[0].data.length; m++) {
+      var sum = fdDatasets.reduce(function(s,d){ return s + d.data[m]; }, 0);
+      if (sum > 0) fdDatasets.forEach(function(d){ d.data[m] = Math.round(d.data[m] / sum * 1000) / 10; });
+    }
     allCharts.freqDist.update('none');
   }
 
@@ -1356,7 +1388,7 @@ function rebuildAll() {
   // -- M12 Retention by # of Surfaces — shift by SKU (Enterprise retains better)
   if (allCharts.retSurface) {
     allCharts.retSurface.data.labels = labels;
-    var retSurfSkuAdj = { Free:-8, Edu:-5, Pro:0, 'Pro+':3, Business:5, Enterprise:8 };
+    var retSurfSkuAdj = { Free:-12, Edu:-8, Pro:0, 'Pro+':5, Business:8, Enterprise:14 };
     var activeSkusRS = SKU_LIST.filter(function(s){ return skuState[s]; });
     var retAdj = 0;
     if (activeSkusRS.length < SKU_LIST.length) {
@@ -1371,13 +1403,35 @@ function rebuildAll() {
         ds.data = sliceTime(baseRetSurfaceData[ds.label]).map(function(v){ return Math.max(0, Math.min(100, Math.round(v + retAdj))); });
       }
     });
+    var allRetVals = [];
+    allCharts.retSurface.data.datasets.forEach(function(ds){ ds.data.forEach(function(v){ if(v!=null) allRetVals.push(v); }); });
+    var retMin = Math.max(0, Math.floor(Math.min.apply(null, allRetVals) / 5) * 5 - 5);
+    var retMax = Math.min(100, Math.ceil(Math.max.apply(null, allRetVals) / 5) * 5 + 5);
+    allCharts.retSurface.options.scales.y.min = retMin;
+    allCharts.retSurface.options.scales.y.max = retMax;
     allCharts.retSurface.update('none');
   }
 
   // -- Revenue Retention J-Curves
   if (allCharts.revJcurves) {
     var showCountRev = Math.min(timeRange, cohortNames.length);
+    var activeSkusRJ = SKU_LIST.filter(function(s) { return skuState[s]; });
+    var revRetSkuMult = { Free:0.3, Edu:0.5, Pro:0.85, 'Pro+':1.1, Business:1.2, Enterprise:1.4 };
+    var rjScale = 1;
+    if (activeSkusRJ.length < SKU_LIST.length) {
+      var twRJ = 0, wsRJ = 0;
+      activeSkusRJ.forEach(function(sk) {
+        var w = skuData.mau[sk].reduce(function(a,b){return a+b;},0); twRJ += w; wsRJ += w * revRetSkuMult[sk];
+      });
+      rjScale = twRJ > 0 ? wsRJ / twRJ : 1;
+    }
     allCharts.revJcurves.data.datasets.forEach(function(ds, idx) {
+      var name = cohortNames[idx];
+      ds.data = revRetData[name].map(function(v) {
+        if (v === null) return null;
+        if (v === 100) return 100;
+        return Math.round((100 + (v - 100) * rjScale) * 10) / 10;
+      });
       allCharts.revJcurves.getDatasetMeta(idx).hidden = idx < (cohortNames.length - showCountRev);
     });
     allCharts.revJcurves.update('none');
