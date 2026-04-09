@@ -1450,7 +1450,7 @@ buildGoalChart('goal-vsc-cost', genActuals(0.35,0.22,0.02), genGoal(0.32,0.20), 
 
 // CLI
 buildGoalChart('goal-cli-dau', genActuals(40,95,5), genGoal(45,100), {color:TEAL, yLabel:'DAU (thousands)', fmt:fmtK1});
-buildGoalChart('goal-cli-newusers', genActuals(3,8,0.5), null, {color:TEAL, yLabel:'New Users (thousands)', fmt:fmtK1});
+buildGoalChart('goal-cli-newusers', genActuals(3,8,0.5), genGoal(3.5,9), {color:TEAL, yLabel:'New Users (thousands)', fmt:fmtK1});
 buildGoalChart('goal-cli-retention', genActuals(55,68,2.5), genGoal(58,70), {color:TEAL, yLabel:'Retention %', fmt:fmtPct});
 buildGoalChart('goal-cli-cost', genActuals(0.28,0.18,0.02), genGoal(0.25,0.16), {color:TEAL, yLabel:'Cost per User', fmt:fmtCost});
 
