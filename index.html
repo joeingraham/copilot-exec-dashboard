@@ -1854,19 +1854,37 @@ var funnelRatesTrend = {
     // Line chart — render into its own card (canvas already in HTML)
     var rateKeys = ['Signup %','Account %','Activated %','D7 Retained %','D30 Retained %','Paid %'];
     var rateColors = [BLUE, TEAL, GREEN, ORANGE, PINK, PURPLE];
+    // Map rate keys to funnel step indices (1-6) for SKU profile multipliers
+    var rateStepIdx = [1, 2, 3, 4, 5, 6];
     var rateLabels, rateDatasets;
+    // Compute SKU rate multipliers (same blend as funnel bars)
+    var rateMults = [1,1,1,1,1,1];
+    var activeSkusR = SKU_LIST.filter(function(s){ return skuState[s]; });
+    if (activeSkusR.length < SKU_LIST.length) {
+      var bMult = [0,0,0,0,0,0,0];
+      var tw = 0;
+      activeSkusR.forEach(function(sk) {
+        var w = skuData.activations[sk].reduce(function(a,b){return a+b;},0);
+        tw += w;
+        skuFunnelProfile[sk].forEach(function(m,i){ bMult[i] += m * w; });
+      });
+      if (tw > 0) bMult = bMult.map(function(v){ return v / tw; });
+      rateMults = rateStepIdx.map(function(si){ return bMult[si]; });
+    }
     if (timeGranularity === 'weekly') {
       var allWeeklyLabels = getWeeklyLabels();
       rateLabels = allWeeklyLabels.slice(allWeeklyLabels.length - timeRange * 4);
       rateDatasets = rateKeys.map(function(key, idx) {
-        var weekly = interpolateToWeekly(funnelRatesTrend[key]);
+        var scaled = funnelRatesTrend[key].map(function(v){ return Math.round(v * rateMults[idx] * 100) / 100; });
+        var weekly = interpolateToWeekly(scaled);
         return { label: key, data: weekly.slice(weekly.length - timeRange * 4),
           borderColor: rateColors[idx], fill: false, tension: .3, borderWidth: 2, pointRadius: 1 };
       });
     } else {
       rateLabels = MONTHS.slice(12 - timeRange);
       rateDatasets = rateKeys.map(function(key, idx) {
-        return { label: key, data: funnelRatesTrend[key].slice(12 - timeRange),
+        var scaled = funnelRatesTrend[key].map(function(v){ return Math.round(v * rateMults[idx] * 100) / 100; });
+        return { label: key, data: scaled.slice(12 - timeRange),
           borderColor: rateColors[idx], fill: false, tension: .3, borderWidth: 2, pointRadius: 2 };
       });
     }
