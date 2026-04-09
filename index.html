@@ -382,7 +382,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
   <div class="section-header"><h2>🧪 Growth Ideas (Experimental)</h2><p>Additional views under consideration — feedback welcome</p></div>
   <div class="grid grid-4">
     <div class="card"><div class="card-title">Seat Utilization (Active / Assigned) <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Active vs assigned seats with utilization % on dual axis. Low utilization = enterprise shelfware risk → churn signal.</div><div class="info-takeaway">📌 Utilization at 79% — 21% of assigned seats are unused. Target >85% to reduce churn risk.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-seat-util"></canvas></div></div>
-    <div class="card"><div class="card-title">ARR Bridge (New + Expansion − Contraction − Churn) <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Full ARR waterfall — new logo ARR and expansion on the positive side, contraction and full churn on the negative side. Net line shows total ARR motion.</div><div class="info-takeaway">📌 Net ARR growth accelerating to $30M/mo. New logo ARR is the biggest driver, but expansion is catching up.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-expansion"></canvas></div></div>
+    <div class="card"><div class="card-title">Monthly Revenue Bridge <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Decomposes monthly revenue change into net new users, expansion (upgrades/overage), contraction (downgrades), and churn. Net line should tie to the monthly revenue increase visible in other charts.</div><div class="info-takeaway">📌 Net monthly revenue growing $11M→$22M/mo. Expansion overtaking net new as the primary growth driver by month 8.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-expansion"></canvas></div></div>
     <div class="card-placeholder"><div class="card-title">Placeholder 1</div></div>
     <div class="card-placeholder"><div class="card-title">Placeholder 2</div></div>
   </div>
@@ -2563,19 +2563,30 @@ allCharts.returnRate = new Chart(document.getElementById('ch-return-rate'), {
 // Expansion = upgrades (Pro→Pro+, Pro→Biz) + seat adds within existing orgs + overage growth
 // Contraction = downgrades (Pro+→Pro) + seat removals + overage decline
 // Excludes: new logo ARR and full churn (those are in the MAU growth chart)
-new Chart(document.getElementById('ch-expansion'), {
-  type:'bar',
-  data:{ labels:MONTHS, datasets:[
-    { label:'New Logo ARR', data:[12,13,14,15,16,17,18,20,22,24,26,28], backgroundColor:a(BLUE,.6), borderRadius:2, stack:'s' },
-    { label:'Expansion ARR', data:[8,9,10,11,12,14,15,17,19,21,23,25], backgroundColor:a(GREEN,.6), borderRadius:2, stack:'s' },
-    { label:'Contraction ARR', data:[-3,-3,-3.5,-3.5,-4,-4,-4.5,-4.5,-5,-5,-5.5,-5.5], backgroundColor:a(ORANGE,.5), borderRadius:2, stack:'s' },
-    { label:'Churned ARR', data:[-5,-5.5,-6,-6,-6.5,-7,-7,-7.5,-8,-8.5,-9,-9.5], backgroundColor:a(RED,.5), borderRadius:2, stack:'s' },
-    { type:'line', label:'Net ARR Change', data:[12,13.5,14.5,16.5,17.5,20,21.5,25,28,31.5,34.5,38], borderColor:PURPLE, borderWidth:2.5, tension:.3, fill:false, pointRadius:3 }
-  ]},
-  options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false},
-    annotation:{annotations:{zero:{type:'line',yMin:0,yMax:0,borderColor:'rgba(255,255,255,.2)',borderWidth:1}}}},
-    scales:{x:{stacked:true,grid:{display:false}}, y:{stacked:true,ticks:{callback:function(v){return '$'+v+'M'}}, title:{display:true,text:'ARR Change ($M)',font:{size:9}}}}, aspectRatio:1.7 }
-});
+// Monthly Revenue Bridge — components sum to actual monthly rev delta
+// Net New = new user rev; Expansion = upgrades/overage; Contraction = downgrades; Churn = lost users
+(function() {
+  var netNew =       [0, 7, 7, 6, 8, 8, 7, 6, 8, 8, 9, 10];
+  var expansion =    [0, 5, 5, 6, 7, 8, 9, 9,11,12,14,16];
+  var contraction =  [0,-0.5,-0.5,-0.5,-0.5,-1,-1,-1,-1,-1.5,-1.5,-2];
+  var churn =        [0,-0.5,-0.5,-0.5,-0.5,-1,-1,-1,-1,-1.5,-1.5,-2];
+  var net = netNew.map(function(v,i){ return Math.round((v + expansion[i] + contraction[i] + churn[i])*10)/10; });
+  // net should be [0,11,11,11,14,14,14,13,17,17,20,22]
+
+  new Chart(document.getElementById('ch-expansion'), {
+    type:'bar',
+    data:{ labels:MONTHS, datasets:[
+      { label:'Net New Users', data:netNew, backgroundColor:a(BLUE,.6), borderRadius:2, stack:'s' },
+      { label:'Expansion', data:expansion, backgroundColor:a(GREEN,.6), borderRadius:2, stack:'s' },
+      { label:'Contraction', data:contraction, backgroundColor:a(ORANGE,.5), borderRadius:2, stack:'s' },
+      { label:'Churn', data:churn, backgroundColor:a(RED,.5), borderRadius:2, stack:'s' },
+      { type:'line', label:'Net Change', data:net, borderColor:PURPLE, borderWidth:2.5, tension:.3, fill:false, pointRadius:3 }
+    ]},
+    options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false},
+      annotation:{annotations:{zero:{type:'line',yMin:0,yMax:0,borderColor:'rgba(255,255,255,.2)',borderWidth:1}}}},
+      scales:{x:{stacked:true,grid:{display:false}}, y:{stacked:true,ticks:{callback:function(v){return '$'+v+'M'}}, title:{display:true,text:'Monthly Rev Change ($M)',font:{size:9}}}}, aspectRatio:1.7 }
+  });
+})();
 
 window.addEventListener('DOMContentLoaded', function(){ if(window.location.hash) history.replaceState(null,'',window.location.pathname); setTimeout(function(){ window.scrollTo(0,0); }, 0); });
 window.addEventListener('load', function(){ window.scrollTo(0,0); });
