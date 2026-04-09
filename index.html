@@ -78,6 +78,10 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 .card { background: var(--card); border: 1px solid var(--card-border); border-radius: 12px; padding: 20px; position: relative; }
 .card-placeholder { background: var(--card); border: 1px dashed var(--card-border); border-radius: 12px; padding: 20px; position: relative; display: flex; align-items: center; justify-content: center; opacity: .4; }
 .card-placeholder .card-title { color: var(--text-muted); font-style: italic; }
+.act-toggle { padding: 3px 8px; font-size: 10px; font-weight: 600; cursor: pointer; border: 1px solid var(--card-border);
+  border-radius: 4px; background: transparent; color: var(--text-muted); transition: all .15s; }
+.act-toggle:hover { border-color: var(--purple); color: var(--text); }
+.act-toggle.active { background: rgba(123,104,238,.15); border-color: var(--purple); color: #fff; }
 .card-title { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;
   letter-spacing: .5px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
 .card-title .illustrative { font-size: 10px; font-weight: 400; color: var(--text-muted);
@@ -254,8 +258,8 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
   <div class="grid grid-4">
     <div class="card"><div class="card-title">Monthly Active Users by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Shows total MAU broken out by plan tier over time. Reveals which SKUs drive user growth and mix shift.</div><div class="info-takeaway">📌 Business and Enterprise are the fastest-growing segments, now exceeding 1.2M combined MAU.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-mau-sku"></canvas></div></div>
     <div class="card"><div class="card-title">MAU Growth by Month <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Decomposes monthly MAU change into activations, resurrections, and churn. The net line shows whether growth is accelerating.</div><div class="info-takeaway">📌 Net growth is consistently positive at ~90K/mo. Resurrections contribute ~18% of gross adds — product pull is strong.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-mau-growth"></canvas></div></div>
-    <div class="card"><div class="card-title">Activations by Channel <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> GTM attribution — where do new users come from? Tracks organic vs paid acquisition mix.</div><div class="info-takeaway">📌 In-Product and Organic Search drive ~65% of activations. Marketing/Paid share is declining — organic growth is self-sustaining.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-act-channel"></canvas></div></div>
-    <div class="card"><div class="card-title">Activations by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Shows which plan tier new users are landing on. Helps understand if growth is driven by free/trial or paid plans.</div><div class="info-takeaway">📌 Free tier drives ~40% of activations — the top-of-funnel. Business activations are steady at ~22K/mo indicating strong enterprise demand.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-act-sku"></canvas></div></div>
+    <div class="card"><div class="card-title"><span>Activations</span> <span class="act-toggles" style="float:right;display:inline-flex;gap:4px"><button class="act-toggle active" onclick="switchActView('sku')">by SKU</button><button class="act-toggle" onclick="switchActView('channel')">by Channel</button></span> <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Toggle between activations by plan tier (SKU) or acquisition channel. Shows where new users come from and what plans they land on.</div><div class="info-takeaway">📌 Free tier drives ~40% of activations. In-Product and Organic Search drive ~65% of channel mix.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-act-sku" style="display:block"></canvas><canvas id="ch-act-channel" style="display:none"></canvas></div></div>
+    <div class="card"><div class="card-title">Seat Utilization (Active / Assigned) <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Active vs assigned seats with utilization % on dual axis. Low utilization = enterprise shelfware risk → churn signal.</div><div class="info-takeaway">📌 Utilization at 79% — 21% of assigned seats are unused. Target >85% to reduce churn risk.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-seat-util"></canvas></div></div>
     <div class="card"><div class="card-title">Plan Upgrade / Downgrade Volume <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Tracks monthly volume of users upgrading between plan tiers (Individual plans and B2B plans) vs downgrades.</div><div class="info-takeaway">📌 Individual upgrades (Free→Pro, Pro→Pro+) are accelerating. B2B downgrades are minimal at &lt;1K/mo — strong enterprise stickiness.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-plan-migration"></canvas></div></div>
     <div class="card"><div class="card-title">Upgrade &amp; Downgrade Rates Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly conversion rates for upgrades and downgrades across plan tiers. Upward upgrade curves + declining downgrades = healthy plan expansion.</div><div class="info-takeaway">📌 Pro → Pro+ conversion is accelerating (4.5% → 7.5%). Downgrade rates are declining across the board — value proposition is strengthening.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-upgrade-rates"></canvas></div></div>
     <div class="card" style="display:flex;flex-direction:column"><div class="card-title">Funnel Visualization</div><div id="funnel-bars-wrap" style="flex:1"></div></div>
@@ -274,10 +278,10 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <div class="card"><div class="card-title">Gross Profit by Usage Percentile <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> GP per user segmented by usage intensity. Shows which usage tiers are most costly — heavy users drive disproportionate COGS.</div><div class="info-takeaway">📌 Top 1% of users (P99-100) are deeply negative at -$85/user/mo. Bottom 50% are near breakeven. Usage intensity is the key margin driver.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-gp-percentile"></canvas></div></div>
   </div>
   <div class="grid grid-4" style="margin-top:20px">
+    <div class="card"><div class="card-title">Monthly Revenue Bridge <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Decomposes monthly revenue change into net new users, expansion (upgrades/overage), contraction (downgrades), and churn. Net line should tie to the monthly revenue increase visible in other charts.</div><div class="info-takeaway">📌 Net monthly revenue growing $11M→$22M/mo. Expansion overtaking net new as the primary growth driver by month 8.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-expansion"></canvas></div></div>
     <div class="card"><div class="card-title">ARPU by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Revenue per user by plan. Positive values.</div><div class="info-takeaway">📌 Enterprise highest at ~$47/mo. All paid SKUs trending up.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-arpu-cost"></canvas></div></div>
     <div class="card"><div class="card-title">COGS per User by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Cost to serve each user. Shown as negative values for visual comparison with ARPU.</div><div class="info-takeaway">📌 COGSPU rising across all SKUs as usage intensity grows. Pro+ highest at ~$33-45/user/mo. Free at ~$0.40-0.97.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-cogspu"></canvas></div></div>
     <div class="card"><div class="card-title">Gross Profit per User by SKU <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> ARPU minus COGS per user. Positive = profitable, negative = subsidized. The unit economics truth.</div><div class="info-takeaway">📌 All SKUs show negative unit economics — COGSPU exceeds ARPU. Enterprise least negative; Pro+ most underwater.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-gppu"></canvas></div></div>
-    <div class="card-placeholder"><div class="card-title">Placeholder 5</div></div>
   </div>
 </section>
 
@@ -381,10 +385,10 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 <section class="section" id="ideas">
   <div class="section-header"><h2>🧪 Growth Ideas (Experimental)</h2><p>Additional views under consideration — feedback welcome</p></div>
   <div class="grid grid-4">
-    <div class="card"><div class="card-title">Seat Utilization (Active / Assigned) <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Active vs assigned seats with utilization % on dual axis. Low utilization = enterprise shelfware risk → churn signal.</div><div class="info-takeaway">📌 Utilization at 79% — 21% of assigned seats are unused. Target >85% to reduce churn risk.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-seat-util"></canvas></div></div>
-    <div class="card"><div class="card-title">Monthly Revenue Bridge <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Decomposes monthly revenue change into net new users, expansion (upgrades/overage), contraction (downgrades), and churn. Net line should tie to the monthly revenue increase visible in other charts.</div><div class="info-takeaway">📌 Net monthly revenue growing $11M→$22M/mo. Expansion overtaking net new as the primary growth driver by month 8.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-expansion"></canvas></div></div>
     <div class="card-placeholder"><div class="card-title">Placeholder 1</div></div>
     <div class="card-placeholder"><div class="card-title">Placeholder 2</div></div>
+    <div class="card-placeholder"><div class="card-title">Placeholder 3</div></div>
+    <div class="card-placeholder"><div class="card-title">Placeholder 4</div></div>
   </div>
 </section>
 
@@ -1771,6 +1775,21 @@ var funnelRatesTrend = {
   window.rebuildFunnel = renderFunnel;
   renderFunnel();
 })();
+
+// Activations toggle (SKU / Channel)
+window.switchActView = function(view) {
+  var skuCanvas = document.getElementById('ch-act-sku');
+  var chCanvas = document.getElementById('ch-act-channel');
+  var btns = document.querySelectorAll('.act-toggle');
+  if (view === 'channel') {
+    skuCanvas.style.display = 'none';
+    chCanvas.style.display = 'block';
+  } else {
+    skuCanvas.style.display = 'block';
+    chCanvas.style.display = 'none';
+  }
+  btns.forEach(function(b) { b.classList.toggle('active', b.textContent.toLowerCase().indexOf(view) >= 0); });
+};
 
 // ══════════════════════════════
 //  3. FINANCE
