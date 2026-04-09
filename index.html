@@ -1771,26 +1771,41 @@ var funnelRatesTrend = {
   function renderFunnel() {
     var ch = channels.find(function(c){ return c.id === activeChannel; });
     var timeMult = timeRange === 3 ? 0.25 : timeRange === 6 ? 0.5 : 1;
-    // SKU-aware funnel: blend selected SKUs' profiles weighted by activation share
+    var trLabel = timeRange === 3 ? 'Last 3 Months' : timeRange === 6 ? 'Last 6 Months' : 'Last 12 Months';
+
+    // Compute SKU rate multipliers
     var activeSkusF = SKU_LIST.filter(function(s){ return skuState[s]; });
-    var scaledData;
+    var skuStepMult = [1,1,1,1,1,1,1];
+    var volScale = 1;
     if (activeSkusF.length < SKU_LIST.length) {
       var totalActAll = SKU_LIST.reduce(function(s,sk){ return s + skuData.activations[sk].reduce(function(a,b){return a+b;},0); },0);
-      // Weighted blend of step multipliers
-      var blendedStepMult = [0,0,0,0,0,0,0];
-      var totalWeight = 0;
+      var bMult = [0,0,0,0,0,0,0];
+      var tw = 0;
       activeSkusF.forEach(function(sk) {
         var w = skuData.activations[sk].reduce(function(a,b){return a+b;},0);
-        totalWeight += w;
-        skuFunnelProfile[sk].forEach(function(m,i){ blendedStepMult[i] += m * w; });
+        tw += w;
+        skuFunnelProfile[sk].forEach(function(m,i){ bMult[i] += m * w; });
       });
-      if (totalWeight > 0) blendedStepMult = blendedStepMult.map(function(v){ return v / totalWeight; });
-      var volScale = totalWeight / totalActAll;
-      scaledData = ch.data.map(function(v,i){ return Math.round(v * timeMult * volScale * blendedStepMult[i]); });
-    } else {
-      scaledData = ch.data.map(function(v){ return Math.round(v * timeMult); });
+      if (tw > 0) bMult = bMult.map(function(v){ return v / tw; });
+      skuStepMult = bMult;
+      volScale = tw / totalActAll;
     }
-    var trLabel = timeRange === 3 ? 'Last 3 Months' : timeRange === 6 ? 'Last 6 Months' : 'Last 12 Months';
+
+    // Average rates over selected time range from funnelRatesTrend, then apply SKU multipliers
+    var rateKeys = ['Signup %','Account %','Activated %','D7 Retained %','D30 Retained %','Paid %'];
+    var sliceStart = 12 - timeRange;
+    var avgRates = rateKeys.map(function(key, idx) {
+      var sliced = funnelRatesTrend[key].slice(sliceStart);
+      var avg = sliced.reduce(function(s,v){return s+v;},0) / sliced.length;
+      return avg * skuStepMult[idx + 1] / 100; // convert % to decimal, apply SKU mult for steps 1-6
+    });
+
+    // Build absolute volumes: visits scaled, then each step = visits × avgRate
+    var baseVisits = ch.data[0] * timeMult * volScale * skuStepMult[0];
+    var scaledData = [Math.round(baseVisits)];
+    avgRates.forEach(function(rate) {
+      scaledData.push(Math.round(baseVisits * rate));
+    });
 
     // Toggles — render into the header card
     var togglesWrap = document.getElementById('funnel-toggles-wrap');
