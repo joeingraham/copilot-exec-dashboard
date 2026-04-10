@@ -131,6 +131,8 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
   cursor: default; position: relative; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .funnel-bar-single:hover { filter: brightness(1.15); }
 .funnel-bar-single:hover .funnel-tip { display: block; }
+.funnel-val { flex-shrink: 0; }
+.funnel-pcts { font-size: 0.35vw; opacity: .75; margin-left: 0.2vw; }
 .funnel-tip { display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
   background: #1c2128; border: 1px solid var(--card-border); border-radius: 4px; padding: 4px 6px;
   font-size: 9px; font-weight: 500; color: #E6EDF3; white-space: nowrap; z-index: 50; pointer-events: none;
@@ -174,8 +176,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
   .card-title { font-size: 12px; }
   .section-header h2 { font-size: 17px; }
   .section-header p { font-size: 11px; }
-  .funnel-bar-single { font-size: 13px !important; }
-  .funnel-bar-single .bar-line { font-size: 9px !important; }
+  .funnel-pcts { display: none; }
 }
 @media (max-width: 1400px) {
   .card { padding: 14px; }
@@ -2108,7 +2109,8 @@ var funnelRatesTrend = {
         bhtml += '<div class="funnel-row-label">'+step+'</div>';
         bhtml += '<div class="funnel-row-bar">';
         bhtml += '<div class="funnel-bar-single" style="width:'+barPct+'%;background:'+ch.color+'">';
-        bhtml += fmt(val);
+        bhtml += '<span class="funnel-val">'+fmt(val)+'</span>';
+        if (i > 0) bhtml += '<span class="funnel-pcts">'+prevConv+'% · '+pctOfTop+'%</span>';
         var tipText = step+': '+fmt(val);
         if (i > 0) tipText += ' · '+prevConv+'% of prior · '+pctOfTop+'% of visits';
         bhtml += '<span class="funnel-tip">'+tipText+'</span>';
