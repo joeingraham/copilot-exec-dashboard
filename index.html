@@ -304,7 +304,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
   <div class="grid grid-4" style="margin-top:12px">
     <div class="card"><div class="card-title">Plan Upgrade / Downgrade Volume <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Tracks monthly volume of users upgrading between plan tiers (Individual plans and B2B plans) vs downgrades.</div><div class="info-takeaway">📌 Individual upgrades (Free→Pro, Pro→Pro+) are accelerating. B2B downgrades are minimal at &lt;1K/mo — strong enterprise stickiness.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-plan-migration"></canvas></div></div>
     <div class="card"><div class="card-title">Upgrade &amp; Downgrade Rates Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly conversion rates for upgrades and downgrades across plan tiers. Upward upgrade curves + declining downgrades = healthy plan expansion.</div><div class="info-takeaway">📌 Pro → Pro+ conversion is accelerating (4.5% → 7.5%). Downgrade rates are declining across the board — value proposition is strengthening.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-upgrade-rates"></canvas></div></div>
-    <div class="card card-compact" id="funnel-viz-card" style="display:flex;flex-direction:column"><div class="card-title">Funnel Visualization (Visits Not to Scale)</div><div id="funnel-bars-wrap" style="flex:1"></div></div>
+    <div class="card card-compact" id="funnel-viz-card" style="display:flex;flex-direction:column"><div class="card-title">Funnel Visualization</div><div id="funnel-bars-wrap" style="flex:1"></div></div>
     <div class="card card-compact" id="funnel-rates-card"><div class="card-title">Conversion Funnel: Visit → Activation<span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> End-to-end acquisition funnel showing conversion rates at each step from site visit through active usage.</div><div class="info-takeaway">📌 Biggest drop-off is Visit → Signup (4.2% conversion). Trial → Paid conversion at 38% is strong. Focus: improve top-of-funnel signup flow.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div id="funnel-toggles-wrap"></div><div class="chart-wrap"><canvas id="ch-funnel-rates"></canvas></div></div>
   </div>
 </section>
@@ -2118,7 +2118,9 @@ var funnelRatesTrend = {
         bhtml += '<div class="funnel-row-bar">';
         bhtml += '<div class="funnel-bar-single" style="width:'+barPct+'%;background:'+ch.color+'">';
         bhtml += '<span class="funnel-val">'+fmt(val)+'</span>';
-        if (i === 1) {
+        if (i === 0) {
+          bhtml += '<span class="funnel-pcts" style="opacity:.5;font-style:italic">Not to Scale</span>';
+        } else if (i === 1) {
           bhtml += '<span class="funnel-pcts">% of visits: '+pctOfTop+'%, % of prior: '+prevConv+'%</span>';
         } else if (i > 1) {
           bhtml += '<span class="funnel-pcts">'+pctOfTop+'% / '+prevConv+'%</span>';
