@@ -114,13 +114,13 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 .info-popup .info-takeaway { color: var(--teal); font-weight: 500; }
 
 /* ── Funnel ── */
-.funnel-toggles { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 14px; }
-.funnel-toggle { padding: 5px 12px; font-size: 11px; font-weight: 600; cursor: pointer; border: 1px solid var(--card-border);
-  border-radius: 6px; background: transparent; color: var(--text-muted); transition: all .15s;
-  display: flex; align-items: center; gap: 5px; }
+.funnel-toggles { display: flex; gap: 3px; flex-wrap: nowrap; margin-bottom: 6px; overflow: hidden; }
+.funnel-toggle { padding: 2px 6px; font-size: 8px; font-weight: 600; cursor: pointer; border: 1px solid var(--card-border);
+  border-radius: 4px; background: transparent; color: var(--text-muted); transition: all .15s;
+  display: flex; align-items: center; gap: 3px; white-space: nowrap; }
 .funnel-toggle:hover { border-color: var(--purple); color: var(--text); }
 .funnel-toggle.active { background: rgba(123,104,238,.15); border-color: var(--purple); color: #fff; }
-.funnel-toggle .ft-dot { width: 8px; height: 8px; border-radius: 50%; }
+.funnel-toggle .ft-dot { width: 5px; height: 5px; border-radius: 50%; }
 .funnel-grid2 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; align-items: center; }
 .funnel-step-cell { display: flex; align-items: center; gap: 3px; padding: 1px 2px 1px 0; }
 .funnel-comment-cell { display: flex; align-items: center; padding: 2px 0 2px 8px;
@@ -2169,13 +2169,13 @@ var funnelRatesTrend = {
       data: { labels: rateLabels, datasets: rateDatasets },
       options: {
         interaction: { mode: 'index', intersect: false },
-        plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } }, datalabels: { display: false } },
+        plugins: { legend: { position: 'bottom', labels: { boxWidth: 6, padding: 4, font: { size: 7 } } }, datalabels: { display: false } },
         scales: {
-          x: { grid: { display: false }, ticks: { font: { size: 8 }, maxRotation: 45, maxTicksLimit: 12 } },
-          y: { ticks: { callback: function(v) { return v + '%'; }, font: { size: 9 } },
-            title: { display: true, text: '% of Visits', font: { size: 9 } } }
+          x: { grid: { display: false }, ticks: { font: { size: 7 }, maxRotation: 45, maxTicksLimit: 8 } },
+          y: { ticks: { callback: function(v) { return v + '%'; }, font: { size: 7 } },
+            title: { display: true, text: '% of Visits', font: { size: 7 } } }
         },
-        aspectRatio: 1.4
+        aspectRatio: 1.8
       }
     });
   }
