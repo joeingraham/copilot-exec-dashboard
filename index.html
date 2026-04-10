@@ -146,7 +146,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 .kpi { text-align: center; }
 .kpi .value { font-size: 32px; font-weight: 700; margin: 6px 0 4px; }
 .kpi .label { font-size: 12px; color: var(--text-muted); }
-.kpi .spark { height: 56px; margin-top: 6px; }
+.kpi .spark { height: 62px; margin-top: 6px; }
 .kpi .change { font-size: 12px; font-weight: 600; }
 .kpi .change.up { color: var(--teal); }
 .kpi .change.down { color: var(--red); }
@@ -1631,8 +1631,8 @@ kpis.forEach((k, i) => {
       pointRadius: 2, pointBackgroundColor:k.color, pointHoverRadius:4,
       pointHoverBackgroundColor:k.color, pointHoverBorderColor:'#fff', pointHoverBorderWidth:2 }] },
     options:{ interaction:{mode:'index', intersect:false},
-      layout: { padding: { top: 14, right: 5 } },
-      plugins:{legend:{display:false}, datalabels:{ display: true, anchor: 'end', align: 'top', font: { size: 7, weight: 'bold' }, color: k.color, clip: false },
+      layout: { padding: { top: 16, right: 20 } },
+      plugins:{legend:{display:false}, datalabels:{ display: true, anchor: 'end', align: 'top', font: { size: 9, weight: 'bold' }, color: k.color, clip: false },
       tooltip:{enabled:true, displayColors:false, backgroundColor:'#1c2128',
         borderColor:k.color, borderWidth:1, padding:8,
         titleFont:{size:10,weight:'500'}, bodyFont:{size:13,weight:'bold'}, bodyColor:k.color,
