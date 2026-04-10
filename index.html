@@ -127,7 +127,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 .funnel-row-label { font-size: 6px; color: var(--text-muted); width: 42px; text-align: right; flex-shrink: 0; font-weight: 600; line-height: 1; }
 .funnel-row-bar { flex: 1; display: flex; justify-content: center; }
 .funnel-bar-single { border-radius: 2px; display: flex; align-items: center; justify-content: center;
-  font-weight: 600; font-size: 3px; color: #fff; min-width: 14px; padding: 2px 1px; line-height: 1;
+  font-weight: 600; font-size: 1px; color: #fff; min-width: 14px; padding: 2px 1px; line-height: 1;
   cursor: default; position: relative; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .funnel-bar-single:hover { filter: brightness(1.15); }
 .funnel-bar-single:hover .funnel-tip { display: block; }
@@ -3008,10 +3008,10 @@ var seatUtilSkuScale = { Free: 0.28, Edu: 0.02, Pro: 0.16, 'Pro+': 0.07, Busines
 // Monthly Revenue Bridge — components sum to actual monthly rev delta
 // Net New = new user rev; Expansion = upgrades/overage; Contraction = downgrades; Churn = lost users
 var baseExpansionData = {
-  'Net New Users': [0, 7, 7, 6, 8, 8, 7, 6, 8, 8, 9, 10],
-  'Expansion': [0, 5, 5, 6, 7, 8, 9, 9, 11, 12, 14, 16],
-  'Contraction': [0, -0.5, -0.5, -0.5, -0.5, -1, -1, -1, -1, -1.5, -1.5, -2],
-  'Churn': [0, -0.5, -0.5, -0.5, -0.5, -1, -1, -1, -1, -1.5, -1.5, -2]
+  'Net New Users': [6, 7, 7, 6, 8, 8, 7, 6, 8, 8, 9, 10],
+  'Expansion': [4, 5, 5, 6, 7, 8, 9, 9, 11, 12, 14, 16],
+  'Contraction': [-0.5, -0.5, -0.5, -0.5, -0.5, -1, -1, -1, -1, -1.5, -1.5, -2],
+  'Churn': [-0.5, -0.5, -0.5, -0.5, -0.5, -1, -1, -1, -1, -1.5, -1.5, -2]
 };
 baseExpansionData['Net Change'] = baseExpansionData['Net New Users'].map(function(v, i) {
   return Math.round((v + baseExpansionData['Expansion'][i] + baseExpansionData['Contraction'][i] + baseExpansionData['Churn'][i]) * 10) / 10;
