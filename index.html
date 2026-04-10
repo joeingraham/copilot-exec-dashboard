@@ -72,7 +72,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 .section-header p { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
 /* ── Grid ── */
-.grid { display: grid; gap: 12px; grid-auto-rows: 1fr; }
+.grid { display: grid; gap: 12px; }
 .grid-1 { grid-template-columns: 1fr; }
 .grid-2 { grid-template-columns: repeat(2, 1fr); }
 .grid-3 { grid-template-columns: repeat(3, 1fr); }
@@ -122,18 +122,18 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 .funnel-toggle.active { background: rgba(123,104,238,.15); border-color: var(--purple); color: #fff; }
 .funnel-toggle .ft-dot { width: 8px; height: 8px; border-radius: 50%; }
 .funnel-grid2 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; align-items: center; }
-.funnel-step-cell { display: flex; align-items: center; gap: 4px; padding: 1px 2px 1px 0; }
+.funnel-step-cell { display: flex; align-items: center; gap: 3px; padding: 1px 2px 1px 0; }
 .funnel-comment-cell { display: flex; align-items: center; padding: 2px 0 2px 8px;
   border-left: 2px solid rgba(123,104,238,.2); font-size: 10px; line-height: 1.3; color: var(--text); }
 .funnel-comment-cell b { color: var(--purple); }
-.funnel-row-label { font-size: 8px; color: var(--text-muted); width: 55px; text-align: right; flex-shrink: 0; font-weight: 600; line-height: 1.2; }
-.funnel-row-label .fl-total { color: #E6EDF3; font-weight: 700; font-size: 9px; display: block; }
-.funnel-row-label .fl-pcts { font-size: 7px; opacity: .7; display: block; }
+.funnel-row-label { font-size: 7px; color: var(--text-muted); width: 48px; text-align: right; flex-shrink: 0; font-weight: 600; line-height: 1.1; }
+.funnel-row-label .fl-total { color: #E6EDF3; font-weight: 700; font-size: 8px; display: block; }
+.funnel-row-label .fl-pcts { font-size: 6px; opacity: .7; display: block; }
 .funnel-row-bar { flex: 1; display: flex; flex-direction: column; align-items: center; }
-.funnel-row-rate { font-size: 7px; color: var(--text-muted); margin: 0; line-height: 1.1; }
-.funnel-bar-single { border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 10px; color: #fff; transition: all .25s; min-width: 30px; padding: 3px 0; line-height: 1.2; }
-.funnel-bar-single .bar-line { font-size: 8px; font-weight: 600; opacity: .8; }
+.funnel-row-rate { font-size: 6px; color: var(--text-muted); margin: 0; line-height: 1; }
+.funnel-bar-single { border-radius: 3px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 8px; color: #fff; transition: all .25s; min-width: 20px; padding: 1px 0; line-height: 1.1; }
+.funnel-bar-single .bar-line { font-size: 6px; font-weight: 600; opacity: .8; }
 .funnel-bar-single:hover { filter: brightness(1.15); }
 #funnel-bars-wrap { display: flex; flex-direction: column; }
 #funnel-text-wrap { display: flex; flex-direction: column; }
@@ -301,8 +301,8 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <div class="card"><div class="card-title">Seat Utilization (Active / Assigned) <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Active vs assigned seats with utilization % on dual axis. Low utilization = enterprise shelfware risk → churn signal.</div><div class="info-takeaway">📌 Utilization at 79% — 21% of assigned seats are unused. Target >85% to reduce churn risk.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-seat-util"></canvas></div></div>
     <div class="card"><div class="card-title">Plan Upgrade / Downgrade Volume <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Tracks monthly volume of users upgrading between plan tiers (Individual plans and B2B plans) vs downgrades.</div><div class="info-takeaway">📌 Individual upgrades (Free→Pro, Pro→Pro+) are accelerating. B2B downgrades are minimal at &lt;1K/mo — strong enterprise stickiness.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-plan-migration"></canvas></div></div>
     <div class="card"><div class="card-title">Upgrade &amp; Downgrade Rates Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly conversion rates for upgrades and downgrades across plan tiers. Upward upgrade curves + declining downgrades = healthy plan expansion.</div><div class="info-takeaway">📌 Pro → Pro+ conversion is accelerating (4.5% → 7.5%). Downgrade rates are declining across the board — value proposition is strengthening.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-upgrade-rates"></canvas></div></div>
-    <div class="card" style="overflow:hidden"><div class="card-title">Funnel Visualization</div><div id="funnel-bars-wrap"></div></div>
-    <div class="card" style="overflow:hidden"><div class="card-title">Conversion Funnel: Visit → Activation <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> End-to-end acquisition funnel showing conversion rates at each step from site visit through active usage.</div><div class="info-takeaway">📌 Biggest drop-off is Visit → Signup (4.2% conversion). Trial → Paid conversion at 38% is strong. Focus: improve top-of-funnel signup flow.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div id="funnel-toggles-wrap"></div><div class="chart-wrap"><canvas id="ch-funnel-rates"></canvas></div></div>
+    <div class="card"><div class="card-title">Funnel Visualization</div><div id="funnel-bars-wrap"></div></div>
+    <div class="card"><div class="card-title">Conversion Funnel: Visit → Activation<span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> End-to-end acquisition funnel showing conversion rates at each step from site visit through active usage.</div><div class="info-takeaway">📌 Biggest drop-off is Visit → Signup (4.2% conversion). Trial → Paid conversion at 38% is strong. Focus: improve top-of-funnel signup flow.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div id="funnel-toggles-wrap"></div><div class="chart-wrap"><canvas id="ch-funnel-rates"></canvas></div></div>
   </div>
 </section>
 
@@ -2106,13 +2106,9 @@ var funnelRatesTrend = {
         bhtml += '<div class="funnel-row-label">'+step+'</div>';
         bhtml += '<div class="funnel-row-bar">';
         bhtml += '<div class="funnel-bar-single" style="width:'+barPct+'%;background:'+ch.color+'">';
-        bhtml += '<span>'+fmt(val)+(notToScale?' <span style="font-size:8px;opacity:.5">(not to scale)</span>':'')+'</span>';
+        bhtml += '<span>'+fmt(val)+(notToScale?' <span style="font-size:6px;opacity:.5">(~)</span>':'')+'</span>';
         if (i > 0) {
-          bhtml += '<span class="bar-line">'+prevConv+'% of prior</span>';
-          bhtml += '<span class="bar-line">'+pctOfTop+'% of total</span>';
-        } else {
-          bhtml += '<span class="bar-line">100% of total</span>';
-          bhtml += '<span class="bar-line">&nbsp;</span>';
+          bhtml += '<span class="bar-line">'+prevConv+'% prior · '+pctOfTop+'% total</span>';
         }
         bhtml += '</div>';
         bhtml += '</div></div>';
