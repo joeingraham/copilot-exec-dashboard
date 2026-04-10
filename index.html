@@ -46,13 +46,12 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
   padding: 16px 0; z-index: 90; transition: width .25s; }
 .sidebar::-webkit-scrollbar { width: 4px; }
 .sidebar::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 4px; }
-.sidebar-toggle { position: absolute; top: 8px; right: -14px; width: 28px; height: 28px; border-radius: 50%;
-  background: #010409; border: 1px solid var(--card-border); cursor: pointer; z-index: 91;
+.sidebar-toggle { position: fixed; top: calc(var(--header-h) + 8px); left: calc(var(--sidebar-w) - 14px); width: 28px; height: 28px; border-radius: 50%;
+  background: #161b22; border: 1px solid var(--card-border); cursor: pointer; z-index: 100;
   display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 14px;
-  transition: all .2s; }
-.sidebar-toggle:hover { color: var(--text); border-color: var(--purple); }
-.sidebar.collapsed { width: 0; padding: 0; overflow: hidden; }
-.sidebar.collapsed .sidebar-toggle { right: -28px; }
+  transition: left .25s; }
+.sidebar-toggle:hover { color: var(--text); border-color: var(--purple); background: #1c2128; }
+.sidebar.collapsed { width: 0; padding: 0; overflow: hidden; border-right: none; }
 .sidebar.collapsed ~ .main { margin-left: 0; }
 .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 20px; cursor: pointer;
   color: var(--text-muted); font-size: 13px; font-weight: 500; transition: all .15s;
@@ -170,20 +169,37 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 .lift-neg { color: var(--red); font-weight: 600; }
 
 /* ── Responsive ── */
-@media (max-width: 1200px) { .grid-4, .grid-5 { grid-template-columns: repeat(2, 1fr); }
-  .card { padding: 14px; }
-  .card-title { font-size: 11px; }
-  .funnel-bar-single { font-size: 10px !important; padding: 2px 0 !important; }
-  .funnel-bar-single .bar-line { font-size: 8px !important; }
-  .funnel-row-label { font-size: 9px; width: 60px; }
-  #funnel-bars-wrap { min-height: 180px; }
-  #funnel-text-wrap { min-height: 180px; }
-  .funnel-insight-row { font-size: 10px !important; }
+@media (max-width: 1600px) {
+  .card { padding: 16px; }
+  .card-title { font-size: 12px; }
+  .section-header h2 { font-size: 17px; }
+  .section-header p { font-size: 11px; }
+  .funnel-bar-single { font-size: 13px !important; }
+  .funnel-bar-single .bar-line { font-size: 9px !important; }
 }
 @media (max-width: 1400px) {
-  .card-title { font-size: 12px; }
-  .funnel-bar-single { font-size: 12px !important; }
-  .funnel-bar-single .bar-line { font-size: 9px !important; }
+  .card { padding: 14px; }
+  .card-title { font-size: 11px; }
+  .section-header h2 { font-size: 15px; }
+  .section-header p { font-size: 10px; }
+  .illustrative { display: none; }
+  .info-icon { display: none; }
+  .kpi .value { font-size: 24px; }
+  .kpi .label { font-size: 10px; }
+  .kpi .change { font-size: 10px; }
+  .funnel-bar-single { font-size: 11px !important; padding: 3px 0 !important; }
+  .funnel-bar-single .bar-line { font-size: 8px !important; }
+  .funnel-row-label { font-size: 9px; width: 65px; }
+}
+@media (max-width: 1200px) { .grid-4, .grid-5 { grid-template-columns: repeat(2, 1fr); }
+  .card { padding: 12px; }
+  .card-title { font-size: 10px; }
+  .section-header h2 { font-size: 14px; }
+  .section-header { margin-bottom: 14px; }
+  .funnel-bar-single { font-size: 9px !important; padding: 2px 0 !important; }
+  .funnel-bar-single .bar-line { font-size: 7px !important; }
+  .funnel-row-label { font-size: 8px; width: 55px; }
+  .kpi .value { font-size: 20px; }
 }
 @media (max-width: 900px) {
   .sidebar { width: 56px; }
@@ -231,7 +247,6 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 
 <!-- ═══════════ SIDEBAR ═══════════ -->
 <nav class="sidebar" id="sidebar">
-  <button class="sidebar-toggle" onclick="toggleSidebar()" title="Collapse sidebar">‹</button>
   <a class="nav-item active" href="#exec" data-section="exec">
     <span class="nav-icon"><svg viewBox="0 0 16 16"><path d="M0 1.75A.75.75 0 0 1 .75 1h14.5a.75.75 0 0 1 0 1.5H.75A.75.75 0 0 1 0 1.75zm0 5A.75.75 0 0 1 .75 6h14.5a.75.75 0 0 1 0 1.5H.75A.75.75 0 0 1 0 6.75zm0 5A.75.75 0 0 1 .75 11h14.5a.75.75 0 0 1 0 1.5H.75a.75.75 0 0 1-.75-.75z"/></svg></span>
     <span class="nav-label">Executive Summary</span>
@@ -265,6 +280,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <span class="nav-label">🧪 Growth Ideas</span>
   </a>
 </nav>
+<button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()" title="Collapse sidebar">‹</button>
 
 <!-- ═══════════ MAIN CONTENT ═══════════ -->
 <main class="main">
@@ -440,8 +456,30 @@ Chart.defaults.plugins.datalabels = {display: false};
 // Responsive: detect screen size and adapt — updates on resize
 function updateScreenSize() {
   var w = window.innerWidth;
-  window._hideInternalLabels = w < 1600;  // internal bar segment labels go first
-  window._hideAllLabels = w < 1200;       // stacked totals + all labels go next
+  window._hideInternalLabels = w < 1600;
+  window._hideAllLabels = w < 1200;
+  // Scale Chart.js defaults based on screen width
+  if (w < 1200) {
+    Chart.defaults.font.size = 8;
+    Chart.defaults.plugins.legend.labels.boxWidth = 6;
+    Chart.defaults.plugins.legend.labels.padding = 6;
+    Chart.defaults.plugins.legend.labels.font = { size: 7 };
+  } else if (w < 1400) {
+    Chart.defaults.font.size = 9;
+    Chart.defaults.plugins.legend.labels.boxWidth = 8;
+    Chart.defaults.plugins.legend.labels.padding = 8;
+    Chart.defaults.plugins.legend.labels.font = { size: 8 };
+  } else if (w < 1600) {
+    Chart.defaults.font.size = 10;
+    Chart.defaults.plugins.legend.labels.boxWidth = 10;
+    Chart.defaults.plugins.legend.labels.padding = 10;
+    Chart.defaults.plugins.legend.labels.font = { size: 9 };
+  } else {
+    Chart.defaults.font.size = 11;
+    Chart.defaults.plugins.legend.labels.boxWidth = 12;
+    Chart.defaults.plugins.legend.labels.padding = 14;
+    Chart.defaults.plugins.legend.labels.font = { size: 11 };
+  }
 }
 updateScreenSize();
 
@@ -3000,9 +3038,11 @@ allCharts.expansion = new Chart(document.getElementById('ch-expansion'), {
 // Sidebar collapse toggle
 window.toggleSidebar = function() {
   var sb = document.getElementById('sidebar');
-  var btn = sb.querySelector('.sidebar-toggle');
+  var btn = document.getElementById('sidebar-toggle');
   sb.classList.toggle('collapsed');
-  btn.textContent = sb.classList.contains('collapsed') ? '›' : '‹';
+  var collapsed = sb.classList.contains('collapsed');
+  btn.textContent = collapsed ? '›' : '‹';
+  btn.style.left = collapsed ? '-2px' : '';
   // Trigger chart resize after transition
   setTimeout(function() {
     window.dispatchEvent(new Event('resize'));
