@@ -127,7 +127,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 .funnel-row-label { font-size: 6px; color: var(--text-muted); width: 42px; text-align: right; flex-shrink: 0; font-weight: 600; line-height: 1; }
 .funnel-row-bar { flex: 1; display: flex; justify-content: center; }
 .funnel-bar-single { border-radius: 2px; display: flex; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 6px; color: #fff; min-width: 14px; padding: 2px 2px; line-height: 1;
+  font-weight: 700; font-size: 5px; color: #fff; min-width: 14px; padding: 2px 1px; line-height: 1;
   cursor: default; position: relative; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .funnel-bar-single:hover { filter: brightness(1.15); }
 .funnel-bar-single:hover .funnel-tip { display: block; }
@@ -520,7 +520,7 @@ const stackedTotalPlugin = {
     const meta0 = chart.getDatasetMeta(0);
     if (!meta0 || meta0.type !== 'bar') return;
     const fmt = chart.config.options.plugins.stackedTotal.formatter || (v => v);
-    const fSize = window._hideInternalLabels ? 7 : 8;
+    const fSize = window._hideInternalLabels ? 6 : 7;
     const datasets = chart.data.datasets.filter(ds => ds.type !== 'line');
     for (let i = 0; i < chart.data.labels.length; i++) {
       let total = 0;
@@ -2507,7 +2507,7 @@ allCharts.retSurface = new Chart(document.getElementById('ch-ret-surface'), {
         pointRadius:3, tension:.3, fill:false, yAxisID:'y1', datalabels:{display:false} }
     ]},
     options:{ plugins:{legend:{position:'bottom'},
-      datalabels:{display:function(ctx){ if(ctx.dataset.type==='line') return false; var v=Math.abs(ctx.dataset.data[ctx.dataIndex]||0); return v>=5; }, color:'#E6EDF3', font:{size:9,weight:'bold'}, formatter:function(v){return '$'+Math.abs(Math.round(v))+'M';}, anchor:'center', align:'center'},
+      datalabels:{display:function(ctx){ if(window._hideInternalLabels) return false; if(ctx.dataset.type==='line') return false; var v=Math.abs(ctx.dataset.data[ctx.dataIndex]||0); return v>=5; }, color:'#E6EDF3', font:{size:8,weight:'bold'}, formatter:function(v){return '$'+Math.abs(Math.round(v))+'M';}, anchor:'center', align:'center'},
       stackedTotal:{display:false},
       annotation:{annotations:{
         zero:{type:'line',yMin:0,yMax:0,borderColor:'rgba(255,255,255,.2)',borderWidth:1}
