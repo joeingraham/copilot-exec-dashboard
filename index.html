@@ -127,7 +127,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 .funnel-row-label { font-size: 6px; color: var(--text-muted); width: 42px; text-align: right; flex-shrink: 0; font-weight: 600; line-height: 1; }
 .funnel-row-bar { flex: 1; display: flex; justify-content: center; }
 .funnel-bar-single { border-radius: 2px; display: flex; align-items: center; justify-content: center;
-  font-weight: 600; font-size: 5.5px; color: #fff; min-width: 14px; padding: 2px 1px; line-height: 1;
+  font-weight: 600; font-size: 3px; color: #fff; min-width: 14px; padding: 2px 1px; line-height: 1;
   cursor: default; position: relative; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .funnel-bar-single:hover { filter: brightness(1.15); }
 .funnel-bar-single:hover .funnel-tip { display: block; }
@@ -2990,9 +2990,7 @@ var seatUtilSkuScale = { Free: 0.28, Edu: 0.02, Pro: 0.16, 'Pro+': 0.07, Busines
       { label:'Active Seats', data:baseSeatActive.slice(), backgroundColor:a(TEAL,.7), borderRadius:2, stack:'s', yAxisID:'y', datalabels:{display:function(){return !window._hideInternalLabels;}, color:'#fff', font:{size:8,weight:'bold'}, formatter:function(v){return v+'K';}, anchor:'center', align:'center'} },
       { label:'Assigned (Unused)', data:baseSeatUnused.slice(), backgroundColor:a(ORANGE,.4), borderRadius:2, stack:'s', yAxisID:'y', datalabels:{display:function(){return !window._hideInternalLabels;}, color:'#fff', font:{size:7,weight:'bold'}, formatter:function(v){return v+'K';}, anchor:'center', align:'center'} },
       { type:'line', label:'Utilization %', data:utilPct, borderColor:PURPLE, borderWidth:2.5, tension:.3, fill:false, pointRadius:3, yAxisID:'y1',
-        datalabels:{ display: function(ctx) { return !window._hideAllLabels && ctx.dataIndex === ctx.dataset.data.length - 1; },
-          anchor: 'end', align: 'top', font: { size: 9, weight: 'bold' }, color: '#E6EDF3',
-          formatter: function(v) { return v + '%'; } } }
+        datalabels:{display:false} }
     ]},
     options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}},
       scales:{
