@@ -122,23 +122,23 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 .funnel-toggle.active { background: rgba(123,104,238,.15); border-color: var(--purple); color: #fff; }
 .funnel-toggle .ft-dot { width: 8px; height: 8px; border-radius: 50%; }
 .funnel-grid2 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; align-items: center; }
-.funnel-step-cell { display: flex; align-items: center; gap: 6px; padding: 2px 4px 2px 0; flex: 1; }
-.funnel-comment-cell { display: flex; align-items: center; padding: 4px 0 4px 10px;
-  border-left: 2px solid rgba(123,104,238,.2); font-size: 12px; line-height: 1.4; color: var(--text); }
+.funnel-step-cell { display: flex; align-items: center; gap: 4px; padding: 1px 2px 1px 0; }
+.funnel-comment-cell { display: flex; align-items: center; padding: 2px 0 2px 8px;
+  border-left: 2px solid rgba(123,104,238,.2); font-size: 10px; line-height: 1.3; color: var(--text); }
 .funnel-comment-cell b { color: var(--purple); }
-.funnel-row-label { font-size: 11px; color: var(--text-muted); width: 80px; text-align: right; flex-shrink: 0; font-weight: 600; line-height: 1.3; }
-.funnel-row-label .fl-total { color: #E6EDF3; font-weight: 700; font-size: 12px; display: block; }
-.funnel-row-label .fl-pcts { font-size: 8px; opacity: .7; display: block; }
+.funnel-row-label { font-size: 8px; color: var(--text-muted); width: 55px; text-align: right; flex-shrink: 0; font-weight: 600; line-height: 1.2; }
+.funnel-row-label .fl-total { color: #E6EDF3; font-weight: 700; font-size: 9px; display: block; }
+.funnel-row-label .fl-pcts { font-size: 7px; opacity: .7; display: block; }
 .funnel-row-bar { flex: 1; display: flex; flex-direction: column; align-items: center; }
-.funnel-row-rate { font-size: 9px; color: var(--text-muted); margin: 0; line-height: 1.2; }
-.funnel-bar-single { border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 15px; color: #fff; transition: all .25s; min-width: 40px; padding: 6px 0; line-height: 1.3; }
-.funnel-bar-single .bar-line { font-size: 11px; font-weight: 600; opacity: .8; }
+.funnel-row-rate { font-size: 7px; color: var(--text-muted); margin: 0; line-height: 1.1; }
+.funnel-bar-single { border-radius: 4px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 10px; color: #fff; transition: all .25s; min-width: 30px; padding: 3px 0; line-height: 1.2; }
+.funnel-bar-single .bar-line { font-size: 8px; font-weight: 600; opacity: .8; }
 .funnel-bar-single:hover { filter: brightness(1.15); }
-#funnel-bars-wrap { display: flex; flex-direction: column; flex: 1; }
-#funnel-text-wrap { display: flex; flex-direction: column; flex: 1; }
-.funnel-insight-row { flex: 1; display: flex; align-items: center; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,.05);
-  font-size: 13px; line-height: 1.5; }
+#funnel-bars-wrap { display: flex; flex-direction: column; }
+#funnel-text-wrap { display: flex; flex-direction: column; }
+.funnel-insight-row { display: flex; align-items: center; padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,.05);
+  font-size: 10px; line-height: 1.3; }
 
 /* ── KPI Tiles ── */
 .kpi { text-align: center; }
@@ -301,7 +301,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
     <div class="card"><div class="card-title">Seat Utilization (Active / Assigned) <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Active vs assigned seats with utilization % on dual axis. Low utilization = enterprise shelfware risk → churn signal.</div><div class="info-takeaway">📌 Utilization at 79% — 21% of assigned seats are unused. Target >85% to reduce churn risk.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-seat-util"></canvas></div></div>
     <div class="card"><div class="card-title">Plan Upgrade / Downgrade Volume <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Tracks monthly volume of users upgrading between plan tiers (Individual plans and B2B plans) vs downgrades.</div><div class="info-takeaway">📌 Individual upgrades (Free→Pro, Pro→Pro+) are accelerating. B2B downgrades are minimal at &lt;1K/mo — strong enterprise stickiness.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-plan-migration"></canvas></div></div>
     <div class="card"><div class="card-title">Upgrade &amp; Downgrade Rates Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly conversion rates for upgrades and downgrades across plan tiers. Upward upgrade curves + declining downgrades = healthy plan expansion.</div><div class="info-takeaway">📌 Pro → Pro+ conversion is accelerating (4.5% → 7.5%). Downgrade rates are declining across the board — value proposition is strengthening.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-upgrade-rates"></canvas></div></div>
-    <div class="card" style="display:flex;flex-direction:column"><div class="card-title">Funnel Visualization</div><div id="funnel-bars-wrap" style="flex:1"></div></div>
+    <div class="card" style="display:flex;flex-direction:column"><div class="card-title">Funnel Visualization</div><div id="funnel-bars-wrap"></div></div>
     <div class="card" style="display:flex;flex-direction:column"><div class="card-title">Conversion Funnel: Visit → Activation <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> End-to-end acquisition funnel showing conversion rates at each step from site visit through active usage.</div><div class="info-takeaway">📌 Biggest drop-off is Visit → Signup (4.2% conversion). Trial → Paid conversion at 38% is strong. Focus: improve top-of-funnel signup flow.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div id="funnel-toggles-wrap"></div><div class="chart-wrap"><canvas id="ch-funnel-rates"></canvas></div></div>
   </div>
 </section>
@@ -1627,7 +1627,7 @@ kpis.forEach((k, i) => {
       fill:true, backgroundColor:a(k.color,.12), tension:.4, pointRadius:0, pointHoverRadius:5,
       pointHoverBackgroundColor:k.color, pointHoverBorderColor:'#fff', pointHoverBorderWidth:2 }] },
     options:{ interaction:{mode:'index', intersect:false},
-      plugins:{legend:{display:false}, datalabels:{ display: function(ctx) { return ctx.dataIndex === ctx.dataset.data.length - 1; }, anchor: 'end', align: 'top', font: { size: 10, weight: 'bold' }, color: '#E6EDF3' },
+      plugins:{legend:{display:false}, datalabels:{ display: function(ctx) { return !window._hideAllLabels && ctx.dataIndex === ctx.dataset.data.length - 1; }, anchor: 'end', align: 'top', font: { size: 9, weight: 'bold' }, color: '#E6EDF3' },
       tooltip:{enabled:true, displayColors:false, backgroundColor:'#1c2128',
         borderColor:k.color, borderWidth:1, padding:8,
         titleFont:{size:10,weight:'500'}, bodyFont:{size:13,weight:'bold'}, bodyColor:k.color,
@@ -1690,8 +1690,8 @@ function buildGoalChart(canvasId, actualData, goalData, opts) {
     lastPtRadius[goalData.length - 1] = 4;
     datasets.push({ label: 'Goal', data: goalData, borderColor: goalColor, backgroundColor: 'transparent',
       borderDash: [6, 4], borderWidth: 1.5, pointRadius: lastPtRadius, pointBackgroundColor: goalColor, fill: false, tension: .3,
-      datalabels:{ display: function(ctx) { return ctx.dataIndex === ctx.dataset.data.length - 1; },
-        anchor: 'end', align: 'top', font: { size: 10, weight: 'bold' }, color: goalColor,
+      datalabels:{ display: function(ctx) { return !window._hideAllLabels && ctx.dataIndex === ctx.dataset.data.length - 1; },
+        anchor: 'end', align: 'top', font: { size: 9, weight: 'bold' }, color: goalColor,
         formatter: function(v) { return fmt(v); }, offset: 2 } });
   }
   return new Chart(document.getElementById(canvasId), {
@@ -2989,11 +2989,11 @@ var seatUtilSkuScale = { Free: 0.28, Edu: 0.02, Pro: 0.16, 'Pro+': 0.07, Busines
   allCharts.seatUtil = new Chart(document.getElementById('ch-seat-util'), {
     type:'bar',
     data:{ labels:MONTHS, datasets:[
-      { label:'Active Seats', data:baseSeatActive.slice(), backgroundColor:a(TEAL,.7), borderRadius:2, stack:'s', yAxisID:'y', datalabels:{display:true, color:'#fff', font:{size:9,weight:'bold'}, formatter:function(v){return v+'K';}, anchor:'center', align:'center'} },
-      { label:'Assigned (Unused)', data:baseSeatUnused.slice(), backgroundColor:a(ORANGE,.4), borderRadius:2, stack:'s', yAxisID:'y', datalabels:{display:true, color:'#fff', font:{size:8,weight:'bold'}, formatter:function(v){return v+'K';}, anchor:'center', align:'center'} },
+      { label:'Active Seats', data:baseSeatActive.slice(), backgroundColor:a(TEAL,.7), borderRadius:2, stack:'s', yAxisID:'y', datalabels:{display:function(){return !window._hideInternalLabels;}, color:'#fff', font:{size:8,weight:'bold'}, formatter:function(v){return v+'K';}, anchor:'center', align:'center'} },
+      { label:'Assigned (Unused)', data:baseSeatUnused.slice(), backgroundColor:a(ORANGE,.4), borderRadius:2, stack:'s', yAxisID:'y', datalabels:{display:function(){return !window._hideInternalLabels;}, color:'#fff', font:{size:7,weight:'bold'}, formatter:function(v){return v+'K';}, anchor:'center', align:'center'} },
       { type:'line', label:'Utilization %', data:utilPct, borderColor:PURPLE, borderWidth:2.5, tension:.3, fill:false, pointRadius:3, yAxisID:'y1',
-        datalabels:{ display: function(ctx) { return ctx.dataIndex === ctx.dataset.data.length - 1; },
-          anchor: 'end', align: 'top', font: { size: 10, weight: 'bold' }, color: '#E6EDF3',
+        datalabels:{ display: function(ctx) { return !window._hideAllLabels && ctx.dataIndex === ctx.dataset.data.length - 1; },
+          anchor: 'end', align: 'top', font: { size: 9, weight: 'bold' }, color: '#E6EDF3',
           formatter: function(v) { return v + '%'; } } }
     ]},
     options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}},
@@ -3025,11 +3025,11 @@ var expansionSkuScale = { Free: 0.01, Edu: 0.01, Pro: 0.14, 'Pro+': 0.10, Busine
 allCharts.expansion = new Chart(document.getElementById('ch-expansion'), {
   type:'bar',
   data:{ labels:MONTHS, datasets:[
-    { label:'Net New Users', data:baseExpansionData['Net New Users'].slice(), backgroundColor:a(BLUE,.6), borderRadius:2, stack:'s', datalabels:{display:function(ctx){return Math.abs(ctx.dataset.data[ctx.dataIndex])>=1;}, color:'#fff', font:{size:8,weight:'bold'}, formatter:function(v){return '$'+Math.round(v)+'M';}, anchor:'center', align:'center'} },
-    { label:'Expansion', data:baseExpansionData['Expansion'].slice(), backgroundColor:a(GREEN,.6), borderRadius:2, stack:'s', datalabels:{display:function(ctx){return Math.abs(ctx.dataset.data[ctx.dataIndex])>=1;}, color:'#fff', font:{size:8,weight:'bold'}, formatter:function(v){return '$'+Math.round(v)+'M';}, anchor:'center', align:'center'} },
+    { label:'Net New Users', data:baseExpansionData['Net New Users'].slice(), backgroundColor:a(BLUE,.6), borderRadius:2, stack:'s', datalabels:{display:function(ctx){return !window._hideInternalLabels && Math.abs(ctx.dataset.data[ctx.dataIndex])>=1;}, color:'#fff', font:{size:7,weight:'bold'}, formatter:function(v){return '$'+Math.round(v)+'M';}, anchor:'center', align:'center'} },
+    { label:'Expansion', data:baseExpansionData['Expansion'].slice(), backgroundColor:a(GREEN,.6), borderRadius:2, stack:'s', datalabels:{display:function(ctx){return !window._hideInternalLabels && Math.abs(ctx.dataset.data[ctx.dataIndex])>=1;}, color:'#fff', font:{size:7,weight:'bold'}, formatter:function(v){return '$'+Math.round(v)+'M';}, anchor:'center', align:'center'} },
     { label:'Contraction', data:baseExpansionData['Contraction'].slice(), backgroundColor:a(ORANGE,.5), borderRadius:2, stack:'s', datalabels:{display:false} },
     { label:'Churn', data:baseExpansionData['Churn'].slice(), backgroundColor:a(RED,.5), borderRadius:2, stack:'s', datalabels:{display:false} },
-    { type:'line', label:'Net Change', data:baseExpansionData['Net Change'].slice(), borderColor:PURPLE, borderWidth:2.5, tension:.3, fill:false, pointRadius:3, datalabels:{display:function(ctx){return ctx.dataIndex===ctx.dataset.data.length-1;}, color:PURPLE, font:{size:10,weight:'bold'}, formatter:function(v){return '$'+Math.round(v)+'M';}, anchor:'end', align:'top'} }
+    { type:'line', label:'Net Change', data:baseExpansionData['Net Change'].slice(), borderColor:PURPLE, borderWidth:2.5, tension:.3, fill:false, pointRadius:3, datalabels:{display:function(ctx){return !window._hideAllLabels && ctx.dataIndex===ctx.dataset.data.length-1;}, color:PURPLE, font:{size:9,weight:'bold'}, formatter:function(v){return '$'+Math.round(v)+'M';}, anchor:'end', align:'top'} }
   ]},
   options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}},
     annotation:{annotations:{zero:{type:'line',yMin:0,yMax:0,borderColor:'rgba(255,255,255,.2)',borderWidth:1}}}},
