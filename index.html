@@ -1630,7 +1630,7 @@ kpis.forEach((k, i) => {
       fill:true, backgroundColor:a(k.color,.12), tension:.4, pointRadius:0, pointHoverRadius:5,
       pointHoverBackgroundColor:k.color, pointHoverBorderColor:'#fff', pointHoverBorderWidth:2 }] },
     options:{ interaction:{mode:'index', intersect:false},
-      plugins:{legend:{display:false}, datalabels:{ display: function(ctx) { return !window._hideAllLabels && ctx.dataIndex === ctx.dataset.data.length - 1; }, anchor: 'end', align: 'top', font: { size: 9, weight: 'bold' }, color: '#E6EDF3' },
+      plugins:{legend:{display:false}, datalabels:{ display: function(ctx) { return !window._hideAllLabels && ctx.dataIndex === ctx.dataset.data.length - 1; }, anchor: 'end', align: 'top', font: { size: 9, weight: 'bold' }, color: k.color },
       tooltip:{enabled:true, displayColors:false, backgroundColor:'#1c2128',
         borderColor:k.color, borderWidth:1, padding:8,
         titleFont:{size:10,weight:'500'}, bodyFont:{size:13,weight:'bold'}, bodyColor:k.color,
