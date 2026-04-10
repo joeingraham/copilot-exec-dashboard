@@ -125,10 +125,16 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 .funnel-grid2 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; align-items: center; }
 .funnel-step-cell { display: flex; align-items: center; gap: 2px; padding: 1px 0; }
 .funnel-row-label { font-size: 6px; color: var(--text-muted); width: 42px; text-align: right; flex-shrink: 0; font-weight: 600; line-height: 1; }
-.funnel-row-bar { flex: 1; }
+.funnel-row-bar { flex: 1; display: flex; justify-content: center; }
 .funnel-bar-single { border-radius: 2px; display: flex; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 7px; color: #fff; min-width: 16px; padding: 2px 3px; line-height: 1; }
+  font-weight: 700; font-size: 6px; color: #fff; min-width: 14px; padding: 2px 2px; line-height: 1;
+  cursor: default; position: relative; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .funnel-bar-single:hover { filter: brightness(1.15); }
+.funnel-bar-single:hover .funnel-tip { display: block; }
+.funnel-tip { display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+  background: #1c2128; border: 1px solid var(--card-border); border-radius: 4px; padding: 4px 6px;
+  font-size: 9px; font-weight: 500; color: #E6EDF3; white-space: nowrap; z-index: 50; pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,.4); }
 #funnel-bars-wrap { display: flex; flex-direction: column; gap: 2px; }
 #funnel-text-wrap { display: flex; flex-direction: column; }
 .funnel-insight-row { display: flex; align-items: center; padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,.05);
@@ -514,7 +520,7 @@ const stackedTotalPlugin = {
     const meta0 = chart.getDatasetMeta(0);
     if (!meta0 || meta0.type !== 'bar') return;
     const fmt = chart.config.options.plugins.stackedTotal.formatter || (v => v);
-    const fSize = 10;
+    const fSize = window._hideInternalLabels ? 7 : 8;
     const datasets = chart.data.datasets.filter(ds => ds.type !== 'line');
     for (let i = 0; i < chart.data.labels.length; i++) {
       let total = 0;
@@ -2103,6 +2109,9 @@ var funnelRatesTrend = {
         bhtml += '<div class="funnel-row-bar">';
         bhtml += '<div class="funnel-bar-single" style="width:'+barPct+'%;background:'+ch.color+'">';
         bhtml += fmt(val);
+        var tipText = step+': '+fmt(val);
+        if (i > 0) tipText += ' · '+prevConv+'% of prior · '+pctOfTop+'% of visits';
+        bhtml += '<span class="funnel-tip">'+tipText+'</span>';
         bhtml += '</div>';
         bhtml += '</div></div>';
       });
