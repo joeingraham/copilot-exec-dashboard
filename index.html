@@ -126,8 +126,8 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 .funnel-step-cell { display: flex; align-items: center; gap: 2px; padding: 1px 0; }
 .funnel-row-label { font-size: 0.4vw; color: var(--text-muted); width: 3vw; text-align: right; flex-shrink: 0; font-weight: 600; line-height: 1; }
 .funnel-row-bar { flex: 1; display: flex; justify-content: center; }
-.funnel-bar-single { border-radius: 2px; display: flex; align-items: center; justify-content: center;
-  font-weight: 600; font-size: 0.45vw; color: #fff; min-width: 14px; padding: 0.15vw 1px; line-height: 1;
+.funnel-bar-single { border-radius: 2px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-weight: 600; font-size: 0.45vw; color: #fff; min-width: 14px; padding: 0.15vw 1px; line-height: 1.2;
   cursor: default; position: relative; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .funnel-bar-single:hover { filter: brightness(1.15); }
 .funnel-bar-single:hover .funnel-tip { display: block; }
@@ -2110,7 +2110,11 @@ var funnelRatesTrend = {
         bhtml += '<div class="funnel-row-bar">';
         bhtml += '<div class="funnel-bar-single" style="width:'+barPct+'%;background:'+ch.color+'">';
         bhtml += '<span class="funnel-val">'+fmt(val)+'</span>';
-        if (i > 0) bhtml += '<span class="funnel-pcts">'+prevConv+'% · '+pctOfTop+'%</span>';
+        if (i === 1) {
+          bhtml += '<span class="funnel-pcts">% of visits: '+pctOfTop+'%, % of prior: '+prevConv+'%</span>';
+        } else if (i > 1) {
+          bhtml += '<span class="funnel-pcts">'+pctOfTop+'% / '+prevConv+'%</span>';
+        }
         var tipText = step+': '+fmt(val);
         if (i > 0) tipText += ' · '+prevConv+'% of prior · '+pctOfTop+'% of visits';
         bhtml += '<span class="funnel-tip">'+tipText+'</span>';
