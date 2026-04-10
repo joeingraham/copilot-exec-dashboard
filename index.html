@@ -2104,7 +2104,12 @@ var funnelRatesTrend = {
       var scaleBase = scaledData[1];
       steps.forEach(function(step, i) {
         var val = scaledData[i];
-        var barPct = Math.max(8, (val / scaledData[0]) * 100);
+        var barPct;
+        if (i === 0) {
+          barPct = Math.max(8, (scaleBase / scaleBase) * 100);
+        } else {
+          barPct = Math.max(8, (val / scaleBase) * 100);
+        }
         var pctOfTop = (val / scaledData[0] * 100).toFixed(1);
         var prevConv = i > 0 ? (val / scaledData[i-1] * 100).toFixed(1) : null;
         bhtml += '<div class="funnel-step-cell">';
