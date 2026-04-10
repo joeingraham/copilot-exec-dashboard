@@ -427,15 +427,23 @@ function updateScreenSize() {
   window._isTinyScreen = w < 1000;
 }
 updateScreenSize();
+
+// Debounced resize handler — force ALL charts to re-render
+var _resizeTimer;
 window.addEventListener('resize', function() {
-  var wasSmall = window._isSmallScreen;
-  updateScreenSize();
-  if (wasSmall !== window._isSmallScreen && typeof rebuildAll === 'function') {
-    // Force all charts to re-render with new label visibility
+  clearTimeout(_resizeTimer);
+  _resizeTimer = setTimeout(function() {
+    updateScreenSize();
+    // Force every chart to re-render (re-evaluates datalabel display functions)
     Object.keys(allCharts).forEach(function(k) {
-      if (allCharts[k] && allCharts[k].update) allCharts[k].update();
+      var ch = allCharts[k];
+      if (!ch) return;
+      if (Array.isArray(ch)) { ch.forEach(function(c){ if(c && c.update) c.update(); }); }
+      else if (ch.update) { ch.update(); }
     });
-  }
+    // Also re-render the funnel rates chart
+    if (window._funnelRatesChart && window._funnelRatesChart.update) window._funnelRatesChart.update();
+  }, 200);
 });
 
 // Register the datalabels plugin explicitly
@@ -448,7 +456,7 @@ const stackedTotalPlugin = {
   id: 'stackedTotal',
   afterDatasetsDraw(chart) {
     if (!chart.config.options.plugins?.stackedTotal?.display) return;
-    if (window._isTinyScreen) return;
+    if (window._isSmallScreen) return;
     const { ctx } = chart;
     const meta0 = chart.getDatasetMeta(0);
     if (!meta0 || meta0.type !== 'bar') return;
