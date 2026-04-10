@@ -83,6 +83,7 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 
 /* ── Card ── */
 .card { background: var(--card); border: 1px solid var(--card-border); border-radius: 10px; padding: 14px; position: relative; }
+.card-compact { overflow: hidden; }
 .card-placeholder { background: var(--card); border: 1px dashed var(--card-border); border-radius: 10px; padding: 14px; position: relative; display: flex; align-items: center; justify-content: center; opacity: .4; }
 .card-placeholder .card-title { color: var(--text-muted); font-style: italic; }
 .act-toggle { padding: 2px 6px; font-size: 9px; font-weight: 600; cursor: pointer; border: 1px solid var(--card-border);
@@ -303,8 +304,8 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
   <div class="grid grid-4" style="margin-top:12px">
     <div class="card"><div class="card-title">Plan Upgrade / Downgrade Volume <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Tracks monthly volume of users upgrading between plan tiers (Individual plans and B2B plans) vs downgrades.</div><div class="info-takeaway">📌 Individual upgrades (Free→Pro, Pro→Pro+) are accelerating. B2B downgrades are minimal at &lt;1K/mo — strong enterprise stickiness.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-plan-migration"></canvas></div></div>
     <div class="card"><div class="card-title">Upgrade &amp; Downgrade Rates Over Time <span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> Monthly conversion rates for upgrades and downgrades across plan tiers. Upward upgrade curves + declining downgrades = healthy plan expansion.</div><div class="info-takeaway">📌 Pro → Pro+ conversion is accelerating (4.5% → 7.5%). Downgrade rates are declining across the board — value proposition is strengthening.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div class="chart-wrap"><canvas id="ch-upgrade-rates"></canvas></div></div>
-    <div class="card"><div class="card-title">Funnel Visualization</div><div id="funnel-bars-wrap"></div></div>
-    <div class="card"><div class="card-title">Conversion Funnel: Visit → Activation<span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> End-to-end acquisition funnel showing conversion rates at each step from site visit through active usage.</div><div class="info-takeaway">📌 Biggest drop-off is Visit → Signup (4.2% conversion). Trial → Paid conversion at 38% is strong. Focus: improve top-of-funnel signup flow.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div id="funnel-toggles-wrap"></div><div class="chart-wrap"><canvas id="ch-funnel-rates"></canvas></div></div>
+    <div class="card card-compact" id="funnel-viz-card"><div class="card-title">Funnel Visualization</div><div id="funnel-bars-wrap"></div></div>
+    <div class="card card-compact" id="funnel-rates-card"><div class="card-title">Conversion Funnel: Visit → Activation<span class="info-icon">i<div class="info-popup"><div class="info-purpose"><strong>Purpose:</strong> End-to-end acquisition funnel showing conversion rates at each step from site visit through active usage.</div><div class="info-takeaway">📌 Biggest drop-off is Visit → Signup (4.2% conversion). Trial → Paid conversion at 38% is strong. Focus: improve top-of-funnel signup flow.</div></div></span><span class="illustrative">(Illustrative Data)</span></div><div id="funnel-toggles-wrap"></div><div class="chart-wrap"><canvas id="ch-funnel-rates"></canvas></div></div>
   </div>
 </section>
 
@@ -3047,6 +3048,23 @@ window.toggleSidebar = function() {
     window.dispatchEvent(new Event('resize'));
   }, 300);
 };
+
+// Sync funnel card heights to chart card heights
+function syncFunnelHeight() {
+  var ref = document.getElementById('ch-plan-migration');
+  if (ref) {
+    var refCard = ref.closest('.card');
+    if (refCard) {
+      var h = refCard.offsetHeight + 'px';
+      var fv = document.getElementById('funnel-viz-card');
+      var fr = document.getElementById('funnel-rates-card');
+      if (fv) { fv.style.maxHeight = h; fv.style.overflow = 'hidden'; }
+      if (fr) { fr.style.maxHeight = h; fr.style.overflow = 'hidden'; }
+    }
+  }
+}
+setTimeout(syncFunnelHeight, 500);
+window.addEventListener('resize', function() { setTimeout(syncFunnelHeight, 300); });
 
 window.addEventListener('DOMContentLoaded', function(){ if(window.location.hash) history.replaceState(null,'',window.location.pathname); setTimeout(function(){ window.scrollTo(0,0); }, 0); });
 window.addEventListener('load', function(){ window.scrollTo(0,0); });
