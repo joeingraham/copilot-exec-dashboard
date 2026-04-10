@@ -1632,7 +1632,14 @@ kpis.forEach((k, i) => {
       pointHoverBackgroundColor:k.color, pointHoverBorderColor:'#fff', pointHoverBorderWidth:2 }] },
     options:{ interaction:{mode:'index', intersect:false},
       layout: { padding: { top: 20, right: 20 } },
-      plugins:{legend:{display:false}, datalabels:{ display: true, anchor: 'end', align: 'top', font: { size: 9, weight: 'bold' }, color: k.color, clip: false },
+      plugins:{legend:{display:false}, datalabels:{ display: true, anchor: 'end', align: 'top', font: { size: 9, weight: 'bold' }, color: k.color, clip: false,
+        formatter: function(v) {
+          if (k.label==='MAU') return v.toFixed(1)+'M';
+          if (k.label==='DAU') return v>=1000?(v/1000).toFixed(1)+'M':v+'K';
+          if (k.label==='ARR') return '$'+v+'M';
+          if (k.label==='Gross Margin') return v+'%';
+          return v;
+        } },
       tooltip:{enabled:true, displayColors:false, backgroundColor:'#1c2128',
         borderColor:k.color, borderWidth:1, padding:8,
         titleFont:{size:10,weight:'500'}, bodyFont:{size:13,weight:'bold'}, bodyColor:k.color,
