@@ -165,9 +165,17 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 @media (max-width: 1200px) { .grid-4, .grid-5 { grid-template-columns: repeat(2, 1fr); }
   .card { padding: 14px; }
   .card-title { font-size: 11px; }
+  .funnel-bar-single { font-size: 10px !important; padding: 2px 0 !important; }
+  .funnel-bar-single .bar-line { font-size: 8px !important; }
+  .funnel-row-label { font-size: 9px; width: 60px; }
+  #funnel-bars-wrap { min-height: 180px; }
+  #funnel-text-wrap { min-height: 180px; }
+  .funnel-insight-row { font-size: 10px !important; }
 }
 @media (max-width: 1400px) {
   .card-title { font-size: 12px; }
+  .funnel-bar-single { font-size: 12px !important; }
+  .funnel-bar-single .bar-line { font-size: 9px !important; }
 }
 @media (max-width: 900px) {
   .sidebar { width: 56px; }
@@ -423,8 +431,8 @@ Chart.defaults.plugins.datalabels = {display: false};
 // Responsive: detect screen size and adapt — updates on resize
 function updateScreenSize() {
   var w = window.innerWidth;
-  window._isSmallScreen = w < 1400;
-  window._isTinyScreen = w < 1000;
+  window._hideInternalLabels = w < 1600;  // internal bar segment labels go first
+  window._hideAllLabels = w < 1200;       // stacked totals + all labels go next
 }
 updateScreenSize();
 
@@ -441,8 +449,9 @@ window.addEventListener('resize', function() {
       if (Array.isArray(ch)) { ch.forEach(function(c){ if(c && c.update) c.update(); }); }
       else if (ch.update) { ch.update(); }
     });
-    // Also re-render the funnel rates chart
+    // Also re-render the funnel rates chart and funnel bars
     if (window._funnelRatesChart && window._funnelRatesChart.update) window._funnelRatesChart.update();
+    if (typeof window.rebuildFunnel === 'function') window.rebuildFunnel();
   }, 200);
 });
 
@@ -456,12 +465,12 @@ const stackedTotalPlugin = {
   id: 'stackedTotal',
   afterDatasetsDraw(chart) {
     if (!chart.config.options.plugins?.stackedTotal?.display) return;
-    if (window._isSmallScreen) return;
+    if (window._hideAllLabels) return;
     const { ctx } = chart;
     const meta0 = chart.getDatasetMeta(0);
     if (!meta0 || meta0.type !== 'bar') return;
     const fmt = chart.config.options.plugins.stackedTotal.formatter || (v => v);
-    const fSize = window._isSmallScreen ? 8 : 10;
+    const fSize = 10;
     const datasets = chart.data.datasets.filter(ds => ds.type !== 'line');
     for (let i = 0; i < chart.data.labels.length; i++) {
       let total = 0;
@@ -497,18 +506,7 @@ function lighten(hex, amt) {
 function stackedDatalabels(fmtFn, minPct) {
   return {
     display: function(ctx) {
-      if (window._isTinyScreen) return false;
-      if (window._isSmallScreen) {
-        // On smaller screens, only show labels for segments > 15% of total
-        var minPctSmall = Math.max(minPct || 0.05, 0.15);
-        if (ctx.dataset.type === 'line') return false;
-        var meta = ctx.chart.getDatasetMeta(ctx.datasetIndex);
-        if (meta.hidden) return false;
-        var ds = ctx.chart.data.datasets.filter(function(d, di){ return d.type !== 'line' && !ctx.chart.getDatasetMeta(di).hidden; });
-        var total = ds.reduce(function(s, d){ return s + (Math.abs(d.data[ctx.dataIndex]) || 0); }, 0);
-        var val = Math.abs(ctx.dataset.data[ctx.dataIndex] || 0);
-        return total > 0 && (val / total) >= minPctSmall;
-      }
+      if (window._hideInternalLabels) return false;
       if (ctx.dataset.type === 'line') return false;
       var meta = ctx.chart.getDatasetMeta(ctx.datasetIndex);
       if (meta.hidden) return false;
@@ -517,7 +515,7 @@ function stackedDatalabels(fmtFn, minPct) {
       var val = Math.abs(ctx.dataset.data[ctx.dataIndex] || 0);
       return total > 0 && (val / total) >= (minPct || 0.05);
     },
-    font: function(ctx) { return { size: window._isSmallScreen ? 7 : 9, weight: 'bold' }; },
+    font: { size: 9, weight: 'bold' },
     color: function(ctx) {
       var bg = ctx.dataset.backgroundColor || '#fff';
       if (typeof bg === 'string' && bg.startsWith('#')) return lighten(bg, 100);
