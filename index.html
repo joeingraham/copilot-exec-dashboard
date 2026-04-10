@@ -2124,18 +2124,6 @@ var funnelRatesTrend = {
         bhtml += '</div></div>';
       });
       barsWrap.innerHTML = bhtml;
-      // Auto-size font to fit narrowest bar
-      setTimeout(function() {
-        var bars = barsWrap.querySelectorAll('.funnel-bar-single');
-        var minW = Infinity;
-        bars.forEach(function(b) { minW = Math.min(minW, b.offsetWidth); });
-        var fs = Math.max(3, Math.min(10, minW / 8));
-        bars.forEach(function(b) {
-          b.style.fontSize = fs + 'px';
-          var pcts = b.querySelector('.funnel-pcts');
-          if (pcts) pcts.style.fontSize = (fs * 0.75) + 'px';
-        });
-      }, 0);
     }
 
     // Commentary — render into text card (aligned with funnel bars)
