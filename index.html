@@ -122,23 +122,17 @@ body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: v
 .funnel-toggle.active { background: rgba(123,104,238,.15); border-color: var(--purple); color: #fff; }
 .funnel-toggle .ft-dot { width: 8px; height: 8px; border-radius: 50%; }
 .funnel-grid2 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; align-items: center; }
-.funnel-step-cell { display: flex; align-items: center; gap: 3px; padding: 1px 2px 1px 0; }
-.funnel-comment-cell { display: flex; align-items: center; padding: 2px 0 2px 8px;
-  border-left: 2px solid rgba(123,104,238,.2); font-size: 10px; line-height: 1.3; color: var(--text); }
-.funnel-comment-cell b { color: var(--purple); }
-.funnel-row-label { font-size: 7px; color: var(--text-muted); width: 48px; text-align: right; flex-shrink: 0; font-weight: 600; line-height: 1.1; }
-.funnel-row-label .fl-total { color: #E6EDF3; font-weight: 700; font-size: 8px; display: block; }
-.funnel-row-label .fl-pcts { font-size: 6px; opacity: .7; display: block; }
-.funnel-row-bar { flex: 1; display: flex; flex-direction: column; align-items: center; }
-.funnel-row-rate { font-size: 6px; color: var(--text-muted); margin: 0; line-height: 1; }
-.funnel-bar-single { border-radius: 3px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 8px; color: #fff; transition: all .25s; min-width: 20px; padding: 1px 0; line-height: 1.1; }
-.funnel-bar-single .bar-line { font-size: 6px; font-weight: 600; opacity: .8; }
+.funnel-step-cell { display: flex; align-items: center; gap: 2px; padding: 0 1px 0 0; }
+.funnel-row-label { font-size: 6px; color: var(--text-muted); width: 40px; text-align: right; flex-shrink: 0; font-weight: 600; line-height: 1; }
+.funnel-row-bar { flex: 1; display: flex; align-items: center; }
+.funnel-bar-single { border-radius: 2px; display: flex; align-items: center; justify-content: center; gap: 4px;
+  font-weight: 700; font-size: 7px; color: #fff; min-width: 16px; padding: 2px 4px; line-height: 1; white-space: nowrap; }
+.funnel-bar-single .bar-pcts { font-size: 6px; font-weight: 500; opacity: .7; }
 .funnel-bar-single:hover { filter: brightness(1.15); }
-#funnel-bars-wrap { display: flex; flex-direction: column; }
+#funnel-bars-wrap { display: flex; flex-direction: column; gap: 1px; }
 #funnel-text-wrap { display: flex; flex-direction: column; }
-.funnel-insight-row { display: flex; align-items: center; padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,.05);
-  font-size: 10px; line-height: 1.3; }
+.funnel-insight-row { display: flex; align-items: center; padding: 1px 0; border-bottom: 1px solid rgba(255,255,255,.05);
+  font-size: 9px; line-height: 1.2; }
 
 /* ── KPI Tiles ── */
 .kpi { text-align: center; }
@@ -2106,9 +2100,9 @@ var funnelRatesTrend = {
         bhtml += '<div class="funnel-row-label">'+step+'</div>';
         bhtml += '<div class="funnel-row-bar">';
         bhtml += '<div class="funnel-bar-single" style="width:'+barPct+'%;background:'+ch.color+'">';
-        bhtml += '<span>'+fmt(val)+(notToScale?' <span style="font-size:6px;opacity:.5">(~)</span>':'')+'</span>';
+        bhtml += '<span>'+fmt(val)+'</span>';
         if (i > 0) {
-          bhtml += '<span class="bar-line">'+prevConv+'% prior · '+pctOfTop+'% total</span>';
+          bhtml += '<span class="bar-pcts">'+prevConv+'% · '+pctOfTop+'%</span>';
         }
         bhtml += '</div>';
         bhtml += '</div></div>';
