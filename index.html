@@ -2105,15 +2105,17 @@ var funnelRatesTrend = {
       steps.forEach(function(step, i) {
         var val = scaledData[i];
         var barPct;
+        var stepLabel = step;
         if (i === 0) {
-          barPct = Math.max(8, (scaleBase / scaleBase) * 100);
+          barPct = 120;
+          stepLabel = 'Page Visits (not to scale)';
         } else {
           barPct = Math.max(8, (val / scaleBase) * 100);
         }
         var pctOfTop = (val / scaledData[0] * 100).toFixed(1);
         var prevConv = i > 0 ? (val / scaledData[i-1] * 100).toFixed(1) : null;
         bhtml += '<div class="funnel-step-cell">';
-        bhtml += '<div class="funnel-row-label">'+step+'</div>';
+        bhtml += '<div class="funnel-row-label">'+stepLabel+'</div>';
         bhtml += '<div class="funnel-row-bar">';
         bhtml += '<div class="funnel-bar-single" style="width:'+barPct+'%;background:'+ch.color+'">';
         bhtml += '<span class="funnel-val">'+fmt(val)+'</span>';
