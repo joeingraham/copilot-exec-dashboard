@@ -420,15 +420,23 @@ Chart.defaults.responsive = true;
 Chart.defaults.maintainAspectRatio = true;
 Chart.defaults.plugins.datalabels = {display: false};
 
-// Responsive: scale down fonts and hide data labels on smaller screens
-var isSmallScreen = window.innerWidth < 1400;
-if (isSmallScreen) {
-  Chart.defaults.font.size = 9;
-  Chart.defaults.plugins.legend.labels.boxWidth = 8;
-  Chart.defaults.plugins.legend.labels.padding = 8;
-  Chart.defaults.elements.point.radius = 1;
+// Responsive: detect screen size and adapt — updates on resize
+function updateScreenSize() {
+  var w = window.innerWidth;
+  window._isSmallScreen = w < 1400;
+  window._isTinyScreen = w < 1000;
 }
-window._isSmallScreen = isSmallScreen;
+updateScreenSize();
+window.addEventListener('resize', function() {
+  var wasSmall = window._isSmallScreen;
+  updateScreenSize();
+  if (wasSmall !== window._isSmallScreen && typeof rebuildAll === 'function') {
+    // Force all charts to re-render with new label visibility
+    Object.keys(allCharts).forEach(function(k) {
+      if (allCharts[k] && allCharts[k].update) allCharts[k].update();
+    });
+  }
+});
 
 // Register the datalabels plugin explicitly
 if (typeof ChartDataLabels !== 'undefined') {
@@ -440,11 +448,12 @@ const stackedTotalPlugin = {
   id: 'stackedTotal',
   afterDatasetsDraw(chart) {
     if (!chart.config.options.plugins?.stackedTotal?.display) return;
-    if (window._isSmallScreen) return;
+    if (window._isTinyScreen) return;
     const { ctx } = chart;
     const meta0 = chart.getDatasetMeta(0);
     if (!meta0 || meta0.type !== 'bar') return;
     const fmt = chart.config.options.plugins.stackedTotal.formatter || (v => v);
+    const fSize = window._isSmallScreen ? 8 : 10;
     const datasets = chart.data.datasets.filter(ds => ds.type !== 'line');
     for (let i = 0; i < chart.data.labels.length; i++) {
       let total = 0;
@@ -460,7 +469,7 @@ const stackedTotalPlugin = {
       if (total > 0 && topY < Infinity) {
         ctx.save();
         ctx.fillStyle = '#E6EDF3';
-        ctx.font = 'bold 10px Inter, system-ui';
+        ctx.font = 'bold '+fSize+'px Inter, system-ui';
         ctx.textAlign = 'center';
         ctx.fillText(fmt(total), meta0.data[i].x, topY - 6);
         ctx.restore();
@@ -480,7 +489,18 @@ function lighten(hex, amt) {
 function stackedDatalabels(fmtFn, minPct) {
   return {
     display: function(ctx) {
-      if (window._isSmallScreen) return false;
+      if (window._isTinyScreen) return false;
+      if (window._isSmallScreen) {
+        // On smaller screens, only show labels for segments > 15% of total
+        var minPctSmall = Math.max(minPct || 0.05, 0.15);
+        if (ctx.dataset.type === 'line') return false;
+        var meta = ctx.chart.getDatasetMeta(ctx.datasetIndex);
+        if (meta.hidden) return false;
+        var ds = ctx.chart.data.datasets.filter(function(d, di){ return d.type !== 'line' && !ctx.chart.getDatasetMeta(di).hidden; });
+        var total = ds.reduce(function(s, d){ return s + (Math.abs(d.data[ctx.dataIndex]) || 0); }, 0);
+        var val = Math.abs(ctx.dataset.data[ctx.dataIndex] || 0);
+        return total > 0 && (val / total) >= minPctSmall;
+      }
       if (ctx.dataset.type === 'line') return false;
       var meta = ctx.chart.getDatasetMeta(ctx.datasetIndex);
       if (meta.hidden) return false;
@@ -489,13 +509,13 @@ function stackedDatalabels(fmtFn, minPct) {
       var val = Math.abs(ctx.dataset.data[ctx.dataIndex] || 0);
       return total > 0 && (val / total) >= (minPct || 0.05);
     },
+    font: function(ctx) { return { size: window._isSmallScreen ? 7 : 9, weight: 'bold' }; },
     color: function(ctx) {
       var bg = ctx.dataset.backgroundColor || '#fff';
       if (typeof bg === 'string' && bg.startsWith('#')) return lighten(bg, 100);
       if (typeof bg === 'string' && bg.startsWith('rgba')) return '#ffffffdd';
       return '#ffffffdd';
     },
-    font: { size: 9, weight: 'bold' },
     formatter: fmtFn || function(v){ return Math.abs(v); },
     anchor: 'center',
     align: 'center',
@@ -1408,28 +1428,40 @@ function rebuildAll() {
     allCharts.retSurface.data.labels = labels;
     var retSurfBySku = {
       Free: {
-        '1 Surface':[25,26,27,28,28,29,29,30,30,31,31,32], '2 Surfaces':[38,39,40,41,42,43,44,44,45,46,46,47],
-        '3 Surfaces':[48,49,50,51,52,53,54,54,55,56,56,57], '4+ Surfaces':[55,56,57,58,59,60,61,61,62,63,63,64]
+        '1 Surface':[28,27,27,26,26,25,25,25,26,26,26,27],
+        '2 Surfaces':[35,35,36,36,37,37,38,38,39,39,40,40],
+        '3 Surfaces':[40,41,42,42,43,44,44,45,46,47,47,48],
+        '4+ Surfaces':[45,47,48,49,50,51,52,53,54,55,56,58]
       },
       Edu: {
-        '1 Surface':[30,31,32,33,33,34,34,35,35,36,36,37], '2 Surfaces':[43,44,45,46,47,48,49,49,50,51,51,52],
-        '3 Surfaces':[53,54,55,56,57,58,59,59,60,61,61,62], '4+ Surfaces':[60,61,62,63,64,65,66,66,67,68,68,69]
+        '1 Surface':[32,32,31,31,31,31,32,32,33,33,34,34],
+        '2 Surfaces':[42,42,43,44,44,45,45,46,47,47,48,49],
+        '3 Surfaces':[50,51,53,54,55,56,57,58,59,60,62,63],
+        '4+ Surfaces':[56,58,60,62,63,65,66,67,69,70,72,73]
       },
       Pro: {
-        '1 Surface':[38,39,40,41,42,43,44,44,45,46,46,47], '2 Surfaces':[52,53,54,55,56,57,58,58,59,60,60,61],
-        '3 Surfaces':[62,63,64,65,66,67,68,68,69,70,70,71], '4+ Surfaces':[70,71,72,73,74,75,76,76,77,78,78,79]
+        '1 Surface':[40,40,39,39,38,38,39,39,40,40,41,41],
+        '2 Surfaces':[50,51,52,53,54,55,56,56,57,58,59,60],
+        '3 Surfaces':[58,60,62,63,65,66,68,69,71,72,73,75],
+        '4+ Surfaces':[65,68,70,72,74,76,78,79,81,83,85,87]
       },
       'Pro+': {
-        '1 Surface':[44,45,46,47,48,49,50,50,51,52,52,53], '2 Surfaces':[58,59,60,61,62,63,64,64,65,66,66,67],
-        '3 Surfaces':[68,69,70,71,72,73,74,74,75,76,76,77], '4+ Surfaces':[76,77,78,79,80,81,82,82,83,84,84,85]
+        '1 Surface':[45,45,46,46,47,47,48,48,49,49,50,51],
+        '2 Surfaces':[56,57,59,60,61,62,64,65,66,67,68,70],
+        '3 Surfaces':[65,67,69,71,73,74,76,77,79,80,82,83],
+        '4+ Surfaces':[73,75,78,80,82,84,86,87,88,89,90,91]
       },
       Business: {
-        '1 Surface':[48,49,50,51,52,53,54,54,55,56,56,57], '2 Surfaces':[62,63,64,65,66,67,68,68,69,70,70,71],
-        '3 Surfaces':[72,73,74,75,76,77,78,78,79,80,80,81], '4+ Surfaces':[80,81,82,83,84,85,86,86,87,88,88,89]
+        '1 Surface':[50,50,51,51,52,53,53,54,55,55,56,57],
+        '2 Surfaces':[60,62,63,65,66,67,69,70,71,72,73,75],
+        '3 Surfaces':[70,72,74,76,78,79,81,82,84,85,86,88],
+        '4+ Surfaces':[78,80,83,85,87,88,90,91,92,93,94,95]
       },
       Enterprise: {
-        '1 Surface':[55,56,57,58,59,60,61,61,62,63,63,64], '2 Surfaces':[68,69,70,71,72,73,74,74,75,76,76,77],
-        '3 Surfaces':[78,79,80,81,82,83,84,84,85,86,86,87], '4+ Surfaces':[86,87,88,89,90,91,92,92,93,94,94,95]
+        '1 Surface':[58,58,59,60,61,62,63,64,65,65,66,67],
+        '2 Surfaces':[68,70,72,73,75,76,78,79,80,81,82,83],
+        '3 Surfaces':[76,78,80,82,84,86,87,88,89,90,91,92],
+        '4+ Surfaces':[84,86,88,90,91,92,93,94,95,96,96,97]
       }
     };
     var activeSkusRS = SKU_LIST.filter(function(s){ return skuState[s]; });
@@ -2381,18 +2413,18 @@ var ideTimeData = {
 var ideNameList = ['VS Code','JetBrains','Visual Studio','Neovim','Other'];
 // M12 Retention by Product Surface (replaces IDE Distribution)
 var baseRetSurfaceData = {
-  '1 Surface': [38,39,40,41,42,43,44,44,45,46,46,47],
-  '2 Surfaces': [52,53,54,55,56,57,58,58,59,60,60,61],
-  '3 Surfaces': [62,63,64,65,66,67,68,68,69,70,70,71],
-  '4+ Surfaces': [70,71,72,73,74,75,76,76,77,78,78,79]
+  '1 Surface': [40,40,39,39,38,38,39,39,40,40,41,41],
+  '2 Surfaces': [50,51,52,53,54,55,56,56,57,58,59,60],
+  '3 Surfaces': [58,60,62,63,65,66,68,69,71,72,73,75],
+  '4+ Surfaces': [65,68,70,72,74,76,78,79,81,83,85,87]
 };
 allCharts.retSurface = new Chart(document.getElementById('ch-ret-surface'), {
   type:'line',
   data:{ labels:MONTHS, datasets: [
-    { label: '1 Surface', data: [38,39,40,41,42,43,44,44,45,46,46,47], borderColor: '#FD71AF', borderWidth: 2.5, tension: .3, fill: false, pointRadius: 2 },
-    { label: '2 Surfaces', data: [52,53,54,55,56,57,58,58,59,60,60,61], borderColor: '#FFB08E', borderWidth: 2.5, tension: .3, fill: false, pointRadius: 2 },
-    { label: '3 Surfaces', data: [62,63,64,65,66,67,68,68,69,70,70,71], borderColor: '#49CCF9', borderWidth: 2.5, tension: .3, fill: false, pointRadius: 2 },
-    { label: '4+ Surfaces', data: [70,71,72,73,74,75,76,76,77,78,78,79], borderColor: '#79D9B9', borderWidth: 2.5, tension: .3, fill: false, pointRadius: 2 }
+    { label: '1 Surface', data: baseRetSurfaceData['1 Surface'].slice(), borderColor: '#FD71AF', borderWidth: 2.5, tension: .3, fill: false, pointRadius: 2 },
+    { label: '2 Surfaces', data: baseRetSurfaceData['2 Surfaces'].slice(), borderColor: '#FFB08E', borderWidth: 2.5, tension: .3, fill: false, pointRadius: 2 },
+    { label: '3 Surfaces', data: baseRetSurfaceData['3 Surfaces'].slice(), borderColor: '#49CCF9', borderWidth: 2.5, tension: .3, fill: false, pointRadius: 2 },
+    { label: '4+ Surfaces', data: baseRetSurfaceData['4+ Surfaces'].slice(), borderColor: '#79D9B9', borderWidth: 2.5, tension: .3, fill: false, pointRadius: 2 }
   ]},
   options:{ plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:9}}}, datalabels:{display:false}},
     interaction: { mode: 'index', intersect: false },
